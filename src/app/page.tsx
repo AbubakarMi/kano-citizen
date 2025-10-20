@@ -112,16 +112,14 @@ export default function Home() {
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="flex">
-            <aside className="hidden lg:block fixed top-20 h-[calc(100vh-80px)] w-[240px] border-r">
-               <div className="p-4">
+          <div className="container flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] md:gap-6 lg:gap-10">
+            <aside className="fixed top-20 -ml-2 hidden h-[calc(100vh-3.5rem-1px)] w-full shrink-0 md:sticky md:block md:w-[240px] overflow-y-auto">
+               <div className="py-6 pr-6 lg:py-8">
                  <DashboardSidebar user={user} />
                </div>
             </aside>
-            <div className="lg:pl-[240px] flex-1">
-              <div className="p-4 sm:p-6 lg:p-8">
-                <RoleBasedDashboard user={user} t={t} />
-              </div>
+            <div className="py-6 lg:py-8">
+               <RoleBasedDashboard user={user} t={t} />
             </div>
           </div>
         ) : (
@@ -140,3 +138,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
