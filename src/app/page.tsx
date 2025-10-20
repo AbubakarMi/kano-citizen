@@ -28,7 +28,7 @@ export default function Home() {
           email: user.email!,
           // You can manually change this to test different roles:
           // "Citizen", "MDA Official", "Moderator", "System Administrator", etc.
-          role: "Citizen", 
+          role: "Super Admin", 
           submittedIdeas: ["idea-1"],
           votedOnIdeas: ["idea-2", "idea-3"],
           followedDirectives: ["dir-1"],
