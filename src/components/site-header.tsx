@@ -30,6 +30,8 @@ interface SiteHeaderProps {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translation['header'];
+  activeView?: string;
+  setActiveView?: (view: string) => void;
 }
 
 export function SiteHeader({
@@ -38,6 +40,8 @@ export function SiteHeader({
   language,
   setLanguage,
   t,
+  activeView,
+  setActiveView,
 }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -63,9 +67,11 @@ export function SiteHeader({
                 <div className="p-4 border-b">
                   <Logo />
                 </div>
-                {/* This is a temporary way to handle sidebar state for mobile */}
-                {user.role === 'Super Admin' && (
-                    <DashboardSidebar user={user} className="p-4" />
+                {user.role === 'Super Admin' && setActiveView && (
+                    <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
+                        setActiveView(view);
+                        setMobileMenuOpen(false);
+                    }} className="p-4" />
                 )}
                </SheetContent>
              </Sheet>
