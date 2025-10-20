@@ -46,12 +46,16 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
 
   return (
     <>
-      <div className="flex-col gap-10 hidden lg:flex">
-        {renderView()}
-      </div>
       <div className="lg:hidden">
-        {renderView()}
+         {renderView()}
       </div>
+
+       <div className="hidden lg:flex">
+          <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} />
+          <div className="flex-1 space-y-6">
+            {renderView()}
+          </div>
+       </div>
     </>
   );
 }

@@ -3,6 +3,8 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Users, FileText, Smile, HardHat, LayoutDashboard } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 
 const kpis = [
     { title: "Total Citizen Participation", value: "15,432", icon: Users },
@@ -10,6 +12,15 @@ const kpis = [
     { title: "Citizen Satisfaction Score", value: "88%", icon: Smile },
     { title: "Top Sector of Concern", value: "Infrastructure", icon: HardHat },
 ];
+
+const sectorData = [
+  { name: 'Health', ideas: 45, directives: 5 },
+  { name: 'Infrastructure', ideas: 82, directives: 8 },
+  { name: 'Education', ideas: 65, directives: 4 },
+  { name: 'Security', ideas: 32, directives: 3 },
+  { name: 'Environment', ideas: 51, directives: 5 },
+];
+
 
 export function ExecutiveDashboard() {
   return (
@@ -34,7 +45,26 @@ export function ExecutiveDashboard() {
               </Card>
           ))}
       </div>
-       {/* Add more charts and data visualizations here later */}
+      
+       <Card>
+        <CardHeader>
+          <CardTitle>Sector Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={sectorData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="ideas" fill="hsl(var(--primary))" name="Citizen Ideas" />
+              <Bar dataKey="directives" fill="hsl(var(--secondary))" name="Issued Directives" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
     </div>
   );
 }
