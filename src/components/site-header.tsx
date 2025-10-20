@@ -1,7 +1,7 @@
 import type { User } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LogOut, User as UserIcon } from "lucide-react";
 
 interface SiteHeaderProps {
   user: User | null;
@@ -33,16 +34,18 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+      <div className="container flex h-20 items-center">
         <Logo />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-2">
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <nav className="flex items-center gap-2">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10 border-2 border-primary/50">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                        {getInitials(user.name)}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -56,15 +59,21 @@ export function SiteHeader({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onLogout}>
+                  <DropdownMenuItem>
+                    <UserIcon />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onLogout} className="text-red-500 focus:text-red-500">
+                    <LogOut />
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" onClick={onLogin}>Access Your Account</Button>
-                <Button onClick={onRegister}>Register Your Voice</Button>
+                <Button variant="ghost" onClick={onLogin}>Sign In</Button>
+                <Button onClick={onRegister}>Register Voice</Button>
               </>
             )}
           </nav>

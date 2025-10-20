@@ -12,11 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, Users, FileText, Bell, Pin } from "lucide-react";
+import { ArrowUp, Check, Handshake, Users, FileText, Bell, Pin, Vote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 
 interface DashboardProps {
@@ -64,7 +64,7 @@ export function Dashboard({ user }: DashboardProps) {
 
   return (
     <div className="container py-10">
-      <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight">
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
         Welcome back, {user.name.split(" ")[0]}!
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">Ready to help build Kano?</p>
@@ -79,7 +79,7 @@ export function Dashboard({ user }: DashboardProps) {
         <TabsContent value="speak" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline text-2xl">Submit Your Idea</CardTitle>
+              <CardTitle className="text-2xl">Submit Your Idea</CardTitle>
               <CardDescription>
                 What change do you want to see? Your name ({user.name}) will be attached for accountability.
               </CardDescription>
@@ -101,7 +101,7 @@ export function Dashboard({ user }: DashboardProps) {
              {localIdeas.sort((a,b) => b.upvotes - a.upvotes).map((idea) => (
                <Card key={idea.id} className="flex flex-col">
                  <CardHeader>
-                   <CardTitle className="font-headline">{idea.title}</CardTitle>
+                   <CardTitle>{idea.title}</CardTitle>
                    <CardDescription>by {idea.author}</CardDescription>
                  </CardHeader>
                  <CardContent className="flex-grow">
@@ -151,7 +151,7 @@ export function Dashboard({ user }: DashboardProps) {
                     <div className="flex justify-between items-start">
                       <div>
                         <Badge className="mb-2" variant={dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
-                        <CardTitle className="font-headline">{dir.title}</CardTitle>
+                        <CardTitle>{dir.title}</CardTitle>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
                         {localUser.followedDirectives.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
@@ -175,7 +175,7 @@ export function Dashboard({ user }: DashboardProps) {
               {volunteerOpportunities.map(op => (
                 <Card key={op.id} className="mb-4">
                   <CardHeader>
-                    <CardTitle className="font-headline">{op.title}</CardTitle>
+                    <CardTitle>{op.title}</CardTitle>
                     <CardDescription>{op.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
