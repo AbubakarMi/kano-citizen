@@ -1,9 +1,11 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, Award } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote } from "lucide-react";
 import { ideas } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
+import { ComplaintForm } from "@/components/complaint-form";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 interface LandingPageProps {
   onRegister: () => void;
@@ -14,6 +16,10 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
+  
+  const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
+  const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
+  const buildImage = PlaceHolderImages.find(p => p.id === 'build');
 
   return (
     <>
@@ -85,8 +91,50 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="bg-secondary/20 dark:bg-secondary/20 py-20 md:py-24">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">A Simple Path to Progress</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Your engagement drives real change in three straightforward steps.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <Card className="shadow-lg hover:shadow-xl transition-shadow">
+              {speakImage && <Image src={speakImage.imageUrl} alt={speakImage.description} data-ai-hint={speakImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center gap-2"><MessageSquareQuote />Speak Up</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Submit your innovative ideas to address challenges and improve our community.</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow">
+              {decideImage && <Image src={decideImage.imageUrl} alt={decideImage.description} data-ai-hint={decideImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center gap-2"><Vote />Decide</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Vote on the ideas submitted by fellow citizens to prioritize what matters most.</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow">
+             {buildImage && <Image src={buildImage.imageUrl} alt={buildImage.description} data-ai-hint={buildImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
+              <CardHeader>
+                <CardTitle className="flex items-center justify-center gap-2"><PencilRuler />Build</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Follow the progress as top-voted ideas are turned into official directives and projects.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+
       {/* Live Polls Section */}
-      <section className="bg-secondary/50 dark:bg-secondary/20 py-20 md:py-24">
+      <section className="bg-white dark:bg-gray-900 py-20 md:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Live Community Polls</h2>
@@ -126,6 +174,21 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
             <Button size="lg" onClick={onRegister}>
                 Have an Idea? Register to Submit Yours!
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Complaint Section */}
+      <section className="bg-secondary/20 dark:bg-secondary/20 py-20 md:py-24">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Voice a Concern</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Report issues or submit complaints. You can choose to remain anonymous or provide your details for a follow-up.
+            </p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <ComplaintForm />
           </div>
         </div>
       </section>
