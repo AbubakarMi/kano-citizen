@@ -45,14 +45,15 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
 };
 
 const DashboardLoading = () => (
-  <div className="container py-8">
-    <div className="grid lg:grid-cols-[240px_1fr] gap-12">
-      <div className="hidden lg:flex flex-col gap-2">
-          <Skeleton className="h-9 w-full" />
-          <Skeleton className="h-9 w-full" />
-          <Skeleton className="h-9 w-full" />
-      </div>
-      <div>
+    <div className="flex h-[calc(100vh-80px)]">
+      <aside className="hidden lg:block w-[240px] border-r p-4">
+        <div className="flex flex-col gap-2">
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+        </div>
+      </aside>
+      <div className="flex-1 p-8">
         <Skeleton className="h-12 w-1/3 mb-4" />
         <Skeleton className="h-4 w-1/2 mb-8" />
         <div className="space-y-4">
@@ -61,7 +62,6 @@ const DashboardLoading = () => (
         </div>
       </div>
     </div>
-  </div>
 );
 
 
@@ -112,12 +112,16 @@ export default function Home() {
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="container grid lg:grid-cols-[240px_1fr] lg:gap-10 items-start py-8">
-            <aside className="hidden lg:block w-[240px] top-20">
-              <DashboardSidebar user={user} />
+          <div className="flex">
+            <aside className="hidden lg:block fixed top-20 h-[calc(100vh-80px)] w-[240px] border-r">
+               <div className="p-4">
+                 <DashboardSidebar user={user} />
+               </div>
             </aside>
-            <div className="min-w-0"> {/* Prevents content from overflowing */}
-              <RoleBasedDashboard user={user} t={t} />
+            <div className="lg:pl-[240px] flex-1">
+              <div className="p-4 sm:p-6 lg:p-8">
+                <RoleBasedDashboard user={user} t={t} />
+              </div>
             </div>
           </div>
         ) : (
