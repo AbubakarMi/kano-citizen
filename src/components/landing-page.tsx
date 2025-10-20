@@ -1,18 +1,18 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote } from "lucide-react";
-import { ideas } from "@/lib/data";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, Quote, HelpingHand } from "lucide-react";
+import { ideas, directives, volunteerOpportunities, testimonials, faqs } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { ComplaintForm } from "@/components/complaint-form";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import Link from 'next/link';
+import { Badge } from "./ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-interface LandingPageProps {
-  onRegister: () => void;
-  onLogin: () => void;
-}
 
-export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
+export function LandingPage() {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
@@ -35,16 +35,11 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
               Submit ideas, vote on priorities, and see your vision come to life.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Button size="lg" onClick={onRegister} className="w-full">
-                Register to Participate
+               <Button asChild size="lg" className="w-full">
+                <Link href="/register">Register to Participate</Link>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={onLogin}
-                className="w-full"
-              >
-                Sign In
+              <Button asChild size="lg" variant="outline" className="w-full">
+                 <Link href="/login">Sign In</Link>
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
@@ -92,7 +87,7 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section className="py-20 md:py-24 bg-background">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">A Simple Path to Progress</h2>
@@ -158,7 +153,9 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
                            <ArrowUp className="h-5 w-5" />
                            {idea.upvotes}
                          </div>
-                         <Button onClick={onLogin}>Vote</Button>
+                         <Button asChild>
+                            <Link href="/login">Vote</Link>
+                         </Button>
                       </div>
                     </div>
                     <div className="mt-4">
@@ -171,15 +168,140 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
             })}
           </div>
           <div className="text-center mt-12">
-            <Button size="lg" onClick={onRegister}>
-                Have an Idea? Register to Submit Yours!
+             <Button asChild size="lg">
+                <Link href="/register">Have an Idea? Register to Submit Yours!</Link>
             </Button>
           </div>
         </div>
       </section>
 
+      {/* From Idea to Action Section */}
+      <section className="py-20 md:py-24 bg-background">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">From Idea to Action</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Top-voted ideas become official directives. Track their progress here.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {directives.map(dir => (
+              <Card key={dir.id}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Badge className="mb-2" variant={dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
+                      <CardTitle>{dir.title}</CardTitle>
+                    </div>
+                    <FileText className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <CardDescription>{dir.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <h4 className="font-semibold mb-2">Latest Updates</h4>
+                  <ul className="space-y-2">
+                  {dir.updates.map((update, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0" /><span>{update}</span></li>
+                  ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="bg-white dark:bg-gray-900 py-20 md:py-24">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Voices of Kano</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              See what fellow citizens are saying about the platform.
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="flex flex-col justify-between">
+                <CardHeader>
+                  <div className="flex items-center gap-4">
+                    <Avatar>
+                      <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/40/40`} />
+                      <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-base">{testimonial.name}</CardTitle>
+                      <CardDescription>{testimonial.location}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Get Involved Section */}
+      <section className="py-20 md:py-24 bg-background">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Get Involved, Build Kano</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Your skills and time can make a huge difference. Volunteer for a project today.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {volunteerOpportunities.map(op => (
+              <Card key={op.id} className="flex flex-col">
+                <CardHeader>
+                  <CardTitle>{op.title}</CardTitle>
+                  <CardDescription>{op.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <h4 className="font-semibold text-sm mb-2">Skills Needed</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                    <Button asChild>
+                        <Link href="/register"><Handshake className="mr-2 h-4 w-4" />Volunteer</Link>
+                    </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-white dark:bg-gray-900 py-20 md:py-24">
+        <div className="container max-w-4xl mx-auto">
+           <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Have questions? We've got answers.
+            </p>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+
       {/* Complaint Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section className="py-20 md:py-24 bg-background">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Voice a Concern</h2>
@@ -203,5 +325,3 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
     </>
   );
 }
-
-      

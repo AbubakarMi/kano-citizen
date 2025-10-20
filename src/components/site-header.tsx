@@ -11,18 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User as UserIcon } from "lucide-react";
+import Link from "next/link";
 
 interface SiteHeaderProps {
   user: User | null;
-  onLogin: () => void;
-  onRegister: () => void;
   onLogout: () => void;
 }
 
 export function SiteHeader({
   user,
-  onLogin,
-  onRegister,
   onLogout,
 }: SiteHeaderProps) {
   const getInitials = (name: string) => {
@@ -35,7 +32,9 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Logo />
+        <Link href="/" aria-label="Home">
+          <Logo />
+        </Link>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
             {user ? (
@@ -72,8 +71,13 @@ export function SiteHeader({
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" onClick={onLogin}>Sign In</Button>
-                <Button onClick={onRegister}>Register Voice</Button>
+                <Button asChild variant="ghost">
+                  <Link href="/login">Sign In</Link>
+                </Button>
+
+                <Button asChild>
+                  <Link href="/register">Register Voice</Link>
+                </Button>
               </>
             )}
           </nav>
