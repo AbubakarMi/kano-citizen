@@ -73,8 +73,7 @@ export function DashboardSidebar({ user }: { user: User }) {
   const links = roleLinks[user.role] || [];
   
   return (
-    <aside className="lg:border-r lg:pr-6">
-      <nav className="flex flex-col gap-1 sticky top-24">
+    <nav className="flex flex-col gap-1 sticky top-24">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -91,6 +90,5 @@ export function DashboardSidebar({ user }: { user: User }) {
           </Link>
         ))}
       </nav>
-    </aside>
   );
 }
