@@ -17,15 +17,15 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/config";
 import type { Translation } from "@/lib/translations";
-
+import { seededUsers, type User } from "@/lib/data";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(1, { message: "Password is required." }),
 });
+
+const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
 interface LoginFormProps {
     t: Translation['login'];
@@ -43,24 +43,51 @@ export function LoginForm({ t }: LoginFormProps) {
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-      
-      toast({
-        title: `${t.toastWelcome} ${user.displayName || 'Citizen'}!`,
-        description: t.toastDescription,
-      });
-      router.push("/");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: t.toastErrorTitle,
-        description: error.message || t.toastErrorDescription,
-      });
-    } finally {
-      setIsLoading(false);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Check if the user is one of the seeded admins
+    const seededUser = seededUsers.find(u => u.email.toLowerCase() === values.email.toLowerCase());
+    
+    let userToLogin: User;
+
+    if (seededUser) {
+      // It's a seeded admin user
+      userToLogin = {
+        name: seededUser.name,
+        email: seededUser.email,
+        role: seededUser.role,
+        submittedIdeas: ["idea-1"],
+        votedOnIdeas: ["idea-2", "idea-3"],
+        followedDirectives: ["dir-1"],
+        volunteeredFor: [],
+      };
+    } else {
+      // It's a regular citizen user
+       userToLogin = {
+        name: "Kano Citizen",
+        email: values.email,
+        role: "Citizen",
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+      };
     }
+
+    // Simulate session by storing user in localStorage
+    localStorage.setItem(FAKE_USER_SESSION_KEY, JSON.stringify(userToLogin));
+
+    toast({
+      title: `${t.toastWelcome} ${userToLogin.name.split(' ')[0]}!`,
+      description: t.toastDescription,
+    });
+
+    // We need to force a page reload to make the root layout read the session
+    window.location.href = '/';
+
+    setIsLoading(false);
   };
 
   return (
@@ -83,7 +110,7 @@ export function LoginForm({ t }: LoginFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t.passwordLabel}</FormLabel>
-              <FormControl><Input type="password" {...field} /></FormControl>
+              <FormControl><Input type="password" placeholder="any password" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
           )}

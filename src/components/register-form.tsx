@@ -16,11 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/firebase/config";
 import type { Translation } from "@/lib/translations";
-import { seededUsers } from "@/lib/data";
-
+import type { User } from "@/lib/data";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -28,6 +25,8 @@ const registerSchema = z.object({
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   location: z.string().optional(),
 });
+
+const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
 interface RegisterFormProps {
     t: Translation['register'];
@@ -45,33 +44,36 @@ export function RegisterForm({ t }: RegisterFormProps) {
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
+    
+    // Simulate API call for user creation
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Update user profile with full name
-      await updateProfile(user, { displayName: values.fullName });
-      
-      // All registered users are citizens by default.
-      // The role is assigned on the main page based on the email.
-      
-      toast({
-        title: t.toastSuccessTitle,
-        description: t.toastSuccessDescription,
-        variant: "default",
-        className: "bg-primary text-primary-foreground border-primary",
-      });
+    // All registered users are citizens by default.
+    const newUser: User = {
+        name: values.fullName,
+        email: values.email,
+        role: "Citizen",
+        location: values.location,
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+    };
+    
+    // Simulate session by storing user in localStorage
+    localStorage.setItem(FAKE_USER_SESSION_KEY, JSON.stringify(newUser));
 
-      router.push("/");
-    } catch (error: any) {
-        toast({
-            variant: "destructive",
-            title: t.toastErrorTitle,
-            description: error.message || t.toastErrorDescription,
-        });
-    } finally {
-        setIsLoading(false);
-    }
+    toast({
+      title: t.toastSuccessTitle,
+      description: t.toastSuccessDescription,
+      variant: "default",
+      className: "bg-primary text-primary-foreground border-primary",
+    });
+
+    // We need to force a page reload to make the root layout read the session
+    window.location.href = '/';
+
+    setIsLoading(false);
   };
 
   return (

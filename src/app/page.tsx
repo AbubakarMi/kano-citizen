@@ -11,10 +11,11 @@ import { ModeratorDashboard } from "@/components/moderator-dashboard";
 import { SPDScoordinatorDashboard } from "@/components/spd-coordinator-dashboard";
 import { SystemAdminDashboard } from "@/components/system-admin-dashboard";
 import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
-import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
-import { auth } from "@/firebase/config";
 import { translations, type Language, type Translation } from "@/lib/translations";
 import { seededUsers } from "@/lib/data";
+
+// This is a temporary solution to handle user state without real auth
+const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
 const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
   switch (user.role) {
@@ -38,44 +39,29 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [language, setLanguage] = useState<Language>('en');
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setFirebaseUser(firebaseUser);
-      if (firebaseUser) {
-        // Check if the logged-in user is one of the seeded admins
-        const seededUser = seededUsers.find(u => u.email === firebaseUser.email);
-        const role = seededUser ? seededUser.role : "Citizen";
-        
-        const appUser: User = {
-          name: firebaseUser.displayName || seededUser?.name || "Kano Citizen",
-          email: firebaseUser.email!,
-          role: role,
-          submittedIdeas: ["idea-1"],
-          votedOnIdeas: ["idea-2", "idea-3"],
-          followedDirectives: ["dir-1"],
-          volunteeredFor: [],
-        };
-        setUser(appUser);
-      } else {
-        setUser(null);
+    // Check for a fake session on component mount
+    try {
+      const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
+      if (session) {
+        const loggedInUser = JSON.parse(session);
+        setUser(loggedInUser);
       }
-    });
-    return () => unsubscribe();
+    } catch (error) {
+      console.error("Failed to parse user session", error);
+      localStorage.removeItem(FAKE_USER_SESSION_KEY);
+    }
   }, []);
 
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      // This will trigger the onAuthStateChanged listener, which will update the state
-      router.push('/');
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
+    // Clear the fake session
+    localStorage.removeItem(FAKE_USER_SESSION_KEY);
+    setUser(null);
+    router.push('/');
   };
   
   const t = translations[language];
