@@ -12,6 +12,7 @@ import { auth } from "@/firebase/config";
 export default function Home() {
   const [user, setUser] = useState<User | null>(null); // This would be your app's user type
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [language, setLanguage] = useState<'en' | 'ha'>('en');
   const router = useRouter();
 
   useEffect(() => {
@@ -53,12 +54,14 @@ export default function Home() {
       <SiteHeader
         user={user}
         onLogout={handleLogout}
+        language={language}
+        setLanguage={setLanguage}
       />
       <main className="flex-1">
         {user ? (
           <Dashboard user={user} />
         ) : (
-          <LandingPage />
+          <LandingPage language={language} />
         )}
       </main>
     </div>

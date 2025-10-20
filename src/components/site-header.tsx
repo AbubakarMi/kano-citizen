@@ -10,17 +10,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut, User as UserIcon, Globe } from "lucide-react";
 import Link from "next/link";
 
 interface SiteHeaderProps {
   user: User | null;
   onLogout: () => void;
+  language: 'en' | 'ha';
+  setLanguage: (lang: 'en' | 'ha') => void;
+}
+
+const headerText = {
+  en: {
+    signIn: "Sign In",
+    register: "Register Voice",
+    myProfile: "My Profile",
+    logout: "Log out",
+  },
+  ha: {
+    signIn: "Shiga ciki",
+    register: "Rijistar Murya",
+    myProfile: "Bayanan sirri na",
+    logout: "Fita",
+  }
 }
 
 export function SiteHeader({
   user,
   onLogout,
+  language,
+  setLanguage
 }: SiteHeaderProps) {
   const getInitials = (name: string) => {
     return name
@@ -28,6 +47,8 @@ export function SiteHeader({
       .map((n) => n[0])
       .join("");
   };
+  
+  const text = headerText[language];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -37,6 +58,24 @@ export function SiteHeader({
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setLanguage('en')}>
+                  English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('ha')}>
+                  Hausa
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Separator />
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -60,23 +99,23 @@ export function SiteHeader({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <UserIcon />
-                    My Profile
+                    {text.myProfile}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onLogout} className="text-red-500 focus:text-red-500">
                     <LogOut />
-                    Log out
+                    {text.logout}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
                 <Button asChild variant="ghost">
-                  <Link href="/login">Sign In</Link>
+                  <Link href="/login">{text.signIn}</Link>
                 </Button>
 
                 <Button asChild>
-                  <Link href="/register">Register Voice</Link>
+                  <Link href="/register">{text.register}</Link>
                 </Button>
               </>
             )}
@@ -86,3 +125,5 @@ export function SiteHeader({
     </header>
   );
 }
+
+const Separator = () => <div className="h-6 w-px bg-border" />;
