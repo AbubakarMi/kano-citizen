@@ -1,37 +1,182 @@
 "use client";
 
 import type { User } from "@/lib/data";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Crown } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, FileText, CheckCircle, Clock, Smile, BarChart, HardHat, FileCheck, FileX } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { mdas, ideas } from "@/lib/data";
 
 interface SuperAdminDashboardProps {
   user: User;
 }
 
+const kpis = [
+    { title: "Total Citizen Participation", value: "15,432", icon: Users },
+    { title: "Directives: Issued vs. Completed", value: "25 / 18", icon: FileText },
+    { title: "Citizen Satisfaction Score", value: "88%", icon: Smile },
+    { title: "Top Sector of Concern", value: "Infrastructure", icon: HardHat },
+]
+
+const approvalItems = [
+    { id: "app-1", type: "SPD Communiqué", title: "Report from Q2 Special Public Dialogue on Security", submittedBy: "SPD Coordinator", status: "Pending"},
+    { id: "app-2", type: "Policy Brief", title: "Recommendations for Waste Management Improvement", submittedBy: "Moderator", status: "Pending"},
+    { id: "app-3", type: "System Change", title: "New User Role: 'Community Champion'", submittedBy: "System Administrator", status: "Approved"},
+]
+
 export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
+  const { toast } = useToast();
+
+  const handleIssueDirective = () => {
+    toast({
+        title: "Directive Issued",
+        description: "The directive has been sent to the assigned MDA and is now being tracked.",
+        className: "bg-primary text-primary-foreground border-primary"
+    });
+  }
+  
+  const handleApproval = (status: "Approved" | "Rejected") => {
+      toast({
+        title: `Decision Recorded`,
+        description: `The item has been marked as ${status}.`,
+      });
+  }
+
   return (
     <div className="container py-10">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-        Super Admin Dashboard
+        Executive Dashboard
       </h1>
-      <p className="text-muted-foreground mt-2 text-lg">Welcome, {user.name}.</p>
+      <p className="text-muted-foreground mt-2 text-lg">Welcome, {user.name}. High-level oversight of KCVP.</p>
 
-      <div className="mt-8 grid gap-6">
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div className="space-y-1.5">
-                    <CardTitle>Platform Oversight</CardTitle>
-                    <CardDescription>
-                        Access all data, issue directives, and manage KCVP operations.
-                    </CardDescription>
-                </div>
-                <Crown className="h-8 w-8 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground">Full analytics, directive issuance, and system management tools will be available here.</p>
-            </CardContent>
-        </Card>
+      {/* KPI Cards */}
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {kpis.map(kpi => (
+            <Card key={kpi.title}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+                    <kpi.icon className="h-5 w-5 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{kpi.value}</div>
+                </CardContent>
+            </Card>
+        ))}
       </div>
+
+      <Tabs defaultValue="directives" className="mt-8">
+        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-2">
+          <TabsTrigger value="directives">Directive Issuance</TabsTrigger>
+          <TabsTrigger value="approvals">Approval Queue</TabsTrigger>
+        </TabsList>
+        
+        {/* Directive Issuance Panel */}
+        <TabsContent value="directives" className="mt-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl">Issue a New Directive</CardTitle>
+                    <CardDescription>Select a top citizen submission, draft an official directive, and assign it to an MDA with a deadline.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Select a Top-Voted Idea</label>
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Choose a citizen idea..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {ideas.map(idea => (
+                                    <SelectItem key={idea.id} value={idea.id}>{idea.title} ({idea.upvotes} votes)</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label htmlFor="directive-title" className="text-sm font-medium">Directive Title</label>
+                        <Input id="directive-title" placeholder="e.g., 'Phase 1 Rollout of Waste-to-Wealth Project'" />
+                    </div>
+
+                     <div className="space-y-2">
+                        <label htmlFor="directive-details" className="text-sm font-medium">Directive Details & Objectives</label>
+                        <Textarea id="directive-details" rows={5} placeholder="Provide a clear, actionable summary of the objective, key milestones, and expected outcomes." />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                         <div className="space-y-2">
+                            <label className="text-sm font-medium">Assign to MDA</label>
+                            <Select>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select an MDA..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {mdas.map(mda => (
+                                        <SelectItem key={mda.id} value={mda.id}>{mda.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <label htmlFor="deadline" className="text-sm font-medium">Deadline</label>
+                            <Input id="deadline" type="date" />
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button onClick={handleIssueDirective}>Issue Official Directive</Button>
+                </CardFooter>
+            </Card>
+        </TabsContent>
+
+        {/* Approval Queue */}
+        <TabsContent value="approvals" className="mt-6">
+             <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl">Approval Queue</CardTitle>
+                    <CardDescription>Review and approve major SPD outcomes, reports, and system changes before they are made public or implemented.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Item</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Submitted By</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {approvalItems.map(item => (
+                                <TableRow key={item.id}>
+                                    <TableCell className="font-medium">{item.title}</TableCell>
+                                    <TableCell><Badge variant="secondary">{item.type}</Badge></TableCell>
+                                    <TableCell>{item.submittedBy}</TableCell>
+                                    <TableCell><Badge variant={item.status === 'Approved' ? 'default' : 'outline'}>{item.status}</Badge></TableCell>
+                                    <TableCell className="text-right space-x-2">
+                                        {item.status === "Pending" && <>
+                                            <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handleApproval('Approved')}>
+                                                <CheckCircle className="mr-2 h-4 w-4" /> Approve
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleApproval('Rejected')}>
+                                                <FileX className="mr-2 h-4 w-4" /> Reject
+                                            </Button>
+                                        </>}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
