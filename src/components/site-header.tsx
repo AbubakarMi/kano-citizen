@@ -67,7 +67,7 @@ export function SiteHeader({
                 <div className="p-4 border-b">
                   <Logo />
                 </div>
-                {user.role === 'Super Admin' && setActiveView && (
+                {setActiveView && (
                     <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
                         setActiveView(view);
                         setMobileMenuOpen(false);
