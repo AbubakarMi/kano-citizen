@@ -86,48 +86,51 @@ export default function Home() {
   const [activeView, setActiveView] = useState('overview');
 
   useEffect(() => {
-    try {
-      const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
-      if (session) {
-        const loggedInUser = JSON.parse(session);
-         // Find user in seeded list to get correct role
-        const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
-        
-        if (seededUser) {
-          loggedInUser.role = seededUser.role;
-          loggedInUser.mda = seededUser.mda;
-        } else {
-          loggedInUser.role = loggedInUser.role || 'Citizen';
+    let sessionChecked = false;
+    if (typeof window !== 'undefined') {
+        try {
+            const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
+            if (session) {
+                const loggedInUser = JSON.parse(session);
+                // Find user in seeded list to get correct role
+                const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
+                
+                if (seededUser) {
+                    loggedInUser.role = seededUser.role;
+                    loggedInUser.mda = seededUser.mda;
+                } else {
+                    loggedInUser.role = loggedInUser.role || 'Citizen';
+                }
+                setUser(loggedInUser);
+                
+                // Set default view based on role
+                switch(loggedInUser.role) {
+                    case 'Citizen':
+                        setActiveView('decide');
+                        break;
+                    case 'MDA Official':
+                        setActiveView('directives');
+                        break;
+                    case 'Moderator':
+                        setActiveView('queue');
+                        break;
+                    case 'SPD Coordinator':
+                        setActiveView('events');
+                        break;
+                    case 'System Administrator':
+                        setActiveView('health');
+                        break;
+                    default:
+                        setActiveView('overview');
+                }
+            }
+        } catch (error) {
+            console.error("Failed to parse user session", error);
+            localStorage.removeItem(FAKE_USER_SESSION_KEY);
+        } finally {
+            sessionChecked = true;
+            setIsLoading(false); // Stop loading after checking session
         }
-        setUser(loggedInUser);
-        
-        // Set default view based on role
-        switch(loggedInUser.role) {
-            case 'Citizen':
-                setActiveView('decide');
-                break;
-            case 'MDA Official':
-                setActiveView('directives');
-                break;
-            case 'Moderator':
-                setActiveView('queue');
-                break;
-            case 'SPD Coordinator':
-                setActiveView('events');
-                break;
-            case 'System Administrator':
-                setActiveView('health');
-                break;
-            default:
-                setActiveView('overview');
-        }
-
-      }
-    } catch (error) {
-      console.error("Failed to parse user session", error);
-      localStorage.removeItem(FAKE_USER_SESSION_KEY);
-    } finally {
-      setIsLoading(false); // Stop loading after checking session
     }
   }, []);
 
