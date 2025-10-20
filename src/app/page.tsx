@@ -21,28 +21,59 @@ import { Skeleton } from "@/components/ui/skeleton";
 // This is a temporary solution to handle user state without real auth
 const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
-const RoleBasedDashboard = ({ user, t, activeView, setActiveView }: { user: User, t: Translation, activeView: string, setActiveView: (view: string) => void }) => {
+const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
     const ideas = t.ideas;
     const directives = t.directives;
     const volunteerOpportunities = t.volunteerOpportunities;
+    const [activeView, setActiveView] = useState('overview');
+
+    // Default view for roles that don't have an "overview"
+    useEffect(() => {
+      if (user.role === 'Citizen') {
+        setActiveView('decide');
+      } else if (user.role === 'MDA Official') {
+        setActiveView('directives');
+      } else if (user.role === 'Moderator') {
+          setActiveView('queue');
+      } else if (user.role === 'SPD Coordinator') {
+          setActiveView('events');
+      } else if (user.role === 'System Administrator') {
+          setActiveView('health');
+      }
+      else {
+        setActiveView('overview');
+      }
+    }, [user.role]);
     
-  switch (user.role) {
-    case "Citizen":
-      return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
-    case "MDA Official":
-      return <MDAOfficialDashboard user={user} />;
-    case "Moderator":
-      return <ModeratorDashboard user={user} />;
-    case "SPD Coordinator":
-      return <SPDScoordinatorDashboard user={user} />;
-    case "System Administrator":
-      return <SystemAdminDashboard user={user} />;
-    case "Super Admin":
-      return <SuperAdminDashboard user={user} ideas={ideas} activeView={activeView} />;
-    default:
-      // Fallback to citizen dashboard for any unhandled roles
-      return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
+  const dashboardContent = () => {
+      switch (user.role) {
+        case "Citizen":
+          return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
+        case "MDA Official":
+          return <MDAOfficialDashboard user={user} />;
+        case "Moderator":
+          return <ModeratorDashboard user={user} />;
+        case "SPD Coordinator":
+          return <SPDScoordinatorDashboard user={user} />;
+        case "System Administrator":
+          return <SystemAdminDashboard user={user} />;
+        case "Super Admin":
+          return <SuperAdminDashboard user={user} ideas={ideas} activeView={activeView} />;
+        default:
+          return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
+      }
   }
+
+  return (
+      <div className="flex">
+        <aside className="fixed left-0 top-20 h-full w-[240px] border-r hidden lg:block">
+            <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} />
+        </aside>
+        <div className="flex-1 lg:ml-[240px] p-6 lg:p-8">
+            {dashboardContent()}
+        </div>
+      </div>
+  )
 };
 
 const DashboardLoading = () => (
@@ -70,7 +101,6 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(true); // Start in loading state
-  const [activeView, setActiveView] = useState('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -83,6 +113,7 @@ export default function Home() {
         
         if (seededUser) {
           loggedInUser.role = seededUser.role;
+          loggedInUser.mda = seededUser.mda;
         } else {
           loggedInUser.role = loggedInUser.role || 'Citizen';
         }
@@ -113,21 +144,12 @@ export default function Home() {
         language={language}
         setLanguage={setLanguage}
         t={t.header}
-        activeView={activeView}
-        setActiveView={setActiveView}
       />
-      <main className="flex-1">
+      <main className="flex-1 pt-20">
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="flex">
-            <aside className="fixed left-0 top-20 h-full w-[240px] border-r hidden lg:block">
-               <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} />
-            </aside>
-            <div className="flex-1 lg:ml-[240px] p-6 lg:p-8">
-               <RoleBasedDashboard user={user} t={t} activeView={activeView} setActiveView={setActiveView} />
-            </div>
-          </div>
+          <RoleBasedDashboard user={user} t={t} />
         ) : (
           <LandingPage 
             language={language} 

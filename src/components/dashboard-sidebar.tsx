@@ -17,6 +17,9 @@ import {
   Handshake,
   ShieldCheck,
   CalendarDays,
+  Activity,
+  BarChart2,
+  FileClock,
 } from "lucide-react";
 
 interface SidebarLink {
@@ -53,8 +56,11 @@ const spdLinks: SidebarLink[] = [
 ]
 
 const sysAdminLinks: SidebarLink[] = [
+    { id: "health", label: "System Health", icon: Activity },
     { id: "users", label: "User Management", icon: Users },
-    { id: "system", label: "System Operations", icon: Settings },
+    { id: "analytics", label: "Analytics", icon: BarChart2 },
+    { id: "logs", label: "System Logs", icon: FileClock },
+    { id: "settings", label: "Configuration", icon: Settings },
 ]
 
 const roleLinks: Record<User["role"], SidebarLink[]> = {
