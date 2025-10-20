@@ -1,3 +1,22 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "speak",
+      "description": "A group of diverse people engaged in a lively discussion in a community center.",
+      "imageUrl": "https://images.unsplash.com/photo-1698569990733-9701edd9d7c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkaXNjdXNzaW9uJTIwY29tbXVuaXR5fGVufDB8fHx8MTc2MDk1MTk2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "discussion community"
+    },
+    {
+      "id": "decide",
+      "description": "Close-up of hands placing votes into a ballot box.",
+      "imageUrl": "https://images.unsplash.com/photo-1738604977160-614076832598?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx2b3RpbmclMjBjaG9pY2V8ZW58MHx8fHwxNzYwOTY3NzA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "voting choice"
+    },
+    {
+      "id": "build",
+      "description": "A diverse group of volunteers working together to build a community garden.",
+      "imageUrl": "https://images.unsplash.com/photo-1695723415318-e07f21fdef1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb25zdHJ1Y3Rpb24lMjBjaXR5fGVufDB8fHx8MTc2MDk2NzcwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "construction city"
+    }
+  ]
 }
