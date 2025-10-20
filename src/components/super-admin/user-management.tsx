@@ -34,6 +34,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -57,6 +58,11 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     const [userToDelete, setUserToDelete] = useState<typeof seededUsers[0] | null>(null);
     const [userToEdit, setUserToEdit] = useState<typeof seededUsers[0] | null>(null);
     const [newRole, setNewRole] = useState<UserRole | "">("");
+
+    const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
+    const [newUserName, setNewUserName] = useState("");
+    const [newUserEmail, setNewUserEmail] = useState("");
+    const [newUserRole, setNewUserRole] = useState<UserRole | "">("");
 
     const [newMdaName, setNewMdaName] = useState("");
     const [newRoleName, setNewRoleName] = useState("");
@@ -123,14 +129,83 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setNewRoleName("");
         toast({ title: "Role Added", description: `${newRoleName.trim()} has been added.` });
     }
+    
+    const handleCreateUser = () => {
+        if (!newUserName || !newUserEmail || !newUserRole) {
+             toast({
+                variant: "destructive",
+                title: "Missing Information",
+                description: "Please fill out all fields for the new user.",
+            });
+            return;
+        }
+        const newUser: (typeof seededUsers)[0] = {
+            name: newUserName,
+            email: newUserEmail,
+            role: newUserRole as UserRole,
+        };
+        setUsers(prev => [newUser, ...prev]);
+        toast({
+          title: `User Created`,
+          description: `Account for ${newUserName} has been created with the role ${newUserRole}.`,
+        });
+
+        // Reset form and close dialog
+        setNewUserName("");
+        setNewUserEmail("");
+        setNewUserRole("");
+        setIsCreateUserOpen(false);
+    }
 
 
     return (
         <div className="space-y-6">
             <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-3"><Users className="h-6 w-6" /> Manage Administrative Users</CardTitle>
-                    <CardDescription>View, edit roles for, and remove all non-citizen users on the platform.</CardDescription>
+                 <CardHeader className="flex-row items-center justify-between">
+                    <div className="space-y-1">
+                        <CardTitle className="text-xl flex items-center gap-3"><Users className="h-6 w-6" /> Manage Administrative Users</CardTitle>
+                        <CardDescription>View, create, edit roles for, and remove all non-citizen users.</CardDescription>
+                    </div>
+                    <Dialog open={isCreateUserOpen} onOpenChange={setIsCreateUserOpen}>
+                        <DialogTrigger asChild>
+                            <Button><PlusCircle className="mr-2 h-4 w-4" /> Create New User</Button>
+                        </DialogTrigger>
+                         <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Create a New User</DialogTitle>
+                                <DialogDescription>
+                                    Fill in the details below to create a new administrative user account.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="name" className="text-right">Full Name</Label>
+                                    <Input id="name" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} className="col-span-3" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="email" className="text-right">Email</Label>
+                                    <Input id="email" type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} className="col-span-3" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="role" className="text-right">Role</Label>
+                                    <Select value={newUserRole || ''} onValueChange={(value) => setNewUserRole(value as UserRole)}>
+                                        <SelectTrigger className="col-span-3">
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {availableRoles.map(role => (
+                                                <SelectItem key={role} value={role}>{role}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsCreateUserOpen(false)}>Cancel</Button>
+                                <Button onClick={handleCreateUser}>Create User</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </CardHeader>
                 <CardContent>
                     <Table>
