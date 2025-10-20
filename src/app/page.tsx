@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import type { User } from "@/lib/data";
+import type { User, UserRole } from "@/lib/data";
 import { SiteHeader } from "@/components/site-header";
 import { LandingPage } from "@/components/landing-page";
 import { Dashboard } from "@/components/dashboard";
@@ -11,7 +11,7 @@ import { auth } from "@/firebase/config";
 import { translations, type Language, type Translation } from "@/lib/translations";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null); // This would be your app's user type
+  const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [language, setLanguage] = useState<Language>('en');
   const router = useRouter();
@@ -22,11 +22,13 @@ export default function Home() {
       if (user) {
         // In a real app, you would fetch your application-specific user profile
         // from Firestore using the user.uid to get their role and other data.
+        // For now, we are simulating the user role.
         const appUser: User = {
           name: user.displayName || "Kano Citizen",
           email: user.email!,
-          role: "Citizen", // Default role, would be fetched from DB
-          // These are examples and would be fetched from your database
+          // You can manually change this to test different roles:
+          // "Citizen", "MDA Official", "Moderator", "System Administrator", etc.
+          role: "Citizen", 
           submittedIdeas: ["idea-1"],
           votedOnIdeas: ["idea-2", "idea-3"],
           followedDirectives: ["dir-1"],
