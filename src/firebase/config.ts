@@ -4,12 +4,13 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID",
+  apiKey: "AIzaSyDRo9Vnm8Tlg5jjGRgE9-uvIXoKyLPPUBU",
+  authDomain: "kano-citizen-s-voice.firebaseapp.com",
+  projectId: "kano-citizen-s-voice",
+  storageBucket: "kano-citizen-s-voice.appspot.com",
+  messagingSenderId: "392979246627",
+  appId: "1:392979246627:web:156ae10eb515d7928ccb96",
+  measurementId: "G-9C2Y5SLX1D"
 };
 
 // Initialize Firebase
