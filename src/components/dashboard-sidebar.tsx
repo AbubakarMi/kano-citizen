@@ -73,15 +73,16 @@ export function DashboardSidebar({ user }: { user: User }) {
   const links = roleLinks[user.role] || [];
   
   return (
-    <aside>
-      <nav className="flex flex-col gap-1">
+    <aside className="lg:border-r lg:pr-6">
+      <nav className="flex flex-col gap-1 sticky top-24">
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             className={cn(
               buttonVariants({ variant: "ghost" }),
-              //   pathname === link.href ? "bg-muted" : "",
+              // TODO: Add active link styling based on scroll position
+              // pathname === link.href ? "bg-muted" : "",
               "justify-start text-base md:text-sm"
             )}
           >

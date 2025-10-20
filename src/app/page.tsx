@@ -14,6 +14,7 @@ import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
 import { translations, type Language, type Translation } from "@/lib/translations";
 import { seededUsers, ideas as allIdeas } from "@/lib/data";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 // This is a temporary solution to handle user state without real auth
@@ -43,9 +44,33 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
   }
 };
 
+const DashboardLoading = () => (
+  <div className="container py-8">
+    <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+      <div className="lg:border-r lg:pr-8">
+        <div className="flex flex-col gap-2">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-8 w-1/2" />
+            <Skeleton className="h-8 w-2/3" />
+        </div>
+      </div>
+      <div>
+        <Skeleton className="h-12 w-1/3 mb-4" />
+        <Skeleton className="h-4 w-1/2 mb-8" />
+        <div className="space-y-4">
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-32 w-full" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
+  const [isLoading, setIsLoading] = useState(true); // Start in loading state
   const router = useRouter();
 
   useEffect(() => {
@@ -55,17 +80,15 @@ export default function Home() {
         const loggedInUser = JSON.parse(session);
          // Find user in seeded list to get correct role
         const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
-        if (seededUser) {
-          loggedInUser.role = seededUser.role;
-        } else {
-            // Default to citizen if not found in seeded list
-            loggedInUser.role = 'Citizen';
-        }
+        
+        loggedInUser.role = seededUser ? seededUser.role : 'Citizen';
         setUser(loggedInUser);
       }
     } catch (error) {
       console.error("Failed to parse user session", error);
       localStorage.removeItem(FAKE_USER_SESSION_KEY);
+    } finally {
+      setIsLoading(false); // Stop loading after checking session
     }
   }, []);
 
@@ -88,11 +111,13 @@ export default function Home() {
         t={t.header}
       />
       <main className="flex-1">
-        {user ? (
+        {isLoading ? (
+            <DashboardLoading />
+        ) : user ? (
           <div className="container py-8">
-            <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+            <div className="grid lg:grid-cols-[240px_1fr] gap-12">
               <DashboardSidebar user={user} />
-              <div className="lg:border-l lg:pl-8">
+              <div className="min-w-0"> {/* Prevents content from overflowing */}
                 <RoleBasedDashboard user={user} t={t} />
               </div>
             </div>
