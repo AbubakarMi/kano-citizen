@@ -42,7 +42,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // Filter out citizens and create a mutable list
 const initialAdminUsers = seededUsers.filter(u => u.role !== "Citizen");
 
-export function UserManagement() {
+interface UserManagementProps {
+    availableRoles: UserRole[];
+}
+
+export function UserManagement({ availableRoles }: UserManagementProps) {
     const { toast } = useToast();
     const [users, setUsers] = useState(initialAdminUsers);
     const [userToDelete, setUserToDelete] = useState<typeof seededUsers[0] | null>(null);
@@ -82,8 +86,6 @@ export function UserManagement() {
         setNewRole("");
     }
 
-    const availableRoles: UserRole[] = ["Super Admin", "System Administrator", "MDA Official", "Moderator", "SPD Coordinator"];
-
     return (
         <>
             <Card>
@@ -121,7 +123,7 @@ export function UserManagement() {
                                                     <span>Edit Role</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(user)}>
+                                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteClick(user)}>
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     <span>Delete User</span>
                                                 </DropdownMenuItem>

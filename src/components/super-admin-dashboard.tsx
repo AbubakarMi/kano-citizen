@@ -2,8 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import type { User, Idea, MDA } from "@/lib/data";
-import { mdas as initialMdas } from "@/lib/data";
+import type { User, Idea, MDA, UserRole } from "@/lib/data";
+import { mdas as initialMdas, seededUsers } from "@/lib/data";
 import { ExecutiveDashboard } from "./super-admin/executive-dashboard";
 import { OngoingVotes } from "./super-admin/ongoing-votes";
 import { DirectiveIssuance } from "./super-admin/directive-issuance";
@@ -17,8 +17,13 @@ interface SuperAdminDashboardProps {
   activeView: string;
 }
 
+const initialRoles: UserRole[] = [...new Set(seededUsers.map(u => u.role))];
+
+
 export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashboardProps) {
   const [mdas, setMdas] = useState<MDA[]>(initialMdas);
+  const [roles, setRoles] = useState<UserRole[]>(initialRoles);
+
 
   const renderView = () => {
     switch (activeView) {
@@ -31,9 +36,9 @@ export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashb
       case 'approvals':
         return <ApprovalQueue />;
       case 'users':
-        return <UserManagement />;
+        return <UserManagement availableRoles={roles.filter(r => r !== 'Citizen')} />;
       case 'settings':
-         return <SystemSettings mdas={mdas} setMdas={setMdas} />;
+         return <SystemSettings mdas={mdas} setMdas={setMdas} roles={roles} setRoles={setRoles} />;
       default:
         return <ExecutiveDashboard />;
     }

@@ -10,22 +10,19 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import type { MDA, UserRole } from "@/lib/data";
-import { seededUsers } from "@/lib/data";
 import { Badge } from "../ui/badge";
 
 interface SystemSettingsProps {
     mdas: MDA[];
     setMdas: React.Dispatch<React.SetStateAction<MDA[]>>;
+    roles: UserRole[];
+    setRoles: React.Dispatch<React.SetStateAction<UserRole[]>>;
 }
 
-const initialRoles: UserRole[] = [...new Set(seededUsers.map(u => u.role))];
-
-
-export function SystemSettings({ mdas, setMdas }: SystemSettingsProps) {
+export function SystemSettings({ mdas, setMdas, roles, setRoles }: SystemSettingsProps) {
     const { toast } = useToast();
     const [newMdaName, setNewMdaName] = useState("");
     const [newRoleName, setNewRoleName] = useState("");
-    const [roles, setRoles] = useState<UserRole[]>(initialRoles);
 
     const handleSave = () => {
         toast({
@@ -108,7 +105,7 @@ export function SystemSettings({ mdas, setMdas }: SystemSettingsProps) {
                             value={newMdaName} 
                             onChange={(e) => setNewMdaName(e.target.value)}
                         />
-                        <Button onClick={handleAddMda}><PlusCircle className="mr-2" /> Add MDA</Button>
+                        <Button onClick={handleAddMda}><PlusCircle className="mr-2 h-4 w-4" /> Add MDA</Button>
                     </div>
                  </div>
 
@@ -125,7 +122,7 @@ export function SystemSettings({ mdas, setMdas }: SystemSettingsProps) {
                             value={newRoleName}
                             onChange={(e) => setNewRoleName(e.target.value)}
                         />
-                        <Button onClick={handleAddRole}><PlusCircle className="mr-2" /> Add Role</Button>
+                        <Button onClick={handleAddRole}><PlusCircle className="mr-2 h-4 w-4" /> Add Role</Button>
                     </div>
                     <p className="text-xs text-muted-foreground">Note: Adding roles is for demonstration. Role permissions require code-level changes.</p>
                  </div>
