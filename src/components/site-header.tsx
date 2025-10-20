@@ -1,3 +1,5 @@
+"use client";
+
 import type { User } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
@@ -10,10 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User as UserIcon, Globe } from "lucide-react";
+import { LogOut, User as UserIcon, Globe, Menu } from "lucide-react";
 import Link from "next/link";
 import type { Language, Translation } from "@/lib/translations";
-
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { DashboardSidebar } from "./dashboard-sidebar";
 
 interface SiteHeaderProps {
   user: User | null;
@@ -40,7 +47,26 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-        <Link href="/" aria-label="Home">
+         {user && (
+           <div className="lg:hidden mr-4">
+             <Sheet>
+               <SheetTrigger asChild>
+                 <Button variant="ghost" size="icon">
+                   <Menu className="h-6 w-6" />
+                 </Button>
+               </SheetTrigger>
+               <SheetContent side="left" className="p-0 w-64">
+                <div className="p-4">
+                  <Logo />
+                </div>
+                <div className="px-2">
+                  <DashboardSidebar user={user} />
+                </div>
+               </SheetContent>
+             </Sheet>
+           </div>
+         )}
+        <Link href="/" aria-label="Home" className="hidden sm:flex">
           <Logo />
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-2">

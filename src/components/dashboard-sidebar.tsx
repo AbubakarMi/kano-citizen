@@ -73,7 +73,7 @@ export function DashboardSidebar({ user }: { user: User }) {
   const links = roleLinks[user.role] || [];
   
   return (
-    <nav className="flex flex-col gap-1 sticky top-24">
+    <nav className="flex flex-col gap-1 lg:sticky lg:top-24">
         {links.map((link) => (
           <Link
             key={link.href}

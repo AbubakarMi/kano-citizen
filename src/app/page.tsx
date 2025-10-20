@@ -47,7 +47,7 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
 const DashboardLoading = () => (
   <div className="container py-8">
     <div className="grid lg:grid-cols-[240px_1fr] gap-12">
-      <div className="flex flex-col gap-2">
+      <div className="hidden lg:flex flex-col gap-2">
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
@@ -113,8 +113,8 @@ export default function Home() {
             <DashboardLoading />
         ) : user ? (
           <div className="container py-8">
-            <div className="grid lg:grid-cols-[240px_1fr] gap-12">
-              <aside className="w-[240px]">
+            <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12">
+              <aside className="hidden lg:block w-[240px]">
                 <DashboardSidebar user={user} />
               </aside>
               <div className="min-w-0"> {/* Prevents content from overflowing */}
