@@ -235,5 +235,3 @@ export function SystemAdminDashboard({ user, activeView }: SystemAdminDashboardP
     </div>
   );
 }
-
-    
