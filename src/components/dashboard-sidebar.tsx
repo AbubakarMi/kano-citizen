@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState } from "react";
 import type { User } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -67,27 +68,32 @@ const roleLinks: Record<User["role"], SidebarLink[]> = {
 
 interface DashboardSidebarProps {
   user: User;
-  activeView: string;
-  setActiveView: (view: string) => void;
+  activeView?: string;
+  setActiveView?: (view: string) => void;
+  className?: string;
 }
 
-export function DashboardSidebar({ user, activeView, setActiveView }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, activeView, setActiveView, className }: DashboardSidebarProps) {
   const links = roleLinks[user.role] || [];
+  const [internalActiveView, setInternalActiveView] = useState('overview');
+
+  const currentView = activeView || internalActiveView;
+  const setCurrentView = setActiveView || setInternalActiveView;
   
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    setActiveView(id);
+    setCurrentView(id);
   };
 
   return (
-    <nav className="flex flex-col gap-1 py-6 pr-6 lg:py-8">
+    <nav className={cn("flex flex-col gap-1 py-6 pr-6 lg:py-8", className)}>
         {links.map((link) => (
           <a
             key={link.id}
             href={`#${link.id}`}
             onClick={(e) => handleClick(e, link.id)}
             className={cn(
-              buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
+              buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost" }),
               "justify-start text-base md:text-sm"
             )}
           >

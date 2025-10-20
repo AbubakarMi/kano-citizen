@@ -38,8 +38,7 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
     case "System Administrator":
       return <SystemAdminDashboard user={user} />;
     case "Super Admin":
-      // We pass the activeView to SuperAdminDashboard now
-      return <SuperAdminDashboard user={user} ideas={ideas} activeView="overview" />;
+      return <SuperAdminDashboard user={user} ideas={ideas} />;
     default:
       // Fallback to citizen dashboard for any unhandled roles
       return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
@@ -71,7 +70,6 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(true); // Start in loading state
-  const [activeAdminView, setActiveAdminView] = useState('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -108,30 +106,24 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SiteHeader
+       <SiteHeader
         user={user}
         onLogout={handleLogout}
         language={language}
         setLanguage={setLanguage}
         t={t.header}
-        activeAdminView={activeAdminView}
-        setActiveAdminView={setActiveAdminView}
       />
       <main className="flex-1">
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="container flex-1 items-start lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
-            <aside className="hidden lg:block w-[240px] sticky top-20 h-[calc(100vh-80px)]">
-               <DashboardSidebar user={user} activeView={activeAdminView} setActiveView={setActiveAdminView} />
+          <div className="flex">
+            <aside className="fixed top-20 left-0 h-full w-[240px] border-r hidden lg:block">
+               <DashboardSidebar user={user} />
             </aside>
-            <main className="py-6 lg:py-8">
-              {user.role === 'Super Admin' ? (
-                <SuperAdminDashboard user={user} ideas={t.ideas} activeView={activeAdminView} />
-              ) : (
-                <RoleBasedDashboard user={user} t={t} />
-              )}
-            </main>
+            <div className="flex-1 lg:ml-[240px] p-6 lg:p-8">
+               <RoleBasedDashboard user={user} t={t} />
+            </div>
           </div>
         ) : (
           <LandingPage 
