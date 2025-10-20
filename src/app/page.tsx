@@ -81,7 +81,7 @@ const DashboardLoading = () => (
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
-  const [isLoading, setIsLoading] = useState(true); // Always start in loading state
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [activeView, setActiveView] = useState('overview');
 
