@@ -24,10 +24,7 @@ import { seededUsers } from "@/lib/data";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
-  email: z.string().email({ message: "Invalid email address." })
-    .refine(email => !seededUsers.some(user => user.email === email), {
-      message: "This email is reserved for a seeded administrative role. Please use a different email to register as a citizen.",
-    }),
+  email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   location: z.string().optional(),
 });
