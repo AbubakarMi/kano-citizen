@@ -21,10 +21,11 @@ export default function Home() {
       setFirebaseUser(user);
       if (user) {
         // In a real app, you would fetch your application-specific user profile
-        // from Firestore using the user.uid
+        // from Firestore using the user.uid to get their role and other data.
         const appUser: User = {
           name: user.displayName || "Kano Citizen",
           email: user.email!,
+          role: "Citizen", // Default role, would be fetched from DB
           // These are examples and would be fetched from your database
           submittedIdeas: ["idea-1"],
           votedOnIdeas: ["idea-2", "idea-3"],

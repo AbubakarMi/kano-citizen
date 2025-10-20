@@ -51,7 +51,9 @@ export function RegisterForm({ t }: RegisterFormProps) {
       // Update user profile with full name
       await updateProfile(user, { displayName: values.fullName });
       
-      // In a real app, you would also save the location and other details to your Firestore database.
+      // In a real app, you would also save the user's role, location and 
+      // other details to your Firestore database. Here we default to 'Citizen'.
+      // const userRole: UserRole = "Citizen";
       
       toast({
         title: t.toastSuccessTitle,

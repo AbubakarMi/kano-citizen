@@ -21,9 +21,18 @@ export type VolunteerOpportunity = {
   requiredSkills: string[];
 };
 
+export type UserRole = 
+    | "Citizen" 
+    | "MDA Official" 
+    | "Moderator" 
+    | "SPD Coordinator" 
+    | "System Administrator" 
+    | "Super Admin";
+
 export type User = {
   name: string;
   email: string;
+  role: UserRole;
   location?: string;
   submittedIdeas: string[]; // array of idea ids
   votedOnIdeas: string[]; // array of idea ids
