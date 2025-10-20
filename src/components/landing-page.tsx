@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand, ChevronRight } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { ComplaintForm } from "@/components/complaint-form";
@@ -11,6 +11,7 @@ import { Badge } from "./ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
+import { cn } from "@/lib/utils";
 
 interface LandingPageProps {
   language: Language;
@@ -137,6 +138,47 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         </div>
       </section>
 
+      {/* Complaint Section */}
+      <section className="bg-white dark:bg-black py-20 md:py-24 overflow-hidden">
+        <div className="container relative">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-blue-900 dark:text-white">
+                Complaint Management System
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                With Kano Citizens' Voice, you can easily <span className="text-blue-600 font-semibold">track</span>, <span className="text-blue-600 font-semibold">investigate</span>, and <span className="text-blue-600 font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <Button asChild size="lg" className="bg-blue-800 hover:bg-blue-900 text-white rounded-full">
+                  <Link href="/register">Get started</Link>
+                </Button>
+                <Link href="/login" className="flex items-center font-semibold text-blue-700 hover:text-blue-800">
+                  Or take our quick Guided Tour <ChevronRight className="ml-1 h-5 w-5" />
+                </Link>
+              </div>
+            </div>
+            <div className="hidden lg:block relative h-[450px] -mr-32">
+                <div className="absolute inset-0 bg-white dark:bg-black [clip-path:url(#complaint-clip)]">
+                    <Image
+                        src="https://picsum.photos/seed/complaint/800/600"
+                        alt="A professional discussing a document"
+                        layout="fill"
+                        objectFit="cover"
+                        data-ai-hint="professional document"
+                    />
+                </div>
+            </div>
+          </div>
+        </div>
+         <svg width="0" height="0">
+            <defs>
+                <clipPath id="complaint-clip" clipPathUnits="objectBoundingBox">
+                <path d="M0.25,0 C0.2,0,0.1,0.05,0.05,0.1 C-0.05,0.25,0,0.75,0.1,0.9 C0.15,0.95,0.25,1,0.3,1 L1,1 L1,0 Z" />
+                </clipPath>
+            </defs>
+        </svg>
+      </section>
 
       {/* Live Polls Section */}
       <section className="bg-background py-20 md:py-24">
@@ -310,21 +352,6 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
 
-      {/* Complaint Section */}
-      <section className="py-20 md:py-24 bg-white dark:bg-card">
-        <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{complaintStrings.title}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {complaintStrings.description}
-            </p>
-          </div>
-          <div className="max-w-2xl mx-auto">
-            <ComplaintForm t={complaintStrings} />
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-background border-t">
         <div className="container py-8 text-center text-muted-foreground text-sm">
@@ -335,3 +362,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    

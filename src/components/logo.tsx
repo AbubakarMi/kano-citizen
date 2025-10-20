@@ -3,12 +3,11 @@ import { Layers3, MessageSquareText } from "lucide-react";
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-        <Layers3 className="h-5 w-5 text-primary-foreground" />
-      </div>
-      <h1 className="text-xl font-bold tracking-tight text-foreground">
-        Kano Citizens' Voice
+      <h1 className="text-2xl font-bold tracking-tight text-blue-900 dark:text-white">
+        bizzmine
       </h1>
     </div>
   );
 }
+
+    

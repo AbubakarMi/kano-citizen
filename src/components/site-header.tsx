@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User as UserIcon, Globe, Menu } from "lucide-react";
+import { LogOut, User as UserIcon, Globe, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import type { Language, Translation } from "@/lib/translations";
 import {
@@ -77,11 +77,31 @@ export function SiteHeader({
              </Sheet>
            </div>
          )}
-        <Link href="/" aria-label="Home" className="hidden sm:flex">
-          <Logo />
-        </Link>
+        <div className="flex items-center gap-8">
+            <Link href="/" aria-label="Home" className="hidden sm:flex">
+              <Logo />
+            </Link>
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
+                    Products
+                </Link>
+                <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
+                    Industries
+                </Link>
+                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
+                    Resources
+                </Link>
+                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
+                    Company
+                </Link>
+            </nav>
+        </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
+             <Button variant="ghost" size="icon" className="hidden md:inline-flex">
+                <Search className="h-5 w-5" />
+             </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -151,3 +171,5 @@ export function SiteHeader({
 }
 
 const Separator = () => <div className="h-6 w-px bg-border" />;
+
+    
