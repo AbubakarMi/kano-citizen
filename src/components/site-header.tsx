@@ -78,23 +78,9 @@ export function SiteHeader({
            </div>
          )}
         <div className="flex items-center gap-8">
-            <Link href="/" aria-label="Home" className="hidden sm:flex">
+            <Link href="/" aria-label="Home" className="flex items-center">
               <Logo />
             </Link>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                    Products
-                </Link>
-                <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                    Industries
-                </Link>
-                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                    Resources
-                </Link>
-                 <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                    Company
-                </Link>
-            </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">

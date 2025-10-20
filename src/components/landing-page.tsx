@@ -98,7 +98,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 md:py-24 bg-white dark:bg-card">
+      <section id="how-it-works" className="py-20 md:py-24 bg-white dark:bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.howItWorksTitle}</h2>
@@ -181,7 +181,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Live Polls Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section id="live-polls" className="bg-background py-20 md:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.livePollsTitle}</h2>
@@ -228,7 +228,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* From Idea to Action Section */}
-      <section className="py-20 md:py-24 bg-white dark:bg-card">
+      <section id="directives" className="py-20 md:py-24 bg-white dark:bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.ideaToActionTitle}</h2>
