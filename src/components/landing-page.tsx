@@ -92,7 +92,7 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-muted/40 dark:bg-muted/40 py-20 md:py-24">
+      <section className="bg-background py-20 md:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">A Simple Path to Progress</h2>
@@ -179,7 +179,7 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
       </section>
 
       {/* Complaint Section */}
-      <section className="bg-muted/40 dark:bg-muted/40 py-20 md:py-24">
+      <section className="bg-background py-20 md:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Voice a Concern</h2>
@@ -203,3 +203,5 @@ export function LandingPage({ onRegister, onLogin }: LandingPageProps) {
     </>
   );
 }
+
+      
