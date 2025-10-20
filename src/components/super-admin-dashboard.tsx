@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@/lib/data";
+import type { User, Idea } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, FileText, CheckCircle, Clock, Smile, BarChart, HardHat, FileCheck, FileX } from "lucide-react";
+import { Users, FileText, Smile, HardHat, FileCheck, FileX, ArrowUp, Vote } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { mdas, ideas } from "@/lib/data";
+import { mdas } from "@/lib/data";
+import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+
 
 interface SuperAdminDashboardProps {
   user: User;
+  ideas: Idea[];
 }
 
 const kpis = [
@@ -30,8 +34,10 @@ const approvalItems = [
     { id: "app-3", type: "System Change", title: "New User Role: 'Community Champion'", submittedBy: "System Administrator", status: "Approved"},
 ]
 
-export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
+export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
   const { toast } = useToast();
+  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
+  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
 
   const handleIssueDirective = () => {
     toast({
@@ -49,14 +55,16 @@ export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
   }
 
   return (
-    <div className="container py-10">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-        Executive Dashboard
-      </h1>
-      <p className="text-muted-foreground mt-2 text-lg">Welcome, {user.name}. High-level oversight of KCVP.</p>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+          Executive Dashboard
+        </h1>
+        <p className="text-muted-foreground mt-2 text-lg">Welcome, {user.name}. High-level oversight of KCVP.</p>
+      </div>
 
       {/* KPI Cards */}
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpis.map(kpi => (
             <Card key={kpi.title}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -70,11 +78,49 @@ export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
         ))}
       </div>
 
-      <Tabs defaultValue="directives" className="mt-8">
-        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-2">
+      <Tabs defaultValue="votes" className="w-full">
+        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3">
+          <TabsTrigger value="votes">Ongoing Votes</TabsTrigger>
           <TabsTrigger value="directives">Directive Issuance</TabsTrigger>
           <TabsTrigger value="approvals">Approval Queue</TabsTrigger>
         </TabsList>
+
+        {/* Ongoing Votes Panel */}
+        <TabsContent value="votes" className="mt-6">
+           <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl">Live Community Polls</CardTitle>
+                    <CardDescription>Real-time view of top-voted ideas from citizens.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {sortedIdeas.map((idea) => {
+                    const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
+                    return (
+                        <Card key={idea.id} className="overflow-hidden shadow-sm">
+                        <CardContent className="p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div className="md:col-span-3">
+                                <h3 className="text-base font-semibold mb-1">{idea.title}</h3>
+                                <p className="text-xs text-muted-foreground">by {idea.author}</p>
+                            </div>
+                            <div className="flex items-center justify-start md:justify-end gap-4 text-right">
+                                <div className="flex items-center gap-2 font-bold text-lg text-primary">
+                                <ArrowUp className="h-5 w-5" />
+                                {idea.upvotes}
+                                </div>
+                            </div>
+                            </div>
+                            <div className="mt-3">
+                            <Progress value={votePercentage} aria-label={`${votePercentage.toFixed(0)}% of votes`} />
+                            <p className="text-right text-xs font-medium text-primary mt-1">{votePercentage.toFixed(1)}%</p>
+                            </div>
+                        </CardContent>
+                        </Card>
+                    );
+                    })}
+                </CardContent>
+            </Card>
+        </TabsContent>
         
         {/* Directive Issuance Panel */}
         <TabsContent value="directives" className="mt-6">
@@ -162,7 +208,7 @@ export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
                                     <TableCell className="text-right space-x-2">
                                         {item.status === "Pending" && <>
                                             <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handleApproval('Approved')}>
-                                                <CheckCircle className="mr-2 h-4 w-4" /> Approve
+                                                <FileCheck className="mr-2 h-4 w-4" /> Approve
                                             </Button>
                                             <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleApproval('Rejected')}>
                                                 <FileX className="mr-2 h-4 w-4" /> Reject
