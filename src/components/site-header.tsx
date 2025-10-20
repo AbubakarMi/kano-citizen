@@ -55,7 +55,7 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
-         {user && (
+         {user && setActiveView && (
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
@@ -67,12 +67,12 @@ export function SiteHeader({
                 <div className="p-4 border-b">
                   <Logo />
                 </div>
-                {setActiveView && (
-                    <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
-                        setActiveView(view);
-                        setMobileMenuOpen(false);
-                    }} className="p-4" />
-                )}
+                
+                <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
+                    setActiveView(view);
+                    setMobileMenuOpen(false);
+                }} className="p-4" />
+                
                </SheetContent>
              </Sheet>
            </div>

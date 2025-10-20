@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { User, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +26,19 @@ interface CitizenDashboardProps {
   ideas: Idea[];
   directives: Directive[];
   volunteerOpportunities: VolunteerOpportunity[];
+  activeView: string;
+  setActiveView: (view: string) => void;
 }
 
-export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportunities }: CitizenDashboardProps) {
+export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportunities, activeView, setActiveView }: CitizenDashboardProps) {
   const { toast } = useToast();
   const [localIdeas, setLocalIdeas] = useState(ideas);
   const [localUser, setLocalUser] = useState(user);
+  
+  useEffect(() => {
+    // The activeView is now controlled by the parent page component.
+    // This component will just respond to the activeView prop.
+  }, [activeView]);
 
   const handleUpvote = (ideaId: string) => {
     if (localUser.votedOnIdeas.includes(ideaId)) {
@@ -77,8 +85,8 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
 
-      <Tabs defaultValue="decide" className="mt-8">
-        <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3">
+      <Tabs value={activeView} onValueChange={setActiveView} className="mt-8">
+        <TabsList className="hidden">
           <TabsTrigger value="speak">{t.tabSpeak}</TabsTrigger>
           <TabsTrigger value="decide">{t.tabDecide}</TabsTrigger>
           <TabsTrigger value="build">{t.tabBuild}</TabsTrigger>
