@@ -83,9 +83,9 @@ export function LoginForm({ t }: LoginFormProps) {
       title: `${t.toastWelcome} ${userToLogin.name.split(' ')[0]}!`,
       description: t.toastDescription,
     });
-
-    // We need to force a page reload to make the root layout read the session
-    window.location.href = '/';
+    
+    router.push('/');
+    router.refresh();
 
     setIsLoading(false);
   };

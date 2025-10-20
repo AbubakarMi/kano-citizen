@@ -70,8 +70,8 @@ export function RegisterForm({ t }: RegisterFormProps) {
       className: "bg-primary text-primary-foreground border-primary",
     });
 
-    // We need to force a page reload to make the root layout read the session
-    window.location.href = '/';
+    router.push('/');
+    router.refresh();
 
     setIsLoading(false);
   };
