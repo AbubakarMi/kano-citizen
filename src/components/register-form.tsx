@@ -19,11 +19,15 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import type { Translation } from "@/lib/translations";
+import { seededUsers } from "@/lib/data";
 
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
-  email: z.string().email({ message: "Invalid email address." }),
+  email: z.string().email({ message: "Invalid email address." })
+    .refine(email => !seededUsers.some(user => user.email === email), {
+      message: "This email is reserved for a seeded administrative role. Please use a different email to register as a citizen.",
+    }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   location: z.string().optional(),
 });
@@ -51,9 +55,8 @@ export function RegisterForm({ t }: RegisterFormProps) {
       // Update user profile with full name
       await updateProfile(user, { displayName: values.fullName });
       
-      // In a real app, you would also save the user's role, location and 
-      // other details to your Firestore database. Here we default to 'Citizen'.
-      // const userRole: UserRole = "Citizen";
+      // All registered users are citizens by default.
+      // The role is assigned on the main page based on the email.
       
       toast({
         title: t.toastSuccessTitle,

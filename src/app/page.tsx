@@ -14,6 +14,7 @@ import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
 import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { translations, type Language, type Translation } from "@/lib/translations";
+import { seededUsers } from "@/lib/data";
 
 const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
   switch (user.role) {
@@ -42,18 +43,17 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setFirebaseUser(user);
-      if (user) {
-        // In a real app, you would fetch your application-specific user profile
-        // from Firestore using the user.uid to get their role and other data.
-        // For now, we are simulating the user role.
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setFirebaseUser(firebaseUser);
+      if (firebaseUser) {
+        // Check if the logged-in user is one of the seeded admins
+        const seededUser = seededUsers.find(u => u.email === firebaseUser.email);
+        const role = seededUser ? seededUser.role : "Citizen";
+        
         const appUser: User = {
-          name: user.displayName || "Kano Citizen",
-          email: user.email!,
-          // You can manually change this to test different roles:
-          // "Citizen", "MDA Official", "Moderator", "System Administrator", etc.
-          role: "Super Admin", 
+          name: firebaseUser.displayName || seededUser?.name || "Kano Citizen",
+          email: firebaseUser.email!,
+          role: role,
           submittedIdeas: ["idea-1"],
           votedOnIdeas: ["idea-2", "idea-3"],
           followedDirectives: ["dir-1"],
