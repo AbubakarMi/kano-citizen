@@ -10,90 +10,15 @@ import Link from 'next/link';
 import { Badge } from "./ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import type { Language, Translation } from "@/lib/translations";
 
-const translations = {
-  en: {
-    heroTitle: "Your Voice, ",
-    heroTitleSpan: "Your Kano.",
-    heroDescription: "Join thousands of citizens shaping the future of our state. Submit ideas, vote on priorities, and see your vision come to life.",
-    registerButton: "Register to Participate",
-    signInButton: "Sign In",
-    registerHint: "It's free, secure, and takes less than a minute.",
-    topIdeaTitle: "Top Community Idea",
-    topIdeaDescription: "Currently leading the polls",
-    votes: "Votes",
-    howItWorksTitle: "A Simple Path to Progress",
-    howItWorksDescription: "Your engagement drives real change in three straightforward steps.",
-    step1Title: "Speak Up",
-    step1Description: "Submit your innovative ideas to address challenges and improve our community.",
-    step2Title: "Decide",
-    step2Description: "Vote on the ideas submitted by fellow citizens to prioritize what matters most.",
-    step3Title: "Build",
-    step3Description: "Follow the progress as top-voted ideas are turned into official directives and projects.",
-    livePollsTitle: "Live Community Polls",
-    livePollsDescription: "See what matters most to the people of Kano right now. Your vote can change these rankings.",
-    by: "by",
-    voteButton: "Vote",
-    submitIdeaButton: "Have an Idea? Register to Submit Yours!",
-    ideaToActionTitle: "From Idea to Action",
-    ideaToActionDescription: "Top-voted ideas become official directives. Track their progress here.",
-    latestUpdates: "Latest Updates",
-    voicesOfKanoTitle: "Voices of Kano",
-    voicesOfKanoDescription: "See what fellow citizens are saying about the platform.",
-    getInvolvedTitle: "Get Involved, Build Kano",
-    getInvolvedDescription: "Your skills and time can make a huge difference. Volunteer for a project today.",
-    skillsNeeded: "Skills Needed",
-    volunteerButton: "Volunteer",
-    faqTitle: "Frequently Asked Questions",
-    faqDescription: "Have questions? We've got answers.",
-    complaintTitle: "Voice a Concern",
-    complaintDescription: "Report issues or submit complaints. You can choose to remain anonymous or provide your details for a follow-up.",
-    footerText: "Kano Citizens' Voice Project. All Rights Reserved.",
-    footerSlogan: "Speak. Decide. Build Together."
-  },
-  ha: {
-    heroTitle: "Muryar Ka, ",
-    heroTitleSpan: "Kanon Ka.",
-    heroDescription: "Kasance cikin dubban jama'a da ke tsara makomar jihar mu. Gabatar da ra'ayoyi, zaɓi muhimman abubuwa, kuma ka ga hangen nesan ka ya tabbata.",
-    registerButton: "Yi Rijista don Shiga",
-    signInButton: "Shiga ciki",
-    registerHint: "Kyauta ne, amintacce, kuma yana ɗaukar ƙasa da minti ɗaya.",
-    topIdeaTitle: "Babban Ra'ayin Al'umma",
-    topIdeaDescription: "A halin yanzu yana kan gaba a zaɓe",
-    votes: "Ƙuri'u",
-    howItWorksTitle: "Hanya Mai Sauƙi zuwa Ci Gaba",
-    howItWorksDescription: "Gudummawar ka tana kawo canji na gaske a matakai uku masu sauƙi.",
-    step1Title: "Yi Magana",
-    step1Description: "Gabatar da sababbin ra'ayoyin ka don magance ƙalubale da inganta al'ummar mu.",
-    step2Title: "Yanke Shawara",
-    step2Description: "Zaɓi ra'ayoyin da 'yan uwa suka gabatar don ba da fifiko ga abin da ya fi muhimmanci.",
-    step3Title: "Gina Tare",
-    step3Description: "Kula da ci gaban yadda ake mayar da ra'ayoyin da suka fi samun ƙuri'a zuwa umarni da ayyuka na hukuma.",
-    livePollsTitle: "Zaɓen Al'umma kai tsaye",
-    livePollsDescription: "Duba abin da ya fi muhimmanci ga mutanen Kano a yanzu. Ƙuri'ar ka na iya canza wannan jerin.",
-    by: "daga",
-    voteButton: "Zaɓi",
-    submitIdeaButton: "Kuna da Ra'ayi? Yi Rijista don Gabatar da Naku!",
-    ideaToActionTitle: "Daga Ra'ayi zuwa Aiki",
-    ideaToActionDescription: "Ra'ayoyin da suka fi samun ƙuri'a sun zama umarni na hukuma. Kula da ci gaban su a nan.",
-    latestUpdates: "Sabbin Labarai",
-    voicesOfKanoTitle: "Muryoyin Kano",
-    voicesOfKanoDescription: "Duba abin da 'yan uwa ke cewa game da wannan dandalin.",
-    getInvolvedTitle: "Shiga ciki, Gina Kano",
-    getInvolvedDescription: "Gwanintar ka da lokacin ka na iya kawo babban canji. Yi aikin sa kai a yau.",
-    skillsNeeded: "Gwanintar da ake buƙata",
-    volunteerButton: "Yi Aikin Sa Kai",
-    faqTitle: "Tambayoyin da ake yawan yi",
-    faqDescription: "Kuna da tambayoyi? Muna da amsoshi.",
-    complaintTitle: "Gabatar da Damuwa",
-    complaintDescription: "Bayar da rahoto kan matsaloli ko gabatar da koke-koke. Za ka iya zaɓar a sakaye sunan ka ko bayar da bayanan ka don bibiya.",
-    footerText: "Aikin Muryar Jama'ar Kano. An kiyaye dukkan haƙƙoƙi.",
-    footerSlogan: "Yi Magana. Yanke Shawara. Gina Tare."
-  }
-};
+interface LandingPageProps {
+  language: Language;
+  t: Translation['landing'];
+  complaintStrings: Translation['complaint'];
+}
 
-
-export function LandingPage({ language }: { language: 'en' | 'ha' }) {
+export function LandingPage({ language, t, complaintStrings }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
@@ -101,8 +26,6 @@ export function LandingPage({ language }: { language: 'en' | 'ha' }) {
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
   const buildImage = PlaceHolderImages.find(p => p.id === 'build');
-  
-  const t = translations[language];
 
   return (
     <>
@@ -386,13 +309,13 @@ export function LandingPage({ language }: { language: 'en' | 'ha' }) {
       <section className="py-20 md:py-24 bg-background">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">{t.complaintTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">{complaintStrings.title}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              {t.complaintDescription}
+              {complaintStrings.description}
             </p>
           </div>
           <div className="max-w-2xl mx-auto">
-            <ComplaintForm />
+            <ComplaintForm t={complaintStrings} />
           </div>
         </div>
       </section>

@@ -8,11 +8,12 @@ import { LandingPage } from "@/components/landing-page";
 import { Dashboard } from "@/components/dashboard";
 import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
 import { auth } from "@/firebase/config";
+import { translations, type Language } from "@/lib/translations";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null); // This would be your app's user type
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [language, setLanguage] = useState<'en' | 'ha'>('en');
+  const [language, setLanguage] = useState<Language>('en');
   const router = useRouter();
 
   useEffect(() => {
@@ -48,6 +49,8 @@ export default function Home() {
       console.error("Error signing out: ", error);
     }
   };
+  
+  const t = translations[language];
 
   return (
     <div className="flex-1 flex flex-col">
@@ -56,12 +59,13 @@ export default function Home() {
         onLogout={handleLogout}
         language={language}
         setLanguage={setLanguage}
+        t={t.header}
       />
       <main className="flex-1">
         {user ? (
-          <Dashboard user={user} />
+          <Dashboard user={user} t={t.dashboard} />
         ) : (
-          <LandingPage language={language} />
+          <LandingPage language={language} t={t.landing} complaintStrings={t.complaint} />
         )}
       </main>
     </div>

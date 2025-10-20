@@ -18,6 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { Translation } from "@/lib/translations";
+
 
 const complaintSchema = z.object({
   complaint: z.string().min(10, { message: "Please describe your complaint in at least 10 characters." }),
@@ -36,7 +38,7 @@ const complaintSchema = z.object({
 });
 
 
-export function ComplaintForm() {
+export function ComplaintForm({ t }: { t: Translation['complaint'] }) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   
@@ -59,8 +61,8 @@ export function ComplaintForm() {
     setTimeout(() => {
       console.log("Complaint submitted:", values);
       toast({
-        title: "Complaint Submitted",
-        description: "Thank you for your feedback. We will look into it shortly.",
+        title: t.toastTitle,
+        description: t.toastDescription,
       });
       form.reset();
       setIsLoading(false);
@@ -70,8 +72,8 @@ export function ComplaintForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Submit a Complaint</CardTitle>
-        <CardDescription>Your feedback is valuable for improving our community services.</CardDescription>
+        <CardTitle>{t.title}</CardTitle>
+        <CardDescription>{t.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -81,10 +83,10 @@ export function ComplaintForm() {
               name="complaint"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Complaint Details</FormLabel>
+                  <FormLabel>{t.detailsLabel}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Please describe the issue in detail..."
+                      placeholder={t.detailsPlaceholder}
                       rows={5}
                       {...field}
                     />
@@ -107,10 +109,10 @@ export function ComplaintForm() {
                         </FormControl>
                         <div className="space-y-1 leading-none">
                             <FormLabel>
-                                Submit Anonymously
+                                {t.anonymousLabel}
                             </FormLabel>
                             <p className="text-sm text-muted-foreground">
-                                Your personal details will not be recorded.
+                                {t.anonymousDescription}
                             </p>
                         </div>
                     </FormItem>
@@ -119,14 +121,14 @@ export function ComplaintForm() {
 
             {!isAnonymous && (
               <div className="space-y-4 p-4 border rounded-md bg-background/50">
-                <p className="text-sm text-muted-foreground">Please provide your details for follow-up.</p>
+                <p className="text-sm text-muted-foreground">{t.followUp}</p>
                 <FormField
                   control={form.control}
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl><Input placeholder="Aisha Bello" {...field} /></FormControl>
+                      <FormLabel>{t.nameLabel}</FormLabel>
+                      <FormControl><Input placeholder={t.namePlaceholder} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -136,7 +138,7 @@ export function ComplaintForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel>{t.emailLabel}</FormLabel>
                       <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
@@ -147,8 +149,8 @@ export function ComplaintForm() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location / Ward (Optional)</FormLabel>
-                      <FormControl><Input placeholder="e.g., Fagge" {...field} /></FormControl>
+                      <FormLabel>{t.locationLabel}</FormLabel>
+                      <FormControl><Input placeholder={t.locationPlaceholder} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -157,7 +159,7 @@ export function ComplaintForm() {
             )}
             
             <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? "Submitting..." : "Submit Complaint"}
+              {isLoading ? t.submittingButton : t.submitButton}
             </Button>
           </form>
         </Form>

@@ -12,34 +12,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User as UserIcon, Globe } from "lucide-react";
 import Link from "next/link";
+import type { Language, Translation } from "@/lib/translations";
+
 
 interface SiteHeaderProps {
   user: User | null;
   onLogout: () => void;
-  language: 'en' | 'ha';
-  setLanguage: (lang: 'en' | 'ha') => void;
-}
-
-const headerText = {
-  en: {
-    signIn: "Sign In",
-    register: "Register Voice",
-    myProfile: "My Profile",
-    logout: "Log out",
-  },
-  ha: {
-    signIn: "Shiga ciki",
-    register: "Rijistar Murya",
-    myProfile: "Bayanan sirri na",
-    logout: "Fita",
-  }
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: Translation['header'];
 }
 
 export function SiteHeader({
   user,
   onLogout,
   language,
-  setLanguage
+  setLanguage,
+  t
 }: SiteHeaderProps) {
   const getInitials = (name: string) => {
     return name
@@ -48,8 +37,6 @@ export function SiteHeader({
       .join("");
   };
   
-  const text = headerText[language];
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
@@ -99,23 +86,23 @@ export function SiteHeader({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <UserIcon />
-                    {text.myProfile}
+                    {t.myProfile}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onLogout} className="text-red-500 focus:text-red-500">
                     <LogOut />
-                    {text.logout}
+                    {t.logout}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
                 <Button asChild variant="ghost">
-                  <Link href="/login">{text.signIn}</Link>
+                  <Link href="/login">{t.signIn}</Link>
                 </Button>
 
                 <Button asChild>
-                  <Link href="/register">{text.register}</Link>
+                  <Link href="/register">{t.register}</Link>
                 </Button>
               </>
             )}

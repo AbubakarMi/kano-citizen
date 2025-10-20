@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
+import type { Translation } from "@/lib/translations";
 
 
 const loginSchema = z.object({
@@ -26,8 +27,11 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
+interface LoginFormProps {
+    t: Translation['login'];
+}
 
-export function LoginForm() {
+export function LoginForm({ t }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -44,15 +48,15 @@ export function LoginForm() {
       const user = userCredential.user;
       
       toast({
-        title: `Welcome back, ${user.displayName || 'Citizen'}!`,
-        description: "Ready to help build Kano?",
+        title: `${t.toastWelcome} ${user.displayName || 'Citizen'}!`,
+        description: t.toastDescription,
       });
       router.push("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Authentication Failed",
-        description: error.message || "Please check your credentials and try again.",
+        title: t.toastErrorTitle,
+        description: error.message || t.toastErrorDescription,
       });
     } finally {
       setIsLoading(false);
@@ -67,7 +71,7 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t.emailLabel}</FormLabel>
               <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -78,7 +82,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t.passwordLabel}</FormLabel>
               <FormControl><Input type="password" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -86,11 +90,11 @@ export function LoginForm() {
         />
         <div className="flex justify-between items-center pt-2">
             <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? "Signing In..." : "Access My Account"}
+                {isLoading ? t.signingInButton : t.submitButton}
             </Button>
         </div>
         <div className="text-center text-sm text-muted-foreground">
-            <Link href="#" className="text-primary hover:underline">Forgot Password?</Link>
+            <Link href="#" className="text-primary hover:underline">{t.forgotPasswordLink}</Link>
         </div>
       </form>
     </Form>

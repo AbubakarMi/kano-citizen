@@ -18,19 +18,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUp, Check, Handshake, Users, FileText, Bell, Pin, Vote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import type { Translation } from "@/lib/translations";
 
 interface DashboardProps {
   user: User;
+  t: Translation['dashboard'];
 }
 
-export function Dashboard({ user }: DashboardProps) {
+export function Dashboard({ user, t }: DashboardProps) {
   const { toast } = useToast();
   const [localIdeas, setLocalIdeas] = useState(allIdeas);
   const [localUser, setLocalUser] = useState(user);
 
   const handleUpvote = (ideaId: string) => {
     if (localUser.votedOnIdeas.includes(ideaId)) {
-      toast({ title: "Already Voted", description: "You can only vote for an idea once." });
+      toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
       return;
     }
     
@@ -41,7 +43,7 @@ export function Dashboard({ user }: DashboardProps) {
       ...prevUser,
       votedOnIdeas: [...prevUser.votedOnIdeas, ideaId]
     }));
-    toast({ title: "Vote Cast!", description: "Thank you for participating." });
+    toast({ title: t.voteCasted, description: t.voteCastedDescription });
   };
 
   const handleFollow = (directiveId: string) => {
@@ -52,12 +54,16 @@ export function Dashboard({ user }: DashboardProps) {
         ? prevUser.followedDirectives.filter(id => id !== directiveId)
         : [...prevUser.followedDirectives, directiveId]
     }));
-    toast({ title: isFollowing ? "Unfollowed" : "Followed", description: `You will ${isFollowing ? 'no longer' : 'now'} receive updates for this directive.` });
+    toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription });
   };
   
   const handleVolunteer = (opportunityId: string) => {
-    toast({ title: "Thank you!", description: "Your interest has been noted. We will contact you shortly." });
+    toast({ title: t.volunteerThankYou, description: t.volunteerThankYouDescription });
   };
+  
+  const handleSubmitIdea = () => {
+     toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription })
+  }
 
   const myIdeas = localIdeas.filter(idea => localUser.submittedIdeas.includes(idea.id));
   const myVotes = localIdeas.filter(idea => localUser.votedOnIdeas.includes(idea.id));
@@ -65,33 +71,33 @@ export function Dashboard({ user }: DashboardProps) {
   return (
     <div className="container py-10">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-        Welcome back, {user.name.split(" ")[0]}!
+        {t.welcome} {user.name.split(" ")[0]}!
       </h1>
-      <p className="text-muted-foreground mt-2 text-lg">Ready to help build Kano?</p>
+      <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
 
       <Tabs defaultValue="decide" className="mt-8">
         <TabsList className="grid w-full grid-cols-1 sm:w-auto sm:grid-cols-3">
-          <TabsTrigger value="speak">Speak</TabsTrigger>
-          <TabsTrigger value="decide">Decide</TabsTrigger>
-          <TabsTrigger value="build">Build Together</TabsTrigger>
+          <TabsTrigger value="speak">{t.tabSpeak}</TabsTrigger>
+          <TabsTrigger value="decide">{t.tabDecide}</TabsTrigger>
+          <TabsTrigger value="build">{t.tabBuild}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="speak" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Submit Your Idea</CardTitle>
+              <CardTitle className="text-2xl">{t.submitIdeaTitle}</CardTitle>
               <CardDescription>
-                What change do you want to see? Your name ({user.name}) will be attached for accountability.
+                {t.submitIdeaDescription}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form className="space-y-4">
-                <Input placeholder="Idea Title (e.g., 'Public Park Renovation')" />
-                <Textarea placeholder="Describe your idea in detail. What problem does it solve? Who will benefit?" rows={6} />
+                <Input placeholder={t.ideaTitlePlaceholder} />
+                <Textarea placeholder={t.ideaDescriptionPlaceholder} rows={6} />
               </form>
             </CardContent>
             <CardFooter>
-              <Button onClick={() => toast({ title: "Idea Submitted!", description: "Thank you for your contribution to a better Kano."})}>Submit Idea</Button>
+              <Button onClick={handleSubmitIdea}>{t.submitIdeaButton}</Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -102,7 +108,7 @@ export function Dashboard({ user }: DashboardProps) {
                <Card key={idea.id} className="flex flex-col">
                  <CardHeader>
                    <CardTitle>{idea.title}</CardTitle>
-                   <CardDescription>by {idea.author}</CardDescription>
+                   <CardDescription>{t.by} {idea.author}</CardDescription>
                  </CardHeader>
                  <CardContent className="flex-grow">
                    <p className="text-muted-foreground">{idea.description}</p>
@@ -117,7 +123,7 @@ export function Dashboard({ user }: DashboardProps) {
                      onClick={() => handleUpvote(idea.id)}
                    >
                      {localUser.votedOnIdeas.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
-                     {localUser.votedOnIdeas.includes(idea.id) ? "Voted" : "Upvote"}
+                     {localUser.votedOnIdeas.includes(idea.id) ? t.voted : t.upvote}
                    </Button>
                  </CardFooter>
                </Card>
@@ -128,19 +134,19 @@ export function Dashboard({ user }: DashboardProps) {
         <TabsContent value="build" className="mt-6">
           <Tabs defaultValue="activity" className="w-full">
             <TabsList>
-              <TabsTrigger value="activity">My Activity</TabsTrigger>
-              <TabsTrigger value="directives">Follow Directives</TabsTrigger>
-              <TabsTrigger value="volunteer">Volunteer</TabsTrigger>
+              <TabsTrigger value="activity">{t.myActivity}</TabsTrigger>
+              <TabsTrigger value="directives">{t.followDirectives}</TabsTrigger>
+              <TabsTrigger value="volunteer">{t.volunteer}</TabsTrigger>
             </TabsList>
             <TabsContent value="activity" className="mt-4">
               <div className="grid gap-6 md:grid-cols-2">
                 <Card>
-                  <CardHeader><CardTitle className="flex items-center gap-2"><FileText />My Submitted Ideas</CardTitle></CardHeader>
-                  <CardContent>{myIdeas.length > 0 ? myIdeas.map(i => <p key={i.id}>{i.title}</p>) : <p className="text-muted-foreground">You haven't submitted any ideas yet.</p>}</CardContent>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
+                  <CardContent>{myIdeas.length > 0 ? myIdeas.map(i => <p key={i.id}>{i.title}</p>) : <p className="text-muted-foreground">{t.noSubmittedIdeas}</p>}</CardContent>
                 </Card>
                 <Card>
-                  <CardHeader><CardTitle className="flex items-center gap-2"><Vote />My Votes</CardTitle></CardHeader>
-                  <CardContent>{myVotes.length > 0 ? myVotes.map(i => <p key={i.id}>{i.title}</p>) : <p className="text-muted-foreground">You haven't voted on any ideas yet.</p>}</CardContent>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><Vote />{t.myVotes}</CardTitle></CardHeader>
+                  <CardContent>{myVotes.length > 0 ? myVotes.map(i => <p key={i.id}>{i.title}</p>) : <p className="text-muted-foreground">{t.noVotes}</p>}</CardContent>
                 </Card>
               </div>
             </TabsContent>
@@ -155,13 +161,13 @@ export function Dashboard({ user }: DashboardProps) {
                       </div>
                       <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
                         {localUser.followedDirectives.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
-                        {localUser.followedDirectives.includes(dir.id) ? 'Following' : 'Follow'}
+                        {localUser.followedDirectives.includes(dir.id) ? t.following : t.follow}
                       </Button>
                     </div>
                     <CardDescription>{dir.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <h4 className="font-semibold mb-2">Latest Updates</h4>
+                    <h4 className="font-semibold mb-2">{t.latestUpdates}</h4>
                     <ul className="space-y-2">
                     {dir.updates.map((update, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0" /><span>{update}</span></li>
@@ -179,13 +185,13 @@ export function Dashboard({ user }: DashboardProps) {
                     <CardDescription>{op.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <h4 className="font-semibold text-sm mb-2">Skills</h4>
+                    <h4 className="font-semibold text-sm mb-2">{t.skillsNeeded}</h4>
                     <div className="flex flex-wrap gap-2">
                       {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button onClick={() => handleVolunteer(op.id)}><Handshake className="mr-2 h-4 w-4" />Volunteer</Button>
+                    <Button onClick={() => handleVolunteer(op.id)}><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
                   </CardFooter>
                 </Card>
               ))}

@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/config";
+import type { Translation } from "@/lib/translations";
 
 
 const registerSchema = z.object({
@@ -27,8 +28,11 @@ const registerSchema = z.object({
   location: z.string().optional(),
 });
 
+interface RegisterFormProps {
+    t: Translation['register'];
+}
 
-export function RegisterForm() {
+export function RegisterForm({ t }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -50,8 +54,8 @@ export function RegisterForm() {
       // In a real app, you would also save the location and other details to your Firestore database.
       
       toast({
-        title: "Account Created!",
-        description: "Your voice can now be heard. Welcome to the platform.",
+        title: t.toastSuccessTitle,
+        description: t.toastSuccessDescription,
         variant: "default",
         className: "bg-primary text-primary-foreground border-primary",
       });
@@ -60,8 +64,8 @@ export function RegisterForm() {
     } catch (error: any) {
         toast({
             variant: "destructive",
-            title: "Registration Failed",
-            description: error.message || "Could not create account. Please try again.",
+            title: t.toastErrorTitle,
+            description: error.message || t.toastErrorDescription,
         });
     } finally {
         setIsLoading(false);
@@ -71,14 +75,14 @@ export function RegisterForm() {
   return (
     <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-            <p className="text-xs text-muted-foreground text-center">Your data is secure and will only be used to manage your participation.</p>
+            <p className="text-xs text-muted-foreground text-center">{t.formHint}</p>
             <FormField
             control={form.control}
             name="fullName"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl><Input placeholder="Aisha Bello" {...field} /></FormControl>
+                <FormLabel>{t.nameLabel}</FormLabel>
+                <FormControl><Input placeholder={t.namePlaceholder} {...field} /></FormControl>
                 <FormMessage />
                 </FormItem>
             )}
@@ -88,7 +92,7 @@ export function RegisterForm() {
             name="email"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t.emailLabel}</FormLabel>
                 <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
                 <FormMessage />
                 </FormItem>
@@ -99,7 +103,7 @@ export function RegisterForm() {
             name="password"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t.passwordLabel}</FormLabel>
                 <FormControl><Input type="password" {...field} /></FormControl>
                 <FormMessage />
                 </FormItem>
@@ -110,14 +114,14 @@ export function RegisterForm() {
             name="location"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Location / Ward (Optional)</FormLabel>
-                <FormControl><Input placeholder="e.g., Fagge" {...field} /></FormControl>
+                <FormLabel>{t.locationLabel}</FormLabel>
+                <FormControl><Input placeholder={t.locationPlaceholder} {...field} /></FormControl>
                 <FormMessage />
                 </FormItem>
             )}
             />
             <Button type="submit" disabled={isLoading} className="w-full pt-2">
-            {isLoading ? "Creating Account..." : "Create My Account"}
+            {isLoading ? t.creatingAccountButton : t.submitButton}
             </Button>
         </form>
     </Form>
