@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { User } from "@/lib/data";
 import { seededUsers } from "@/lib/data";
 import {
@@ -10,6 +10,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Settings,
@@ -34,6 +35,9 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar, BarChart as RechartsBarChart } from 'recharts';
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 
 
 interface SystemAdminDashboardProps {
@@ -304,9 +308,39 @@ const Configuration = () => (
             <CardTitle className="text-xl flex items-center gap-3"><Settings className="h-6 w-6" /> Platform Configuration</CardTitle>
             <CardDescription>Manage available sectors, M&E metrics, notification templates, and other platform-wide settings.</CardDescription>
         </CardHeader>
-        <CardContent>
-            <p className="text-muted-foreground">Detailed configuration options for tailoring the platform's functionality will be available here.</p>
+        <CardContent className="space-y-6">
+            <div className="space-y-4 p-4 border rounded-lg">
+                <h3 className="font-semibold">Idea & Voting Settings</h3>
+                 <div className="flex items-center justify-between">
+                    <Label htmlFor="voting-threshold" className="flex flex-col gap-1">
+                        <span>New Idea Grace Period (Hours)</span>
+                        <span className="font-normal text-muted-foreground text-xs">Time before a new idea can be voted on.</span>
+                    </Label>
+                    <Input id="voting-threshold" type="number" defaultValue="24" className="w-24" />
+                </div>
+                 <div className="flex items-center justify-between">
+                    <Label htmlFor="anonymous-ideas" className="flex flex-col gap-1">
+                        <span>Maintenance Mode</span>
+                         <span className="font-normal text-muted-foreground text-xs">Temporarily disable public access for maintenance.</span>
+                    </Label>
+                    <Switch id="anonymous-ideas" />
+                </div>
+            </div>
+             <div className="space-y-4 p-4 border rounded-lg">
+                <h3 className="font-semibold">Notification Templates</h3>
+                <div className="space-y-2">
+                    <Label htmlFor="welcome-email">Welcome Email Subject</Label>
+                    <Input id="welcome-email" defaultValue="Welcome to Kano Citizens' Voice!" />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="welcome-body">Welcome Email Body</Label>
+                    <Textarea id="welcome-body" defaultValue="Thank you for joining the platform. Your voice matters. Start by submitting your first idea or voting on existing ones." />
+                </div>
+            </div>
         </CardContent>
+        <CardFooter>
+            <Button>Save Configuration</Button>
+        </CardFooter>
     </Card>
 )
 
@@ -334,3 +368,5 @@ export function SystemAdminDashboard({ user, activeView }: SystemAdminDashboardP
     </div>
   );
 }
+
+    
