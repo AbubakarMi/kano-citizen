@@ -77,16 +77,10 @@ export function DashboardSidebar({ user, activeView, setActiveView }: DashboardS
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     setActiveView(id);
-    if (user.role !== 'Super Admin') {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
   };
 
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-1 py-6 pr-6 lg:py-8">
         {links.map((link) => (
           <a
             key={link.id}

@@ -13,7 +13,7 @@ const kpis = [
 
 export function ExecutiveDashboard() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
               <LayoutDashboard className="h-6 w-6" />
@@ -34,6 +34,7 @@ export function ExecutiveDashboard() {
               </Card>
           ))}
       </div>
+       {/* Add more charts and data visualizations here later */}
     </div>
   );
 }

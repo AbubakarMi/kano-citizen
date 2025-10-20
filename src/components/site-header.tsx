@@ -30,6 +30,7 @@ interface SiteHeaderProps {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translation['header'];
+  activeAdminView: string;
   setActiveAdminView: (view: string) => void;
 }
 
@@ -39,6 +40,7 @@ export function SiteHeader({
   language,
   setLanguage,
   t,
+  activeAdminView,
   setActiveAdminView,
 }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,11 +51,16 @@ export function SiteHeader({
       .join("");
   };
   
+  const handleMobileLinkClick = (view: string) => {
+    setActiveAdminView(view);
+    setMobileMenuOpen(false);
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
          {user && (
-           <div className="md:hidden mr-4">
+           <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
                  <Button variant="ghost" size="icon">
@@ -65,10 +72,7 @@ export function SiteHeader({
                   <Logo />
                 </div>
                 <div className="px-2">
-                  <DashboardSidebar user={user} activeView={""} setActiveView={(view) => {
-                    setActiveAdminView(view);
-                    setMobileMenuOpen(false);
-                  }} />
+                  <DashboardSidebar user={user} activeView={activeAdminView} setActiveView={handleMobileLinkClick} />
                 </div>
                </SheetContent>
              </Sheet>

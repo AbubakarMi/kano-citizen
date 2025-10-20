@@ -38,7 +38,8 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
     case "System Administrator":
       return <SystemAdminDashboard user={user} />;
     case "Super Admin":
-      return <SuperAdminDashboard user={user} ideas={ideas} />;
+      // We pass the activeView to SuperAdminDashboard now
+      return <SuperAdminDashboard user={user} ideas={ideas} activeView="overview" />;
     default:
       // Fallback to citizen dashboard for any unhandled roles
       return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} />;
@@ -81,7 +82,11 @@ export default function Home() {
          // Find user in seeded list to get correct role
         const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
         
-        loggedInUser.role = seededUser ? seededUser.role : 'Citizen';
+        if (seededUser) {
+          loggedInUser.role = seededUser.role;
+        } else {
+          loggedInUser.role = loggedInUser.role || 'Citizen';
+        }
         setUser(loggedInUser);
       }
     } catch (error) {
@@ -109,27 +114,24 @@ export default function Home() {
         language={language}
         setLanguage={setLanguage}
         t={t.header}
+        activeAdminView={activeAdminView}
         setActiveAdminView={setActiveAdminView}
       />
       <main className="flex-1">
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="container flex-1">
-            <div className="lg:grid lg:grid-cols-[240px_1fr]">
-              <aside className="hidden lg:block w-[240px] fixed top-20 h-[calc(100vh-80px)] border-r">
-                <div className="py-6 pr-6 lg:py-8 h-full overflow-y-auto">
-                   <DashboardSidebar user={user} activeView={activeAdminView} setActiveView={setActiveAdminView} />
-                </div>
-              </aside>
-              <main className="lg:pl-[240px] flex w-full flex-col overflow-hidden py-6 lg:py-8">
-                 {user.role === 'Super Admin' ? (
-                  <SuperAdminDashboard user={user} ideas={t.ideas} activeView={activeAdminView} />
-                ) : (
-                  <RoleBasedDashboard user={user} t={t} />
-                )}
-              </main>
-            </div>
+          <div className="container flex-1 items-start lg:grid lg:grid-cols-[240px_1fr] lg:gap-10">
+            <aside className="hidden lg:block w-[240px] sticky top-20 h-[calc(100vh-80px)]">
+               <DashboardSidebar user={user} activeView={activeAdminView} setActiveView={setActiveAdminView} />
+            </aside>
+            <main className="py-6 lg:py-8">
+              {user.role === 'Super Admin' ? (
+                <SuperAdminDashboard user={user} ideas={t.ideas} activeView={activeAdminView} />
+              ) : (
+                <RoleBasedDashboard user={user} t={t} />
+              )}
+            </main>
           </div>
         ) : (
           <LandingPage 

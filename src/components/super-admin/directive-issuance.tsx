@@ -26,6 +26,8 @@ export function DirectiveIssuance({ ideas }: DirectiveIssuanceProps) {
     });
   }
 
+  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
+
   return (
     <Card>
         <CardHeader>
@@ -40,7 +42,7 @@ export function DirectiveIssuance({ ideas }: DirectiveIssuanceProps) {
                         <SelectValue placeholder="Choose a citizen idea..." />
                     </SelectTrigger>
                     <SelectContent>
-                        {ideas.map(idea => (
+                        {sortedIdeas.map(idea => (
                             <SelectItem key={idea.id} value={idea.id}>{idea.title} ({idea.upvotes} votes)</SelectItem>
                         ))}
                     </SelectContent>
