@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand } from "lucide-react";
-import { ideas, directives, volunteerOpportunities, testimonials, faqs } from "@/lib/data";
+import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { ComplaintForm } from "@/components/complaint-form";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -16,9 +16,14 @@ interface LandingPageProps {
   language: Language;
   t: Translation['landing'];
   complaintStrings: Translation['complaint'];
+  ideas: Idea[];
+  directives: Directive[];
+  volunteerOpportunities: VolunteerOpportunity[];
+  testimonials: Testimonial[];
+  faqs: FAQ[];
 }
 
-export function LandingPage({ language, t, complaintStrings }: LandingPageProps) {
+export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
@@ -195,7 +200,7 @@ export function LandingPage({ language, t, complaintStrings }: LandingPageProps)
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <Badge className="mb-2" variant={dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
+                      <Badge className="mb-2" variant={dir.status === 'Completed' || dir.status === 'An kammala' ? 'default' : 'secondary'}>{dir.status}</Badge>
                       <CardTitle>{dir.title}</CardTitle>
                     </div>
                     <FileText className="h-6 w-6 text-muted-foreground" />

@@ -8,7 +8,7 @@ import { LandingPage } from "@/components/landing-page";
 import { Dashboard } from "@/components/dashboard";
 import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { translations, type Language } from "@/lib/translations";
+import { translations, type Language, type Translation } from "@/lib/translations";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null); // This would be your app's user type
@@ -63,9 +63,18 @@ export default function Home() {
       />
       <main className="flex-1">
         {user ? (
-          <Dashboard user={user} t={t.dashboard} />
+          <Dashboard user={user} t={t.dashboard} ideas={t.ideas} directives={t.directives} volunteerOpportunities={t.volunteerOpportunities} />
         ) : (
-          <LandingPage language={language} t={t.landing} complaintStrings={t.complaint} />
+          <LandingPage 
+            language={language} 
+            t={t.landing} 
+            complaintStrings={t.complaint}
+            ideas={t.ideas}
+            directives={t.directives}
+            volunteerOpportunities={t.volunteerOpportunities}
+            testimonials={t.testimonials}
+            faqs={t.faqs}
+          />
         )}
       </main>
     </div>

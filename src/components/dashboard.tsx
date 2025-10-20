@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { User, Idea } from "@/lib/data";
-import { ideas as allIdeas, directives, volunteerOpportunities } from "@/lib/data";
+import type { User, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,11 +22,14 @@ import type { Translation } from "@/lib/translations";
 interface DashboardProps {
   user: User;
   t: Translation['dashboard'];
+  ideas: Idea[];
+  directives: Directive[];
+  volunteerOpportunities: VolunteerOpportunity[];
 }
 
-export function Dashboard({ user, t }: DashboardProps) {
+export function Dashboard({ user, t, ideas, directives, volunteerOpportunities }: DashboardProps) {
   const { toast } = useToast();
-  const [localIdeas, setLocalIdeas] = useState(allIdeas);
+  const [localIdeas, setLocalIdeas] = useState(ideas);
   const [localUser, setLocalUser] = useState(user);
 
   const handleUpvote = (ideaId: string) => {
@@ -156,7 +158,7 @@ export function Dashboard({ user, t }: DashboardProps) {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <Badge className="mb-2" variant={dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
+                        <Badge className="mb-2" variant={dir.status === 'An kammala' ? 'default' : 'secondary'}>{dir.status}</Badge>
                         <CardTitle>{dir.title}</CardTitle>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>

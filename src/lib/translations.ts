@@ -1,6 +1,151 @@
+import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from './data';
+
 export type Language = 'en' | 'ha';
 
-const t = {
+type TranslationContent = {
+  header: {
+    signIn: string,
+    register: string,
+    myProfile: string,
+    logout: string,
+  },
+  landing: {
+    heroTitle: string,
+    heroTitleSpan: string,
+    heroDescription: string,
+    registerButton: string,
+    signInButton: string,
+    registerHint: string,
+    topIdeaTitle: string,
+    topIdeaDescription: string,
+    votes: string,
+    howItWorksTitle: string,
+    howItWorksDescription: string,
+    step1Title: string,
+    step1Description: string,
+    step2Title: string,
+    step2Description: string,
+    step3Title: string,
+    step3Description: string,
+    livePollsTitle: string,
+    livePollsDescription: string,
+    by: string,
+    voteButton: string,
+    submitIdeaButton: string,
+    ideaToActionTitle: string,
+    ideaToActionDescription: string,
+    latestUpdates: string,
+    voicesOfKanoTitle: string,
+    voicesOfKanoDescription: string,
+    getInvolvedTitle: string,
+    getInvolvedDescription: string,
+    skillsNeeded: string,
+    volunteerButton: string,
+    faqTitle: string,
+    faqDescription: string,
+    footerText: string,
+    footerSlogan: string
+  },
+  complaint: {
+      title: string,
+      description: string,
+      detailsLabel: string,
+      detailsPlaceholder: string,
+      anonymousLabel: string,
+      anonymousDescription: string,
+      followUp: string,
+      nameLabel: string,
+      namePlaceholder: string,
+      emailLabel: string,
+      locationLabel: string,
+      locationPlaceholder: string,
+      submitButton: string,
+      submittingButton: string,
+      toastTitle: string,
+      toastDescription: string,
+  },
+  login: {
+      title: string,
+      description: string,
+      emailLabel: string,
+      passwordLabel: string,
+      submitButton: string,
+      signingInButton: string,
+      forgotPasswordLink: string,
+      noAccount: string,
+      registerLink: string,
+      toastWelcome: string,
+      toastDescription: string,
+      toastErrorTitle: string,
+      toastErrorDescription: string,
+  },
+  register: {
+      title: string,
+      description: string,
+      formHint: string,
+      nameLabel: string,
+      namePlaceholder: string,
+      emailLabel: string,
+      passwordLabel: string,
+      locationLabel: string,
+      locationPlaceholder: string,
+      submitButton: string,
+      creatingAccountButton: string,
+      hasAccount: string,
+      signInLink: string,
+      toastSuccessTitle: string,
+      toastSuccessDescription: string,
+      toastErrorTitle: string,
+      toastErrorDescription: string,
+  },
+  dashboard: {
+      welcome: string,
+      welcomeSubtitle: string,
+      tabSpeak: string,
+      tabDecide: string,
+      tabBuild: string,
+      submitIdeaTitle: string,
+      submitIdeaDescription: string,
+      ideaTitlePlaceholder: string,
+      ideaDescriptionPlaceholder: string,
+      submitIdeaButton: string,
+      ideaSubmitted: string,
+      ideaSubmittedDescription: string,
+      by: string,
+      voted: string,
+      upvote: string,
+      alreadyVoted: string,
+      alreadyVotedDescription: string,
+      voteCasted: string,
+      voteCastedDescription: string,
+      myActivity: string,
+      followDirectives: string,
+      volunteer: string,
+      mySubmittedIdeas: string,
+      noSubmittedIdeas: string,
+      myVotes: string,
+      noVotes: string,
+      following: string,
+      follow: string,
+      unfollowed: string,
+      followed: string,
+      unfollowedDescription: string,
+      followedDescription: string,
+      latestUpdates: string,
+      skillsNeeded: string,
+      volunteerButton: string,
+      volunteerThankYou: string,
+      volunteerThankYouDescription: string,
+  },
+  ideas: Idea[],
+  directives: Directive[],
+  volunteerOpportunities: VolunteerOpportunity[],
+  testimonials: Testimonial[],
+  faqs: FAQ[]
+};
+
+
+const t: Record<Language, TranslationContent> = {
   en: {
     header: {
       signIn: "Sign In",
@@ -135,11 +280,113 @@ const t = {
         volunteerButton: "Volunteer",
         volunteerThankYou: "Thank you!",
         volunteerThankYouDescription: "Your interest has been noted. We will contact you shortly.",
-    }
+    },
+    ideas: [
+      {
+        id: "idea-1",
+        title: "Community Solar Power Initiative",
+        description: "Install solar panels on public buildings (schools, markets) to provide clean, reliable energy and reduce electricity costs for the community.",
+        author: "Aisha Bello",
+        upvotes: 128,
+      },
+      {
+        id: "idea-2",
+        title: "Youth Tech Training Program",
+        description: "Establish free coding and digital skills bootcamps for young people in Kano to improve employment opportunities in the tech sector.",
+        author: "Musa Ibrahim",
+        upvotes: 256,
+      },
+      {
+        id: "idea-3",
+        title: "Waste-to-Wealth Recycling Project",
+        description: "A comprehensive recycling program that rewards citizens for separating their waste, creating jobs and a cleaner environment.",
+        author: "Fatima Sani",
+        upvotes: 98,
+      },
+      {
+        id: "idea-4",
+        title: "Improve Public Transport Routes",
+        description: "Expand and optimize bus routes to connect underserved areas with the city center and major employment hubs.",
+        author: "Umar Farouk",
+        upvotes: 77,
+      },
+    ],
+    directives: [
+      {
+        id: "dir-1",
+        title: "Streetlight Repair and Installation Phase 1",
+        status: "In Progress",
+        description: "A directive to repair all faulty streetlights and install new ones in key commercial and residential areas to improve security and nightlife.",
+        updates: [
+          "Initial survey of faulty lights completed.",
+          "Procurement of new LED bulbs is underway.",
+        ],
+      },
+      {
+        id: "dir-2",
+        title: "Drainage Desilting Program",
+        status: "Completed",
+        description: "Clearing of major drainage channels across the metropolitan area to prevent flooding during the rainy season.",
+        updates: [
+          "Contract awarded.",
+          "Work completed in Fagge and Gwale LGAs.",
+          "Program officially concluded with 95% of target channels cleared.",
+        ],
+      },
+    ],
+    volunteerOpportunities: [
+        {
+            id: 'vol-1',
+            title: 'Mentor for Youth Tech Program',
+            description: 'Guide and mentor a small group of students in our new tech training program. Share your industry experience.',
+            requiredSkills: ['Software Development', 'Project Management', 'Public Speaking'],
+        },
+        {
+            id: 'vol-2',
+            title: 'Community Garden Volunteer',
+            description: 'Help with planting, watering, and harvesting at the new community garden initiative. No experience needed!',
+            requiredSkills: ['Gardening (optional)', 'Teamwork'],
+        }
+    ],
+    testimonials: [
+        {
+            name: 'Hassan Idris',
+            location: 'Fagge, Kano',
+            quote: "I submitted an idea for cleaning up our local market, and it got voted on! Seeing the community get behind it and the government take action was incredible. This platform works."
+        },
+        {
+            name: 'Amina Lawal',
+            location: 'Tarauni, Kano',
+            quote: "Before, it felt like our voices were never heard. Now, I can see what projects are being proposed, vote on what matters to my family, and track the progress. It's brought transparency."
+        },
+        {
+            name: 'Bello Garba',
+            location: 'Nassarawa, Kano',
+            quote: "Volunteering for the tree-planting directive was so rewarding. I met neighbors I'd never spoken to, and together we made our area greener. This platform isn't just about talk; it's about action."
+        }
+    ],
+    faqs: [
+        {
+            question: "Is my data secure?",
+            answer: "Yes, absolutely. We use industry-standard security protocols to protect your personal information. Your data is encrypted and will never be shared with third parties without your explicit consent. Anonymous contributions are completely private."
+        },
+        {
+            question: "How are the winning ideas implemented?",
+            answer: "Top-voted ideas are reviewed by a joint committee of community leaders and government representatives. Feasible ideas are then converted into official directives, assigned a budget, and a project team for implementation. You can track the entire process on the 'Build' section of your dashboard."
+        },
+        {
+            question: "Can I edit my idea after submitting it?",
+            answer: "Once an idea is submitted and enters the voting phase, it cannot be edited to ensure a fair and consistent process for all voters. We recommend carefully reviewing your idea before submission. You can, however, delete your submission before it gains significant traction."
+        },
+        {
+            question: "What if I see an inappropriate or offensive idea?",
+            answer: "Every idea and comment has a 'report' button. Our moderation team reviews all reports promptly. We have a zero-tolerance policy for hate speech, personal attacks, and misinformation to keep the platform a safe and constructive space for everyone."
+        }
+    ]
   },
   ha: {
     header: {
-      signIn: "Shiga",
+      signIn: "Shiga Ciki",
       register: "Bada Murya",
       myProfile: "Bayananai",
       logout: "Fita",
@@ -148,8 +395,8 @@ const t = {
       heroTitle: "Muryar Ka, ",
       heroTitleSpan: "Kanon Ka.",
       heroDescription: "Haɗa kai da dubban 'yan ƙasa wajen tsara makomar jihar mu. Gabatar da ra'ayoyi, zaɓi muhimman ayyuka, kuma ka ga hangen nesan ka ya tabbata.",
-      registerButton: "Bada Guduwa",
-      signInButton: "Shiga",
+      registerButton: "Yi Rajista don Shiga",
+      signInButton: "Shiga Ciki",
       registerHint: "Kyauta ne, amintacce, kuma yana ɗaukar ƙasa da minti ɗaya.",
       topIdeaTitle: "Babban Ra'ayin Al'umma",
       topIdeaDescription: "A halin yanzu yana kan gaba a zaɓe",
@@ -166,16 +413,16 @@ const t = {
       livePollsDescription: "Duba abin da ya fi muhimmanci ga mutanen Kano a yanzu. Ƙuri'ar ka na iya sauya wannan jadawali.",
       by: "daga",
       voteButton: "Zaɓi",
-      submitIdeaButton: "Kana da Ra'ayi? Yi Rijista don Gabatar da Naka!",
+      submitIdeaButton: "Kana da Ra'ayi? Yi Rajista don Gabatar da Naka!",
       ideaToActionTitle: "Daga Ra'ayi zuwa Aiki",
       ideaToActionDescription: "Ra'ayoyin da suka fi samun ƙuri'a sun zama umarni na hukuma. Kula da ci gaban su a nan.",
       latestUpdates: "Sabbin Sanarwa",
       voicesOfKanoTitle: "Muryoyin Kano",
       voicesOfKanoDescription: "Duba abin da 'yan uwa 'yan ƙasa ke faɗa game da wannan dandali.",
-      getInvolvedTitle: "Bada Gudunmawa, a Gina Kano",
+      getInvolvedTitle: "Shiga Ciki, a Gina Kano",
       getInvolvedDescription: "Gwanintar ka da lokacin ka na iya kawo babban sauyi. Bada gudunmawar aikin sa kai a yau.",
       skillsNeeded: "Gwanintar da ake Buƙata",
-      volunteerButton: "Bada Aikin Sa Kai",
+      volunteerButton: "Aikin Sa Kai",
       faqTitle: "Tambayoyin da aka Fi Yi",
       faqDescription: "Kuna da tambayoyi? Muna da amsoshi.",
       footerText: "Aikin Muryar Jama'ar Kano. An adana dukkan haƙƙoƙi.",
@@ -227,7 +474,7 @@ const t = {
         submitButton: "Bude Akawun",
         creatingAccountButton: "Ana Bude Akawun...",
         hasAccount: "Ka na da akawun?",
-        signInLink: "Shiga",
+        signInLink: "Shiga Ciki",
         toastSuccessTitle: "An Bude Akawun!",
         toastSuccessDescription: "Yanzu za a iya jin muryar ka. Barka da zuwa wannan dandali.",
         toastErrorTitle: "Bude Akawun ya Gagara",
@@ -271,9 +518,111 @@ const t = {
         volunteerButton: "Bada Aikin Sa Kai",
         volunteerThankYou: "Mun Gode!",
         volunteerThankYouDescription: "An lura da sha'awar ka. Za mu tuntube ka nan ba da daɗewa ba.",
-    }
+    },
+    ideas: [
+      {
+        id: "idea-1",
+        title: "Shirin Hasken Rana na Al'umma",
+        description: "Sanya fuskokin hasken rana a gine-ginen gwamnati (makarantu, kasuwanni) don samar da wutar lantarki mai tsafta, mai dogaro da kai da rage kuɗin wuta ga al'umma.",
+        author: "Aisha Bello",
+        upvotes: 128,
+      },
+      {
+        id: "idea-2",
+        title: "Shirin Horar da Matasa Fasahar Zamani",
+        description: "Kafa wuraren koyar da rubutun kwamfuta da fasahar dijital kyauta ga matasan Kano don inganta damar samun aikin yi a fannin fasaha.",
+        author: "Musa Ibrahim",
+        upvotes: 256,
+      },
+      {
+        id: "idea-3",
+        title: "Aikin Sake Sarrafa Shara zuwa Arziki",
+        description: "Cikakken shirin sake sarrafa shara wanda ke ba 'yan ƙasa lada don raba sharar su, samar da ayyukan yi da tsaftataccen muhalli.",
+        author: "Fatima Sani",
+        upvotes: 98,
+      },
+      {
+        id: "idea-4",
+        title: "Inganta Hanyoyin Sufurin Jama'a",
+        description: "Faɗaɗa da inganta hanyoyin motocin bas don haɗa wuraren da ba su da isasshen sabis da tsakiyar gari da manyan cibiyoyin ayyuka.",
+        author: "Umar Farouk",
+        upvotes: 77,
+      },
+    ],
+    directives: [
+      {
+        id: "dir-1",
+        title: "Aikin Gyara da Sanya Fitilun Hanyoyi Mataki na 1",
+        status: "Ana ci gaba",
+        description: "Umarnin gyara dukkan fitilun hanyoyi da suka lalace da sanya sababbi a muhimman wuraren kasuwanci da na zama don inganta tsaro da zirga-zirgar dare.",
+        updates: [
+          "An kammala binciken farko na fitilun da suka lalace.",
+          "Ana kan aiwatar da sayen sabbin kwan fitila na LED.",
+        ],
+      },
+      {
+        id: "dir-2",
+        title: "Shirin Cire Laka a Magudanan Ruwa",
+        status: "An kammala",
+        description: "Share manyan magudanan ruwa a faɗin birni don hana ambaliyar ruwa a lokacin damina.",
+        updates: [
+          "An bayar da kwangila.",
+          "An kammala aiki a ƙananan hukumomin Fagge da Gwale.",
+          "An kammala shirin a hukumance tare da share kashi 95% na magudanan da aka sa a gaba.",
+        ],
+      },
+    ],
+    volunteerOpportunities: [
+        {
+            id: 'vol-1',
+            title: 'Mai Jagora a Shirin Horar da Matasa Fasaha',
+            description: 'Jagoranci da ba da shawara ga ƙaramin rukuni na ɗalibai a sabon shirin mu na horar da fasaha. Raba gogewar ka ta masana\'antu.',
+            requiredSkills: ['Haɓaka Software', 'Gudanar da Ayyuka', 'Yin Magana a Bainar Jama\'a'],
+        },
+        {
+            id: 'vol-2',
+            title: 'Mai Aikin Sa Kai a Lambun Al\'umma',
+            description: 'Taimaka da shuka, ba da ruwa, da girbi a sabon shirin lambun al\'umma. Ba a buƙatar gogewa!',
+            requiredSkills: ['Noman lambu (na zaɓi)', 'Aiki tare'],
+        }
+    ],
+    testimonials: [
+        {
+            name: 'Hassan Idris',
+            location: 'Fagge, Kano',
+            quote: "Na gabatar da ra'ayin tsaftace kasuwarmu ta gida, kuma an zaɓe shi! Ganin yadda al'umma suka mara masa baya kuma gwamnati ta dauki mataki abin birgewa ne. Wannan dandali yana aiki."
+        },
+        {
+            name: 'Amina Lawal',
+            location: 'Tarauni, Kano',
+            quote: "A da, ana jin kamar ba a taɓa jin muryoyinmu ba. Yanzu, ina iya ganin irin ayyukan da ake gabatarwa, in zaɓi abin da ya fi muhimmanci ga iyalina, kuma in bibiyi ci gaban. Ya kawo gaskiya da riƙon amana."
+        },
+        {
+            name: 'Bello Garba',
+            location: 'Nassarawa, Kano',
+            quote: "Aikin sa kai na dashen itatuwa ya kasance mai matuƙar fa'ida. Na haɗu da maƙwabta waɗanda ban taɓa magana da su ba, kuma tare muka sa yankinmu ya zama mai kore. Wannan dandali ba na magana kaɗai ba ne; na aiki ne."
+        }
+    ],
+    faqs: [
+        {
+            question: "Shin bayanaina na da tsaro?",
+            answer: "Eh, tabbas. Muna amfani da ka'idojin tsaro na zamani don kare bayanan ka na sirri. An killace bayanan ka kuma ba za a taɓa raba su da wasu ba tare da izinin ka ba. Gudunmawar da aka bayar ba tare da suna ba sirri ne."
+        },
+        {
+            question: "Yaya ake aiwatar da ra'ayoyin da suka yi nasara?",
+            answer: "Kwamitin haɗin gwiwa na shugabannin al'umma da wakilan gwamnati ne ke duba ra'ayoyin da suka fi samun ƙuri'a. Daga nan sai a mayar da ra'ayoyin da za a iya aiwatarwa zuwa umarni na hukuma, a ware musu kasafin kuɗi, da tawagar aiki don aiwatarwa. Za ka iya bin diddigin dukkan aikin a sashin 'Gina Tare' na shafin ka."
+        },
+        {
+            question: "Zan iya gyara ra'ayina bayan na gabatar da shi?",
+            answer: "Da zarar an gabatar da ra'ayi kuma ya shiga matakin zaɓe, ba za a iya gyara shi ba don tabbatar da adalci da daidaito ga dukkan masu zaɓe. Muna ba da shawarar ka duba ra'ayin ka a hankali kafin ka gabatar. Koyaya, za ka iya share abin da ka gabatar kafin ya sami karɓuwa sosai."
+        },
+        {
+            question: "Me zan yi idan na ga ra'ayi mara kyau ko na cin zarafi?",
+            answer: "Kowane ra'ayi da sharhi na da maɓallin 'rahoto'. Tawagar mu ta masu lura da abun ciki tana duba dukkan rahotanni cikin gaggawa. Ba ma haƙura da kalaman ƙiyayya, cin zarafin mutum, da yaɗa labaran ƙarya don kiyaye dandalin a matsayin wuri mai aminci da inganci ga kowa."
+        }
+    ]
   }
 };
 
-export type Translation = typeof t.en;
+export type Translation = (typeof t)['en'];
 export const translations = t;
