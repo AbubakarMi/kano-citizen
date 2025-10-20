@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { User, UserRole } from "@/lib/data";
+import type { User } from "@/lib/data";
 import { seededUsers } from "@/lib/data";
 import {
   Card,
@@ -235,3 +235,5 @@ export function SystemAdminDashboard({ user, activeView }: SystemAdminDashboardP
     </div>
   );
 }
+
+    
