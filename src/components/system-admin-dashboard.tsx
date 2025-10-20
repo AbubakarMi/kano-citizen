@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar, BarChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar, BarChart as RechartsBarChart } from 'recharts';
 
 
 interface SystemAdminDashboardProps {
@@ -255,7 +255,7 @@ const Analytics = () => (
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={ideaSubmissionData}>
+                        <RechartsBarChart data={ideaSubmissionData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
                             <YAxis fontSize={12} tickLine={false} axisLine={false} />
@@ -268,7 +268,7 @@ const Analytics = () => (
                             />
                             <Legend iconSize={10} />
                             <Bar dataKey="ideas" fill="hsl(var(--primary))" name="New Ideas" radius={[4, 4, 0, 0]} />
-                        </BarChart>
+                        </RechartsBarChart>
                     </ResponsiveContainer>
                 </CardContent>
             </Card>
@@ -283,7 +283,17 @@ const SystemLogs = () => (
             <CardDescription>Access detailed, searchable logs for security, auditing, and advanced debugging purposes.</CardDescription>
         </CardHeader>
         <CardContent>
-            <p className="text-muted-foreground">A searchable and filterable log viewer for all system and user actions will be available here.</p>
+            <pre className="p-4 bg-muted rounded-lg text-xs h-[400px] overflow-y-auto">
+                <code>
+                    [INFO] 2024-05-21 10:00:15 - User 'citizen@test.com' logged in successfully.<br/>
+                    [WARN] 2024-05-21 10:01:03 - API endpoint /api/ideas returned in 350ms (above threshold).<br/>
+                    [INFO] 2024-05-21 10:02:40 - New idea 'idea-123' submitted by 'citizen1@test.com'.<br/>
+                    [ERROR] 2024-05-21 10:05:22 - Failed to connect to Redis cache: Connection timed out.<br/>
+                    [AUDIT] 2024-05-21 10:08:00 - Super Admin 'superadmin@test.com' changed role of 'moderator@test.com' to 'System Administrator'.<br/>
+                    [INFO] 2024-05-21 10:10:11 - User 'citizen3@test.com' upvoted idea 'idea-2'.<br/>
+                    [SECURITY] 2024-05-21 10:12:54 - Failed login attempt for user 'unknown@user.com' from IP 192.168.1.10.<br/>
+                </code>
+            </pre>
         </CardContent>
     </Card>
 )
@@ -324,5 +334,3 @@ export function SystemAdminDashboard({ user, activeView }: SystemAdminDashboardP
     </div>
   );
 }
-
-    
