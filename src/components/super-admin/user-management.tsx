@@ -3,6 +3,9 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +38,34 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+
+
+const createUserSchema = z.object({
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  confirmPassword: z.string(),
+  role: z.enum(["MDA Official", "Moderator", "SPD Coordinator", "System Administrator", "Super Admin"]),
+  mda: z.string().optional(),
+  location: z.string().optional(),
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+}).refine(data => {
+    if (data.role === "MDA Official") {
+        return !!data.mda;
+    }
+    return true;
+}, {
+    message: "MDA assignment is required for MDA Officials.",
+    path: ["mda"],
+});
 
 
 // Filter out citizens and create a mutable list
@@ -60,13 +87,22 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     const [newRole, setNewRole] = useState<UserRole | "">("");
 
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
-    const [newUserName, setNewUserName] = useState("");
-    const [newUserEmail, setNewUserEmail] = useState("");
-    const [newUserRole, setNewUserRole] = useState<UserRole | "">("");
-    const [newUserMda, setNewUserMda] = useState<string | "">("");
-
+    
     const [newMdaName, setNewMdaName] = useState("");
     const [newRoleName, setNewRoleName] = useState("");
+
+    const form = useForm<z.infer<typeof createUserSchema>>({
+        resolver: zodResolver(createUserSchema),
+        defaultValues: {
+            fullName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            location: "",
+        }
+    });
+
+    const selectedRole = form.watch("role");
 
     const handleDeleteClick = (user: (typeof seededUsers)[0]) => {
         setUserToDelete(user);
@@ -131,40 +167,26 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         toast({ title: "Role Added", description: `${newRoleName.trim()} has been added.` });
     }
     
-    const handleCreateUser = () => {
-        if (!newUserName || !newUserEmail || !newUserRole) {
-             toast({
-                variant: "destructive",
-                title: "Missing Information",
-                description: "Please fill out all fields for the new user.",
-            });
-            return;
-        }
-        if (newUserRole === "MDA Official" && !newUserMda) {
-             toast({
-                variant: "destructive",
-                title: "Missing Information",
-                description: "Please assign an MDA for the MDA Official.",
-            });
-            return;
-        }
-        const newUser: (typeof seededUsers)[0] = {
-            name: newUserName,
-            email: newUserEmail,
-            role: newUserRole as UserRole,
-            mda: newUserRole === "MDA Official" ? newUserMda : undefined,
+    const handleCreateUser = (values: z.infer<typeof createUserSchema>) => {
+        const newUser: User = {
+            name: values.fullName,
+            email: values.email,
+            role: values.role as UserRole,
+            mda: values.role === "MDA Official" ? values.mda : undefined,
+            location: values.location,
+            submittedIdeas: [],
+            votedOnIdeas: [],
+            followedDirectives: [],
+            volunteeredFor: [],
         };
         setUsers(prev => [newUser, ...prev]);
         toast({
           title: `User Created`,
-          description: `Account for ${newUserName} has been created with the role ${newUserRole}.`,
+          description: `Account for ${values.fullName} has been created with the role ${values.role}.`,
         });
 
         // Reset form and close dialog
-        setNewUserName("");
-        setNewUserEmail("");
-        setNewUserRole("");
-        setNewUserMda("");
+        form.reset();
         setIsCreateUserOpen(false);
     }
 
@@ -181,55 +203,136 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                         <DialogTrigger asChild>
                             <Button><PlusCircle className="mr-2 h-4 w-4" /> Create New User</Button>
                         </DialogTrigger>
-                         <DialogContent className="sm:max-w-[425px]">
+                         <DialogContent className="sm:max-w-md">
                             <DialogHeader>
                                 <DialogTitle>Create a New User</DialogTitle>
                                 <DialogDescription>
                                     Fill in the details below to create a new administrative user account.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="name" className="text-right">Full Name</Label>
-                                    <Input id="name" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="email" className="text-right">Email</Label>
-                                    <Input id="email" type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} className="col-span-3" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="role" className="text-right">Role</Label>
-                                    <Select value={newUserRole || ''} onValueChange={(value) => setNewUserRole(value as UserRole)}>
-                                        <SelectTrigger className="col-span-3">
-                                            <SelectValue placeholder="Select a role" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {availableRoles.map(role => (
-                                                <SelectItem key={role} value={role}>{role}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                {newUserRole === 'MDA Official' && (
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label htmlFor="mda" className="text-right">Assign to MDA</Label>
-                                        <Select value={newUserMda || ''} onValueChange={(value) => setNewUserMda(value)}>
-                                            <SelectTrigger className="col-span-3">
-                                                <SelectValue placeholder="Select an MDA" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {mdas.map(mda => (
-                                                    <SelectItem key={mda.id} value={mda.id}>{mda.name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(handleCreateUser)} className="space-y-4">
+                                     <FormField
+                                        control={form.control}
+                                        name="fullName"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Full Name</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Aisha Bello" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email Address</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="name@domain.com" type="email" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                     <div className="grid grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="password"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Confirm Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsCreateUserOpen(false)}>Cancel</Button>
-                                <Button onClick={handleCreateUser}>Create User</Button>
-                            </DialogFooter>
+                                    <FormField
+                                        control={form.control}
+                                        name="location"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Location (Optional)</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="e.g. Nassarawa" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="role"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Role</FormLabel>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select a role" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {availableRoles.map(role => (
+                                                            <SelectItem key={role} value={role}>{role}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    {selectedRole === 'MDA Official' && (
+                                        <FormField
+                                            control={form.control}
+                                            name="mda"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Assign to MDA</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select an MDA" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            {mdas.map(mda => (
+                                                                <SelectItem key={mda.id} value={mda.id}>{mda.name}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                                    <DialogFooter className="pt-4">
+                                        <DialogClose asChild>
+                                            <Button variant="outline">Cancel</Button>
+                                        </DialogClose>
+                                        <Button type="submit">Create User</Button>
+                                    </DialogFooter>
+                                </form>
+                            </Form>
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
@@ -380,3 +483,5 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         </div>
     );
 }
+
+      
