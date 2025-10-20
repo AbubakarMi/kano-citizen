@@ -100,7 +100,7 @@ export default function Home() {
   const t = translations[language];
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <SiteHeader
         user={user}
         onLogout={handleLogout}
@@ -112,14 +112,12 @@ export default function Home() {
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="container py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12">
-              <aside className="hidden lg:block w-[240px]">
-                <DashboardSidebar user={user} />
-              </aside>
-              <div className="min-w-0"> {/* Prevents content from overflowing */}
-                <RoleBasedDashboard user={user} t={t} />
-              </div>
+          <div className="container grid lg:grid-cols-[240px_1fr] lg:gap-10 items-start py-8">
+            <aside className="hidden lg:block w-[240px] top-20">
+              <DashboardSidebar user={user} />
+            </aside>
+            <div className="min-w-0"> {/* Prevents content from overflowing */}
+              <RoleBasedDashboard user={user} t={t} />
             </div>
           </div>
         ) : (
