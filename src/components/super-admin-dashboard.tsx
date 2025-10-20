@@ -19,11 +19,9 @@ interface SuperAdminDashboardProps {
 
 const initialRoles: UserRole[] = [...new Set(seededUsers.map(u => u.role))];
 
-
 export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashboardProps) {
   const [mdas, setMdas] = useState<MDA[]>(initialMdas);
   const [roles, setRoles] = useState<UserRole[]>(initialRoles);
-
 
   const renderView = () => {
     switch (activeView) {
@@ -36,9 +34,15 @@ export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashb
       case 'approvals':
         return <ApprovalQueue />;
       case 'users':
-        return <UserManagement availableRoles={roles.filter(r => r !== 'Citizen')} />;
+        return <UserManagement 
+                 availableRoles={roles.filter(r => r !== 'Citizen')}
+                 mdas={mdas}
+                 setMdas={setMdas}
+                 roles={roles}
+                 setRoles={setRoles} 
+               />;
       case 'settings':
-         return <SystemSettings mdas={mdas} setMdas={setMdas} roles={roles} setRoles={setRoles} />;
+         return <SystemSettings />;
       default:
         return <ExecutiveDashboard />;
     }
