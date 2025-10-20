@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User as UserIcon, Globe, Menu, Search } from "lucide-react";
+import { LogOut, User as UserIcon, Globe, Menu } from "lucide-react";
 import Link from "next/link";
 import type { Language, Translation } from "@/lib/translations";
 import {
@@ -84,10 +84,6 @@ export function SiteHeader({
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
-             <Button variant="ghost" size="icon" className="hidden md:inline-flex">
-                <Search className="h-5 w-5" />
-             </Button>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
