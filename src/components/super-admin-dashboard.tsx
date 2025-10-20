@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { User, Idea } from "@/lib/data";
@@ -8,12 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users, FileText, Smile, HardHat, FileCheck, FileX, ArrowUp, Settings, Gavel, CheckCircle, Vote } from "lucide-react";
+import { Users, FileText, Smile, HardHat, FileCheck, FileX, ArrowUp, Settings, Gavel, CheckCircle, Vote, LayoutDashboard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { mdas } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "./ui/separator";
-
 
 interface SuperAdminDashboardProps {
   user: User;
@@ -22,7 +21,7 @@ interface SuperAdminDashboardProps {
 
 const kpis = [
     { title: "Total Citizen Participation", value: "15,432", icon: Users },
-    { title: "Directives: Issued vs. Completed", value: "25 / 18", icon: FileText },
+    { title: "Directives Issued vs. Completed", value: "25 / 18", icon: FileText },
     { title: "Citizen Satisfaction Score", value: "88%", icon: Smile },
     { title: "Top Sector of Concern", value: "Infrastructure", icon: HardHat },
 ]
@@ -54,12 +53,13 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-10">
       
       {/* Executive Dashboard Section */}
-      <div id="overview" className="space-y-6 scroll-mt-24">
+      <div id="overview" className="space-y-4 scroll-mt-20">
         <div>
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+                <LayoutDashboard className="h-6 w-6" />
                 Executive Dashboard
             </h2>
             <p className="text-muted-foreground mt-1">High-level oversight of the Kano Citizens' Voice Project.</p>
@@ -79,61 +79,53 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
         </div>
       </div>
 
-      <Separator />
-
       {/* Ongoing Votes Section */}
-       <div id="votes" className="space-y-6 scroll-mt-24">
+       <div id="votes" className="space-y-4 scroll-mt-20">
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-                <Vote /> Ongoing Votes
+                <Vote className="h-6 w-6" /> Ongoing Votes
             </h2>
             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl">Live Community Polls</CardTitle>
                     <CardDescription>Real-time view of top-voted ideas from citizens.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                     {sortedIdeas.map((idea) => {
                     const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
                     return (
-                        <Card key={idea.id} className="overflow-hidden shadow-sm">
-                        <CardContent className="p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                            <div className="md:col-span-3">
-                                <h3 className="text-base font-semibold mb-1">{idea.title}</h3>
+                        <div key={idea.id} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="text-base font-semibold">{idea.title}</h3>
                                 <p className="text-xs text-muted-foreground">by {idea.author}</p>
                             </div>
-                            <div className="flex items-center justify-start md:justify-end gap-4 text-right">
-                                <div className="flex items-center gap-2 font-bold text-lg text-primary">
+                            <div className="flex items-center gap-2 font-bold text-lg text-primary">
                                 <ArrowUp className="h-5 w-5" />
                                 {idea.upvotes}
-                                </div>
                             </div>
-                            </div>
-                            <div className="mt-3">
+                          </div>
+                          <div>
                             <Progress value={votePercentage} aria-label={`${votePercentage.toFixed(0)}% of votes`} />
                             <p className="text-right text-xs font-medium text-primary mt-1">{votePercentage.toFixed(1)}%</p>
-                            </div>
-                        </CardContent>
-                        </Card>
+                          </div>
+                        </div>
                     );
                     })}
                 </CardContent>
             </Card>
       </div>
 
-      <Separator />
-
       {/* Directive Issuance Section */}
-      <div id="directives" className="space-y-6 scroll-mt-24">
+      <div id="directives" className="space-y-4 scroll-mt-20">
          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-            <Gavel /> Directive Issuance
+            <Gavel className="h-6 w-6" /> Directive Issuance
         </h2>
         <Card>
             <CardHeader>
                 <CardTitle className="text-xl">Issue a New Directive</CardTitle>
                 <CardDescription>Select a top citizen submission, draft an official directive, and assign it to an MDA with a deadline.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Select a Top-Voted Idea</label>
                     <Select>
@@ -155,7 +147,7 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
                     <label htmlFor="directive-details" className="text-sm font-medium">Directive Details & Objectives</label>
                     <Textarea id="directive-details" rows={5} placeholder="Provide a clear, actionable summary of the objective, key milestones, and expected outcomes." />
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <label className="text-sm font-medium">Assign to MDA</label>
                         <Select>
@@ -181,12 +173,10 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
         </Card>
       </div>
       
-      <Separator />
-
       {/* Approval Queue Section */}
-      <div id="approvals" className="space-y-6 scroll-mt-24">
+      <div id="approvals" className="space-y-4 scroll-mt-20">
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-            <CheckCircle /> Approval Queue
+            <CheckCircle className="h-6 w-6" /> Approval Queue
         </h2>
          <Card>
             <CardHeader>
@@ -229,12 +219,10 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
         </Card>
       </div>
 
-      <Separator />
-
        {/* User Management Section (Placeholder) */}
-      <div id="users" className="space-y-6 scroll-mt-24">
+      <div id="users" className="space-y-4 scroll-mt-20">
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-            <Users /> User Management
+            <Users className="h-6 w-6" /> User Management
         </h2>
         <Card>
             <CardHeader>
@@ -247,12 +235,10 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
         </Card>
       </div>
 
-      <Separator />
-
        {/* System Settings Section (Placeholder) */}
-      <div id="settings" className="space-y-6 scroll-mt-24">
+      <div id="settings" className="space-y-4 scroll-mt-20">
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-            <Settings /> System Settings
+            <Settings className="h-6 w-6" /> System Settings
         </h2>
         <Card>
             <CardHeader>
@@ -268,5 +254,3 @@ export function SuperAdminDashboard({ user, ideas }: SuperAdminDashboardProps) {
     </div>
   );
 }
-
-    
