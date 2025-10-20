@@ -81,12 +81,12 @@ const DashboardLoading = () => (
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
-  const [isLoading, setIsLoading] = useState(true); // Start in loading state
+  const [isLoading, setIsLoading] = useState(true); // Always start in loading state
   const router = useRouter();
   const [activeView, setActiveView] = useState('overview');
 
   useEffect(() => {
-    let sessionChecked = false;
+    // This effect runs only once on the client after initial mount.
     if (typeof window !== 'undefined') {
         try {
             const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
@@ -128,8 +128,8 @@ export default function Home() {
             console.error("Failed to parse user session", error);
             localStorage.removeItem(FAKE_USER_SESSION_KEY);
         } finally {
-            sessionChecked = true;
-            setIsLoading(false); // Stop loading after checking session
+            // Stop loading only after the session check is complete.
+            setIsLoading(false); 
         }
     }
   }, []);
@@ -138,6 +138,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem(FAKE_USER_SESSION_KEY);
     setUser(null);
+    setActiveView('overview'); // Reset view on logout
     router.push('/');
   };
   

@@ -58,6 +58,7 @@ export function LoginForm({ t }: LoginFormProps) {
         name: seededUser.name,
         email: seededUser.email,
         role: seededUser.role,
+        mda: seededUser.mda,
         submittedIdeas: ["idea-1"],
         votedOnIdeas: ["idea-2", "idea-3"],
         followedDirectives: ["dir-1"],
