@@ -5,10 +5,35 @@ import { useRouter } from 'next/navigation';
 import type { User, UserRole } from "@/lib/data";
 import { SiteHeader } from "@/components/site-header";
 import { LandingPage } from "@/components/landing-page";
-import { Dashboard } from "@/components/dashboard";
+import { CitizenDashboard } from "@/components/citizen-dashboard";
+import { MDAOfficialDashboard } from "@/components/mda-official-dashboard";
+import { ModeratorDashboard } from "@/components/moderator-dashboard";
+import { SPDScoordinatorDashboard } from "@/components/spd-coordinator-dashboard";
+import { SystemAdminDashboard } from "@/components/system-admin-dashboard";
+import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
 import { onAuthStateChanged, User as FirebaseUser, signOut } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { translations, type Language, type Translation } from "@/lib/translations";
+
+const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
+  switch (user.role) {
+    case "Citizen":
+      return <CitizenDashboard user={user} t={t.dashboard} ideas={t.ideas} directives={t.directives} volunteerOpportunities={t.volunteerOpportunities} />;
+    case "MDA Official":
+      return <MDAOfficialDashboard user={user} />;
+    case "Moderator":
+      return <ModeratorDashboard user={user} />;
+    case "SPD Coordinator":
+      return <SPDScoordinatorDashboard user={user} />;
+    case "System Administrator":
+      return <SystemAdminDashboard user={user} />;
+    case "Super Admin":
+      return <SuperAdminDashboard user={user} />;
+    default:
+      // Fallback to citizen dashboard for any unhandled roles
+      return <CitizenDashboard user={user} t={t.dashboard} ideas={t.ideas} directives={t.directives} volunteerOpportunities={t.volunteerOpportunities} />;
+  }
+};
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -66,7 +91,7 @@ export default function Home() {
       />
       <main className="flex-1">
         {user ? (
-          <Dashboard user={user} t={t.dashboard} ideas={t.ideas} directives={t.directives} volunteerOpportunities={t.volunteerOpportunities} />
+          <RoleBasedDashboard user={user} t={t} />
         ) : (
           <LandingPage 
             language={language} 
