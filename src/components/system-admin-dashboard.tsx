@@ -119,7 +119,7 @@ const SystemHealth = () => (
                         [INFO] 2024-05-21 10:00:15 - User 'citizen@test.com' logged in successfully.<br/>
                         [WARN] 2024-05-21 10:01:03 - API endpoint /api/ideas returned in 350ms (above threshold).<br/>
                         [INFO] 2024-05-21 10:02:40 - New idea 'idea-123' submitted by 'citizen1@test.com'.<br/>
-                        [ERROR] 2024-05-21 10:05:22 - Failed to connect to Redis cache: Connection timed out.<br/>
+                        [ERROR] 2024-05-21 10:05:22 - Failed to connect to Redis cache: Connection timed out.
                     </code>
                 </pre>
             </CardContent>
