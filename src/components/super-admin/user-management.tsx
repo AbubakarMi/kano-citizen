@@ -55,19 +55,20 @@ interface UserManagementProps {
 export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles }: UserManagementProps) {
     const { toast } = useToast();
     const [users, setUsers] = useState(initialAdminUsers);
-    const [userToDelete, setUserToDelete] = useState<typeof seededUsers[0] | null>(null);
-    const [userToEdit, setUserToEdit] = useState<typeof seededUsers[0] | null>(null);
+    const [userToDelete, setUserToDelete] = useState<(typeof seededUsers)[0] | null>(null);
+    const [userToEdit, setUserToEdit] = useState<(typeof seededUsers)[0] | null>(null);
     const [newRole, setNewRole] = useState<UserRole | "">("");
 
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
     const [newUserName, setNewUserName] = useState("");
     const [newUserEmail, setNewUserEmail] = useState("");
     const [newUserRole, setNewUserRole] = useState<UserRole | "">("");
+    const [newUserMda, setNewUserMda] = useState<string | "">("");
 
     const [newMdaName, setNewMdaName] = useState("");
     const [newRoleName, setNewRoleName] = useState("");
 
-    const handleDeleteClick = (user: typeof seededUsers[0]) => {
+    const handleDeleteClick = (user: (typeof seededUsers)[0]) => {
         setUserToDelete(user);
     }
 
@@ -82,7 +83,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setUserToDelete(null);
     }
 
-    const handleEditClick = (user: typeof seededUsers[0]) => {
+    const handleEditClick = (user: (typeof seededUsers)[0]) => {
         setUserToEdit(user);
         setNewRole(user.role);
     }
@@ -139,10 +140,19 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
             });
             return;
         }
+        if (newUserRole === "MDA Official" && !newUserMda) {
+             toast({
+                variant: "destructive",
+                title: "Missing Information",
+                description: "Please assign an MDA for the MDA Official.",
+            });
+            return;
+        }
         const newUser: (typeof seededUsers)[0] = {
             name: newUserName,
             email: newUserEmail,
             role: newUserRole as UserRole,
+            mda: newUserRole === "MDA Official" ? newUserMda : undefined,
         };
         setUsers(prev => [newUser, ...prev]);
         toast({
@@ -154,6 +164,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setNewUserName("");
         setNewUserEmail("");
         setNewUserRole("");
+        setNewUserMda("");
         setIsCreateUserOpen(false);
     }
 
@@ -199,6 +210,21 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                         </SelectContent>
                                     </Select>
                                 </div>
+                                {newUserRole === 'MDA Official' && (
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="mda" className="text-right">Assign to MDA</Label>
+                                        <Select value={newUserMda || ''} onValueChange={(value) => setNewUserMda(value)}>
+                                            <SelectTrigger className="col-span-3">
+                                                <SelectValue placeholder="Select an MDA" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {mdas.map(mda => (
+                                                    <SelectItem key={mda.id} value={mda.id}>{mda.name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
                             </div>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setIsCreateUserOpen(false)}>Cancel</Button>
@@ -222,7 +248,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                 <TableRow key={user.email}>
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell><Badge variant="outline">{user.role}</Badge></TableCell>
+                                    <TableCell><Badge variant="outline">{user.role}{user.role === 'MDA Official' && user.mda ? ` (${mdas.find(m => m.id === user.mda)?.name || ''})` : ''}</Badge></TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
