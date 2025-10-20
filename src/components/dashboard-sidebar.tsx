@@ -1,10 +1,9 @@
+
 "use client";
 
 import type { User } from "@/lib/data";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -20,43 +19,42 @@ import {
 } from "lucide-react";
 
 interface SidebarLink {
-  href: string;
+  id: string;
   label: string;
   icon: React.ElementType;
 }
 
 const citizenLinks: SidebarLink[] = [
-  { href: "#speak", label: "Speak Up", icon: MessageSquareQuote },
-  { href: "#decide", label: "Decide", icon: Vote },
-  { href: "#build", label: "Build Together", icon: Handshake },
+  { id: "speak", label: "Speak Up", icon: MessageSquareQuote },
+  { id: "decide", label: "Decide", icon: Vote },
+  { id: "build", label: "Build Together", icon: Handshake },
 ];
 
 const superAdminLinks: SidebarLink[] = [
-  { href: "#overview", label: "Executive Dashboard", icon: LayoutDashboard },
-  { href: "#votes", label: "Ongoing Votes", icon: Vote },
-  { href: "#directives", label: "Directive Issuance", icon: Gavel },
-  { href: "#approvals", label: "Approval Queue", icon: CheckCircle },
-  { href: "#users", label: "User Management", icon: Users },
-  { href: "#settings", label: "System Settings", icon: Settings },
+  { id: "overview", label: "Executive Dashboard", icon: LayoutDashboard },
+  { id: "votes", label: "Ongoing Votes", icon: Vote },
+  { id: "directives", label: "Directive Issuance", icon: Gavel },
+  { id: "approvals", label: "Approval Queue", icon: CheckCircle },
+  { id: "users", label: "User Management", icon: Users },
+  { id: "settings", label: "System Settings", icon: Settings },
 ];
 
 const mdaLinks: SidebarLink[] = [
-    { href: "#directives", label: "Assigned Directives", icon: FileText },
+    { id: "directives", label: "Assigned Directives", icon: FileText },
 ]
 
 const moderatorLinks: SidebarLink[] = [
-    { href: "#queue", label: "Moderation Queue", icon: ShieldCheck },
+    { id: "queue", label: "Moderation Queue", icon: ShieldCheck },
 ]
 
 const spdLinks: SidebarLink[] = [
-    { href: "#events", label: "Manage SPD Events", icon: CalendarDays },
+    { id: "events", label: "Manage SPD Events", icon: CalendarDays },
 ]
 
 const sysAdminLinks: SidebarLink[] = [
-    { href: "#users", label: "User Management", icon: Users },
-    { href: "#system", label: "System Operations", icon: Settings },
+    { id: "users", label: "User Management", icon: Users },
+    { id: "system", label: "System Operations", icon: Settings },
 ]
-
 
 const roleLinks: Record<User["role"], SidebarLink[]> = {
   "Citizen": citizenLinks,
@@ -67,27 +65,41 @@ const roleLinks: Record<User["role"], SidebarLink[]> = {
   "System Administrator": sysAdminLinks,
 };
 
+interface DashboardSidebarProps {
+  user: User;
+  activeView: string;
+  setActiveView: (view: string) => void;
+}
 
-export function DashboardSidebar({ user }: { user: User }) {
-  const pathname = usePathname();
+export function DashboardSidebar({ user, activeView, setActiveView }: DashboardSidebarProps) {
   const links = roleLinks[user.role] || [];
   
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    setActiveView(id);
+    if (user.role !== 'Super Admin') {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <nav className="flex flex-col gap-1">
         {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
+          <a
+            key={link.id}
+            href={`#${link.id}`}
+            onClick={(e) => handleClick(e, link.id)}
             className={cn(
-              buttonVariants({ variant: "ghost" }),
-              // TODO: Add active link styling based on scroll position
-              // pathname === link.href ? "bg-muted" : "",
+              buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
               "justify-start text-base md:text-sm"
             )}
           >
             <link.icon className="mr-3 h-4 w-4" />
             {link.label}
-          </Link>
+          </a>
         ))}
       </nav>
   );

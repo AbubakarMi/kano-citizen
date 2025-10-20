@@ -46,15 +46,15 @@ const RoleBasedDashboard = ({ user, t }: { user: User, t: Translation }) => {
 };
 
 const DashboardLoading = () => (
-    <div className="flex h-[calc(100vh-80px)]">
-      <aside className="hidden lg:block w-[240px] border-r p-4">
-        <div className="flex flex-col gap-2">
+    <div className="flex h-screen">
+      <div className="hidden lg:block w-[240px] border-r p-4">
+        <div className="flex flex-col gap-2 mt-20">
             <Skeleton className="h-9 w-full" />
             <Skeleton className="h-9 w-full" />
             <Skeleton className="h-9 w-full" />
         </div>
-      </aside>
-      <div className="flex-1 p-8">
+      </div>
+      <div className="flex-1 p-8 mt-20">
         <Skeleton className="h-12 w-1/3 mb-4" />
         <Skeleton className="h-4 w-1/2 mb-8" />
         <div className="space-y-4">
@@ -70,6 +70,7 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [language, setLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(true); // Start in loading state
+  const [activeAdminView, setActiveAdminView] = useState('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -108,20 +109,27 @@ export default function Home() {
         language={language}
         setLanguage={setLanguage}
         t={t.header}
+        setActiveAdminView={setActiveAdminView}
       />
       <main className="flex-1">
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <div className="container flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-            <aside className="fixed top-20 z-30 -ml-2 hidden h-[calc(100vh-5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto">
-              <div className="py-6 pr-6 lg:py-8">
-                 <DashboardSidebar user={user} />
-              </div>
-            </aside>
-            <main className="flex w-full flex-col overflow-hidden py-6 lg:py-8">
-              <RoleBasedDashboard user={user} t={t} />
-            </main>
+          <div className="container flex-1">
+            <div className="lg:grid lg:grid-cols-[240px_1fr]">
+              <aside className="hidden lg:block w-[240px] fixed top-20 h-[calc(100vh-80px)] border-r">
+                <div className="py-6 pr-6 lg:py-8 h-full overflow-y-auto">
+                   <DashboardSidebar user={user} activeView={activeAdminView} setActiveView={setActiveAdminView} />
+                </div>
+              </aside>
+              <main className="lg:pl-[240px] flex w-full flex-col overflow-hidden py-6 lg:py-8">
+                 {user.role === 'Super Admin' ? (
+                  <SuperAdminDashboard user={user} ideas={t.ideas} activeView={activeAdminView} />
+                ) : (
+                  <RoleBasedDashboard user={user} t={t} />
+                )}
+              </main>
+            </div>
           </div>
         ) : (
           <LandingPage 

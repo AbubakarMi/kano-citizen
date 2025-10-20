@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { User } from "@/lib/data";
@@ -21,6 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { DashboardSidebar } from "./dashboard-sidebar";
+import { useState } from "react";
 
 interface SiteHeaderProps {
   user: User | null;
@@ -28,6 +30,7 @@ interface SiteHeaderProps {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translation['header'];
+  setActiveAdminView: (view: string) => void;
 }
 
 export function SiteHeader({
@@ -35,8 +38,10 @@ export function SiteHeader({
   onLogout,
   language,
   setLanguage,
-  t
+  t,
+  setActiveAdminView,
 }: SiteHeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -48,8 +53,8 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 items-center">
          {user && (
-           <div className="lg:hidden mr-4">
-             <Sheet>
+           <div className="md:hidden mr-4">
+             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
                  <Button variant="ghost" size="icon">
                    <Menu className="h-6 w-6" />
@@ -60,7 +65,10 @@ export function SiteHeader({
                   <Logo />
                 </div>
                 <div className="px-2">
-                  <DashboardSidebar user={user} />
+                  <DashboardSidebar user={user} activeView={""} setActiveView={(view) => {
+                    setActiveAdminView(view);
+                    setMobileMenuOpen(false);
+                  }} />
                 </div>
                </SheetContent>
              </Sheet>
