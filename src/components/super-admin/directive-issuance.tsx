@@ -2,8 +2,7 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import type { Idea } from "@/lib/data";
-import { mdas } from "@/lib/data";
+import type { Idea, MDA } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,9 +12,10 @@ import { Gavel } from "lucide-react";
 
 interface DirectiveIssuanceProps {
     ideas: Idea[];
+    mdas: MDA[];
 }
 
-export function DirectiveIssuance({ ideas }: DirectiveIssuanceProps) {
+export function DirectiveIssuance({ ideas, mdas }: DirectiveIssuanceProps) {
   const { toast } = useToast();
   
   const handleIssueDirective = () => {
