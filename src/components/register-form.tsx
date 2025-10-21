@@ -78,7 +78,7 @@ export function RegisterForm({ t }: RegisterFormProps) {
 
   return (
     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <p className="text-xs text-muted-foreground text-center">{t.formHint}</p>
             <FormField
             control={form.control}
@@ -124,7 +124,7 @@ export function RegisterForm({ t }: RegisterFormProps) {
                 </FormItem>
             )}
             />
-            <Button type="submit" disabled={isLoading} className="w-full pt-2">
+            <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? t.creatingAccountButton : t.submitButton}
             </Button>
         </form>

@@ -21,11 +21,12 @@ export default function LoginPage() {
     const t = translations[language];
 
     return (
-      <>
+      <div className="relative min-h-screen w-full bg-background">
+        <div className="absolute top-0 left-0 h-full w-1.5 bg-primary/20"></div>
         <header className="absolute top-0 z-40 w-full">
              <div className="container flex h-20 items-center justify-between">
                 <Link href="/" aria-label="Home">
-                <Logo />
+                  <Logo />
                 </Link>
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -44,23 +45,21 @@ export default function LoginPage() {
                 </DropdownMenu>
             </div>
         </header>
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-            <Card className="w-full max-w-md">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">{t.login.title}</CardTitle>
-                    <CardDescription>{t.login.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <LoginForm t={t.login} />
-                     <div className="mt-4 text-center text-sm">
-                        {t.login.noAccount}{" "}
-                        <Link href="/register" className="underline text-primary">
-                            {t.login.registerLink}
-                        </Link>
-                    </div>
-                </CardContent>
-            </Card>
+        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+            <div className="w-full max-w-sm space-y-6">
+                <div className="text-center">
+                    <h1 className="text-3xl font-bold tracking-tight">{t.login.title}</h1>
+                    <p className="text-muted-foreground mt-2">{t.login.description}</p>
+                </div>
+                <LoginForm t={t.login} />
+                 <div className="mt-4 text-center text-sm">
+                    {t.login.noAccount}{" "}
+                    <Link href="/register" className="font-semibold text-primary hover:underline">
+                        {t.login.registerLink} &rarr;
+                    </Link>
+                </div>
+            </div>
         </div>
-      </>
+      </div>
     );
 }
