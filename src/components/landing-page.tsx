@@ -16,6 +16,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 import { HeroDashboard } from "./hero-dashboard";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+
 
 interface LandingPageProps {
   language: Language;
@@ -313,8 +324,72 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         </div>
       </section>
 
+      {/* Get Involved Section */}
+      <section id="get-involved" className="py-20 md:py-24 bg-background">
+        <div className="container">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
+            <p className="mt-4 text-lg text-muted-foreground">{t.getInvolvedDescription}</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {volunteerOpportunities.map(op => (
+               <Dialog key={op.id}>
+                <Card className="flex flex-col group hover:shadow-primary/20 hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <CardTitle className="text-xl group-hover:text-primary transition-colors">{op.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <p className="text-muted-foreground line-clamp-3">{op.description}</p>
+                     <div className="flex flex-wrap gap-2 mt-4">
+                        {op.requiredSkills.slice(0, 2).map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                        {op.requiredSkills.length > 2 && <Badge variant="outline">+{op.requiredSkills.length - 2} more</Badge>}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                     <DialogTrigger asChild>
+                       <Button variant="outline" className="w-full">View Details</Button>
+                     </DialogTrigger>
+                  </CardFooter>
+                </Card>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl">{op.title}</DialogTitle>
+                    <DialogDescription>{op.description}</DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4">
+                    <h4 className="font-semibold mb-3">Skills Needed</h4>
+                     <div className="flex flex-wrap gap-2">
+                        {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Close</Button>
+                    </DialogClose>
+                    <Button asChild>
+                       <Link href="/register"><Handshake className="mr-2 h-4 w-4"/>Volunteer Now</Link>
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+               </Dialog>
+            ))}
+             <div className="lg:col-span-3 flex justify-center mt-8">
+                <Image 
+                    src="https://picsum.photos/seed/community-work/1000/400"
+                    alt="Community volunteering work"
+                    width={1000}
+                    height={400}
+                    className="rounded-lg object-cover"
+                    data-ai-hint="community volunteering"
+                />
+             </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section className="bg-white dark:bg-card py-20 md:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.voicesOfKanoTitle}</h2>
@@ -324,11 +399,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="flex flex-col justify-between bg-card shadow-lg border">
-                <CardHeader className="p-6 pb-4">
+              <Card key={index} className="flex flex-col justify-between bg-background shadow-lg border-t-4 border-primary">
+                 <CardContent className="p-6 pb-4">
+                   <Quote className="h-8 w-8 text-primary/30 mb-4" />
                    <p className="text-base text-foreground/90">"{testimonial.quote}"</p>
-                </CardHeader>
-                <CardFooter className="p-6 pt-4 mt-auto bg-muted/40">
+                </CardContent>
+                <CardFooter className="p-6 pt-4 mt-auto">
                   <div className="flex items-center gap-4">
                     <Avatar className="border-2 border-primary/50">
                       <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/40/40`} />
@@ -346,72 +422,6 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         </div>
       </section>
 
-      {/* Get Involved Section */}
-      <section className="bg-primary/90 text-primary-foreground py-20 md:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url(/assets/subtle-pattern.svg)] bg-repeat opacity-10"></div>
-        <div className="container relative">
-            <div className="grid grid-cols-12">
-                <div className="col-span-12 lg:col-span-1 flex flex-col items-center lg:items-start">
-                    <Handshake className="h-10 w-10 mb-4 text-secondary"/>
-                    <div className="flex lg:flex-col gap-4">
-                        {['volunteer'].map((tab, index) => (
-                           <div key={tab} className="flex items-center gap-2">
-                                <div className={cn("h-3 w-3 rounded-full border-2 border-secondary", activeInvolvedTab === tab ? "bg-secondary" : "")}></div>
-                           </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="col-span-12 lg:col-span-11 mt-8 lg:mt-0">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">{t.getInvolvedTitle}</h2>
-                    <p className="text-primary-foreground/80 mt-2">{t.getInvolvedDescription}</p>
-                    
-                    <div className="mt-8 flex gap-8 border-b-2 border-primary-foreground/20">
-                        <button 
-                            onClick={() => setActiveInvolvedTab('volunteer')}
-                            className={cn(
-                                "flex items-center gap-2 pb-3 font-bold text-2xl border-b-4",
-                                activeInvolvedTab === 'volunteer' ? 'border-secondary text-white' : 'border-transparent text-primary-foreground/60 hover:text-white'
-                            )}>
-                            <span className="text-secondary">1</span>
-                            <span>{t.volunteerButton}</span>
-                        </button>
-                    </div>
-
-                    <div className="bg-background text-foreground rounded-b-lg -mx-6 p-6 lg:p-8 lg:-mx-8">
-                        {activeInvolvedTab === 'volunteer' && (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                <div className="lg:col-span-2 space-y-8">
-                                    {volunteerOpportunities.map(op => (
-                                      <div key={op.id}>
-                                        <h3 className="text-xl font-bold">{op.title}</h3>
-                                        <p className="text-muted-foreground mt-2">{op.description}</p>
-                                        <div className="flex flex-wrap gap-2 mt-4">
-                                            {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
-                                        </div>
-                                        <Button asChild className="mt-4">
-                                            <Link href="/register"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Link>
-                                        </Button>
-                                      </div>
-                                    ))}
-                                </div>
-                                <div className="hidden lg:grid grid-cols-2 gap-4">
-                                    <Image src="https://picsum.photos/seed/volunteer1/400/600" alt="Volunteering" width={400} height={600} className="rounded-lg object-cover w-full h-full col-span-2" data-ai-hint="volunteering community"/>
-                                    <Card className="col-span-2 bg-secondary/10 border-secondary/20">
-                                        <CardContent className="p-6">
-                                            <h4 className="font-bold text-lg">Ready to build?</h4>
-                                            <p className="text-muted-foreground mt-2 text-sm">Use your passion to make a real contribution. Volunteers are the backbone of our movement.</p>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
       <section className="bg-background py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
@@ -421,11 +431,13 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               {t.faqDescription}
             </p>
           </div>
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="bg-card px-6 rounded-lg mb-2 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="text-lg text-left font-semibold py-5">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-base text-muted-foreground pb-5">
+              <AccordionItem key={index} value={`item-${index}`} className="bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <AccordionTrigger className="text-lg text-left font-semibold p-6">
+                    {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground px-6 pb-6">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -436,7 +448,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
 
 
       {/* Footer */}
-      <footer className="bg-background border-t">
+      <footer className="bg-card border-t">
         <div className="container py-8 text-center text-muted-foreground text-sm">
           <p>&copy; {new Date().getFullYear()} {t.footerText}</p>
           <p className="mt-1 font-semibold text-foreground/80">{t.footerSlogan}</p>
@@ -445,5 +457,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
