@@ -215,7 +215,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   {topIdea.description}
                 </p>
                 <div className="space-y-1">
-                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2 [&>*]:bg-secondary" />
+                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2" />
                     <p className="text-right text-sm font-medium text-secondary">{((topIdea.upvotes.length / totalVotes) * 100).toFixed(1)}% of votes</p>
                 </div>
 
@@ -241,7 +241,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                 <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
                                 <div className="space-y-1 mb-4">
-                                    <Progress value={votePercentage} className="h-2 [&>*]:bg-secondary" />
+                                    <Progress value={votePercentage} className="h-2" />
                                     <p className="text-right text-xs font-medium text-secondary">{votePercentage.toFixed(1)}%</p>
                                 </div>
                                 <div className="flex justify-between items-center">

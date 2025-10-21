@@ -139,7 +139,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                   />
               </CardContent>
               <CardFooter>
-                <Button type="submit">{t.submitIdeaButton}</Button>
+                <Button type="submit" variant="landing">{t.submitIdeaButton}</Button>
               </CardFooter>
             </form>
           </Card>
@@ -157,7 +157,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                    <p className="text-muted-foreground">{idea.description}</p>
                  </CardContent>
                  <CardFooter className="flex justify-between items-center">
-                   <div className="flex items-center gap-2 font-bold text-lg">
+                   <div className="flex items-center gap-2 font-bold text-lg text-secondary">
                      <ArrowUp className="h-5 w-5"/>
                      {idea.upvotes.length}
                    </div>
@@ -214,7 +214,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         <CardHeader>
                             <div className="flex justify-between items-start">
                             <div>
-                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
+                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : 'default'}>{dir.status}</Badge>
                                 <CardTitle className="font-headline">{dir.title}</CardTitle>
                             </div>
                             <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
