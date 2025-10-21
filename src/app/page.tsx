@@ -58,8 +58,8 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
         <div className="flex">
             <aside 
             className={cn(
-                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background transition-all duration-300",
-                isSuperAdmin ? 'bg-card' : '',
+                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-card transition-all duration-300",
+                isSuperAdmin ? '' : 'bg-primary',
                 isSuperAdmin && !isSidebarCollapsed && "w-[240px]",
                 isSuperAdmin && isSidebarCollapsed && "w-[72px]",
                 !isSuperAdmin && "w-[240px]"
@@ -79,7 +79,6 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             )}>
                 <div className={cn(
                     "p-6 lg:p-8",
-                    isSuperAdmin ? 'bg-muted/30' : ''
                 )}>
                     {dashboardContent()}
                 </div>
@@ -130,7 +129,7 @@ function HomePageContent() {
       />
       <main className="flex-1">
         {user ? (
-          <RoleBasedDashboard user={user} t={t} />
+          <RoleBasedDashboard user={user.profile!} t={t} />
         ) : (
           <LandingPage 
             language={language} 

@@ -67,8 +67,8 @@ export function SiteHeader({
 
   return (
     <header className={cn(
-      "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      user ? 'bg-primary text-primary-foreground' : 'bg-background'
+      "sticky top-0 z-40 w-full border-b",
+      user ? 'bg-primary text-primary-foreground' : 'bg-card'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
@@ -79,7 +79,7 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon" className="hover:bg-white/20">
+                 <Button variant="ghost" size="icon" className="hover:bg-primary/90">
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
@@ -101,7 +101,7 @@ export function SiteHeader({
           <nav className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(user ? "hover:bg-white/20" : "")}>
+                <Button variant="ghost" size="icon" className={cn(user ? "hover:bg-primary/90" : "")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -120,7 +120,7 @@ export function SiteHeader({
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-white/20">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary/90">
                     <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
                       <AvatarFallback className="bg-transparent text-primary-foreground font-semibold">
                         {getInitials(user.profile.name)}

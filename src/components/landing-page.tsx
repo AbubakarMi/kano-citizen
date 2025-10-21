@@ -99,7 +99,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold font-headline">{t.step1Title}</h3>
+                    <h3 className="text-xl font-bold font-headline text-primary">{t.step1Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step1Description}</p>
                 </div>
             </div>
@@ -117,7 +117,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold font-headline">{t.step2Title}</h3>
+                    <h3 className="text-xl font-bold font-headline text-primary">{t.step2Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step2Description}</p>
                 </div>
             </div>
@@ -135,7 +135,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold font-headline">{t.step3Title}</h3>
+                    <h3 className="text-xl font-bold font-headline text-primary">{t.step3Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step3Description}</p>
                 </div>
             </div>
@@ -208,7 +208,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 font-headline">{topIdea.title}</h3>
+                <h3 className="text-xl font-bold mb-2 font-headline text-primary">{topIdea.title}</h3>
                  <p className="text-sm text-muted-foreground mb-4">{t.by} {topIdea.author}</p>
                 <p className="text-muted-foreground mb-4 line-clamp-3">
                   {topIdea.description}
@@ -237,7 +237,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     return (
                         <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
                             <CardContent className="p-6">
-                                <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline">{idea.title}</h3>
+                                <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline text-primary">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
                                 <div className="space-y-1 mb-4">
                                     <Progress value={votePercentage} className="h-2" />
@@ -299,13 +299,13 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   <CardContent className="p-6 flex-grow">
                     <p className="text-muted-foreground mb-6">{dir.description}</p>
                     
-                    <h4 className="font-semibold mb-4 text-base font-headline">{t.latestUpdates}</h4>
+                    <h4 className="font-semibold mb-4 text-base font-headline text-primary">{t.latestUpdates}</h4>
                     <div className="relative pl-6">
                         <div className="absolute left-[11px] top-1 h-full w-0.5 bg-border"></div>
                         <ul className="space-y-8">
                         {dir.updates.map((update, i) => (
                           <li key={i} className="relative flex items-start gap-4 text-sm">
-                            <div className="absolute left-[-15px] top-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border-2 border-primary">
+                            <div className="absolute left-[-15px] top-1 flex h-6 w-6 items-center justify-center rounded-full bg-card border-2 border-primary">
                                 <Pin className="h-3 w-3 text-primary" />
                             </div>
                             <span className="text-muted-foreground">{update}</span>
@@ -344,7 +344,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </div>
             </div>
 
-            <div className="bg-background p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-foreground">
+            <div className="bg-card p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-foreground">
               <div className="space-y-6">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id} className="p-4 rounded-lg hover:bg-muted transition-colors">
@@ -369,7 +369,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                               <p className="text-muted-foreground">{op.description}</p>
                             </div>
                             <DialogFooter>
-                              <Button asChild variant="secondary"><Link href="/register">Volunteer Now</Link></Button>
+                              <Button asChild><Link href="/register">Volunteer Now</Link></Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
@@ -420,7 +420,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-bold text-lg font-headline">{testimonial.name}</p>
+                                <p className="font-bold text-lg font-headline text-primary">{testimonial.name}</p>
                                 <p className="text-sm text-muted-foreground">{testimonial.location}</p>
                             </div>
                              <Quote className={cn(
@@ -437,7 +437,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                             "{selectedTestimonial.quote}"
                         </p>
                         <div className="mt-8">
-                            <p className="text-xl font-bold font-headline">{selectedTestimonial.name}</p>
+                            <p className="text-xl font-bold font-headline text-primary">{selectedTestimonial.name}</p>
                             <p className="text-muted-foreground">{selectedTestimonial.location}</p>
                         </div>
                     </div>

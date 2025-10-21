@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React from "react";
@@ -148,11 +147,11 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
   if (user.role === 'Super Admin') {
       return (
         <TooltipProvider delayDuration={0}>
-          <div className={cn("h-full flex flex-col justify-between text-card-foreground", className)}>
+          <div className={cn("h-full flex flex-col justify-between", className)}>
               <div>
                   <div className={cn("flex items-center justify-between p-4 mb-4", isCollapsed && "justify-center")}>
                       <div className={cn(isCollapsed && 'hidden')}>
-                        <Logo className="text-foreground"/>
+                        <Logo />
                       </div>
                       <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-muted -mr-2">
                         {isCollapsed ? <ChevronRight className="h-5 w-5"/> : <ChevronLeft className="h-5 w-5"/>}
@@ -171,7 +170,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                                                 className={cn(
                                                 buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost", size: "icon" }),
                                                 "h-10 w-10",
-                                                activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                                activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-card-foreground"
                                                 )}
                                             >
                                                 <link.icon className="h-5 w-5" />
@@ -188,9 +187,9 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                                         href={`#${link.id}`}
                                         onClick={(e) => handleClick(e, link.id)}
                                         className={cn(
-                                        buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
+                                        buttonVariants({ variant: activeView === link.id ? "default" : "ghost" }),
                                         "justify-start text-sm font-medium",
-                                        activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        activeView !== link.id && "text-card-foreground hover:bg-muted/50"
                                         )}
                                     >
                                         <link.icon className="mr-3 h-5 w-5" />
@@ -242,7 +241,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
             className={cn(
               buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
               "justify-start text-base md:text-sm",
-              activeView === link.id ? 'bg-secondary text-secondary-foreground hover:bg-secondary/90' : 'text-primary-foreground hover:bg-primary-foreground/10'
+               activeView === link.id ? "text-secondary-foreground" : "text-primary-foreground hover:bg-primary-foreground/10"
             )}
           >
             <link.icon className="mr-3 h-4 w-4" />

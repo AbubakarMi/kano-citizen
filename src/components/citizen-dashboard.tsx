@@ -72,7 +72,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
       await writeBatch(firestore).update(userRef, {
         followedDirectives: isFollowing ? arrayRemove(directiveId) : arrayUnion(directiveId)
       }).commit();
-      toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription });
+      toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch(e) {
       console.error(e);
     }
@@ -217,7 +217,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                                 <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'accent'}>{dir.status}</Badge>
                                 <CardTitle className="font-headline text-primary">{dir.title}</CardTitle>
                             </div>
-                            <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
+                            <Button variant={user?.profile?.followedDirectives?.includes(dir.id) ? "secondary" : "outline"} size="sm" onClick={() => handleFollow(dir.id)}>
                                 {user?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
                                 {user?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
                             </Button>
