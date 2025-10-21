@@ -56,13 +56,13 @@ export function HeroDashboard() {
               <CardContent>
                 <ul className="space-y-3 text-sm">
                   <li className="flex justify-between items-center">
-                    <span>Community Solar</span> <span className="font-bold">128</span>
+                    <span>Community Solar</span> <span className="font-bold text-primary">128</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span>Public Transport</span> <span className="font-bold">98</span>
+                    <span>Public Transport</span> <span className="font-bold text-primary">98</span>
                   </li>
                    <li className="flex justify-between items-center">
-                    <span>Youth Tech Training</span> <span className="font-bold">77</span>
+                    <span>Youth Tech Training</span> <span className="font-bold text-primary">77</span>
                   </li>
                 </ul>
               </CardContent>
@@ -87,7 +87,7 @@ export function HeroDashboard() {
                   <TableRow>
                     <TableCell>Streetlight Repair Phase 1</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-amber-600 border-amber-500">
+                      <Badge variant="outline" className="text-accent-foreground border-accent bg-accent">
                         <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
                       </Badge>
                     </TableCell>

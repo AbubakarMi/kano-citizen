@@ -58,7 +58,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               {t.heroDescription}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-               <Button asChild size="lg" variant="landing" className="w-full">
+               <Button asChild size="lg" className="w-full">
                 <Link href="/register">{t.registerButton}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="w-full">
@@ -157,7 +157,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 With Kano Citizens' Voice, you can easily <span className="text-primary font-semibold">track</span>, <span className="text-primary font-semibold">investigate</span>, and <span className="text-primary font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <Button asChild size="lg" variant="landing">
+                <Button asChild size="lg">
                   <Link href="/register">Get started</Link>
                 </Button>
                 <Link href="/login" className="flex items-center font-semibold text-primary hover:text-primary/80">
@@ -224,7 +224,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes.length} {t.votes}</span>
                   </div>
-                   <Button asChild size="lg">
+                   <Button asChild size="lg" variant="landing">
                     <Link href="/login">{t.voteButton}</Link>
                   </Button>
                 </div>
