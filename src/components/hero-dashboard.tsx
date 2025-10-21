@@ -23,7 +23,7 @@ import { ArrowUp, CheckCircle, FolderClock } from "lucide-react"
 export function HeroDashboard() {
   return (
     <div className="relative">
-      <div className="absolute -inset-2 bg-gradient-to-tr from-primary to-secondary rounded-xl blur-lg opacity-25"></div>
+      <div className="absolute -inset-4 bg-gradient-to-tr from-primary to-secondary rounded-2xl blur-xl opacity-25"></div>
       <div className="relative w-full max-w-2xl mx-auto bg-background/80 backdrop-blur-xl border border-border/20 rounded-xl shadow-2xl">
         <div className="p-6">
           <h2 className="text-xl font-bold text-foreground">Kano Progress Dashboard</h2>
