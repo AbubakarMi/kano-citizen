@@ -42,6 +42,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   const buildImage = PlaceHolderImages.find(p => p.id === 'build');
   
   const [activeInvolvedTab, setActiveInvolvedTab] = useState('volunteer');
+  const [selectedTestimonial, setSelectedTestimonial] = useState(testimonials[0]);
 
 
   return (
@@ -388,35 +389,56 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
 
       {/* Testimonials Section */}
       <section className="bg-white dark:bg-card py-20 md:py-24">
-        <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.voicesOfKanoTitle}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {t.voicesOfKanoDescription}
-            </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="flex flex-col justify-between bg-background shadow-lg border-t-4 border-primary">
-                 <CardContent className="p-6 pb-4">
-                   <Quote className="h-8 w-8 text-primary/30 mb-4" />
-                   <p className="text-base text-foreground/90">"{testimonial.quote}"</p>
-                </CardContent>
-                <CardFooter className="p-6 pt-4 mt-auto">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="border-2 border-primary/50">
-                      <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/40/40`} />
-                      <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-base">{testimonial.name}</p>
-                      <p className="text-sm text-muted-foreground">{testimonial.location}</p>
+        <div className="container max-w-6xl">
+            <div className="mb-16">
+                <div className="flex items-center gap-2">
+                  <div className="h-1 w-4 bg-primary"></div>
+                  <p className="text-sm font-bold uppercase tracking-wider text-primary">TESTIMONIALS</p>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4">{t.voicesOfKanoTitle}</h2>
+                <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t.voicesOfKanoDescription}</p>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-16 items-start">
+                <div className="flex flex-col gap-4">
+                    {testimonials.map((testimonial) => (
+                        <button 
+                            key={testimonial.name}
+                            onClick={() => setSelectedTestimonial(testimonial)}
+                            className={cn(
+                                "flex items-center gap-4 text-left p-4 rounded-lg transition-all duration-300",
+                                selectedTestimonial.name === testimonial.name 
+                                    ? "bg-background shadow-lg scale-105" 
+                                    : "hover:bg-background/50"
+                            )}
+                        >
+                            <Avatar className="h-14 w-14 border-2 border-primary/20">
+                               <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/56/56`} />
+                               <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-bold text-lg">{testimonial.name}</p>
+                                <p className="text-sm text-muted-foreground">{testimonial.location}</p>
+                            </div>
+                             <Quote className={cn(
+                                 "h-10 w-10 ml-auto shrink-0 transition-colors",
+                                 selectedTestimonial.name === testimonial.name ? "text-primary" : "text-muted-foreground/20"
+                             )} />
+                        </button>
+                    ))}
+                </div>
+                 <div className="relative pt-8 lg:pt-0">
+                    <Quote className="h-24 w-24 text-primary/10 absolute -top-8 -left-8" />
+                    <div className="relative z-10">
+                        <p className="text-2xl lg:text-3xl font-medium leading-relaxed text-foreground/80">
+                            "{selectedTestimonial.quote}"
+                        </p>
+                        <div className="mt-8">
+                            <p className="text-xl font-bold">{selectedTestimonial.name}</p>
+                            <p className="text-muted-foreground">{selectedTestimonial.location}</p>
+                        </div>
                     </div>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                </div>
+            </div>
         </div>
       </section>
 
