@@ -93,7 +93,7 @@ export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
                   </div>
                 </div>
                 <div>
-                  <Progress value={votePercentage} aria-label={`${votePercentage.toFixed(0)}% of votes`} />
+                  <Progress value={votePercentage} aria-label={`${votePercentage.toFixed(0)}% of votes`} className="h-2" />
                   <p className="text-right text-xs font-medium text-primary mt-1">{votePercentage.toFixed(1)}%</p>
                 </div>
               </div>

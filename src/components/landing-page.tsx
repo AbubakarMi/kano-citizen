@@ -207,9 +207,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <p className="text-muted-foreground mb-4 line-clamp-3">
                   {topIdea.description}
                 </p>
-                <Progress value={(topIdea.upvotes / totalVotes) * 100} className="mb-4 h-3" />
+                <div className="space-y-1">
+                    <Progress value={(topIdea.upvotes / totalVotes) * 100} className="h-2" />
+                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes / totalVotes) * 100).toFixed(1)}%</p>
+                </div>
 
-                <div className="flex justify-between items-center text-sm font-medium">
+                <div className="mt-4 flex justify-between items-center text-sm font-medium">
                   <div className="flex items-center gap-2 font-bold text-lg text-primary">
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes} {t.votes}</span>
@@ -230,13 +233,19 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     className="w-full"
                 >
                     <CarouselContent>
-                    {otherIdeas.map((idea, index) => (
+                    {otherIdeas.map((idea, index) => {
+                        const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
+                        return(
                         <CarouselItem key={index} className="md:basis-1/2 lg:basis-full">
                            <Card className="shadow-md transition-all hover:shadow-lg duration-300 h-full">
                             <CardContent className="p-6 flex flex-col justify-between h-full">
                                 <div>
                                     <h3 className="text-lg font-semibold mb-1 line-clamp-2">{idea.title}</h3>
                                     <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
+                                    <div className="space-y-1 mb-4">
+                                        <Progress value={votePercentage} className="h-2" />
+                                        <p className="text-right text-xs font-medium text-primary">{votePercentage.toFixed(1)}%</p>
+                                    </div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 font-bold text-primary">
@@ -250,7 +259,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                             </CardContent>
                             </Card>
                         </CarouselItem>
-                    ))}
+                    )})}
                     </CarouselContent>
                     <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
                     <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
