@@ -97,8 +97,8 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         defaultValues: {
             fullName: "",
             email: "",
-            password: "",
-            confirmPassword: "",
+            password: "Password123",
+            confirmPassword: "Password123",
             location: "",
         }
     });
@@ -313,7 +313,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an MDA" />
-                                                            </SelectTrigger>
+                                                            </Trigger>
                                                         </FormControl>
                                                         <SelectContent>
                                                             {mdas.map(mda => (
