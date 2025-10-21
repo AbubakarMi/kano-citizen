@@ -68,7 +68,7 @@ export function SiteHeader({
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      user ? 'bg-primary' : 'bg-background'
+      user ? 'bg-primary text-primary-foreground' : 'bg-background'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
@@ -79,13 +79,13 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
+                 <Button variant="ghost" size="icon" className="hover:bg-white/20">
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
                <SheetContent side="left" className="p-0 w-64">
                 <div className="p-4 border-b bg-primary text-primary-foreground">
-                  <Logo className="text-primary-foreground"/>
+                  <Logo />
                 </div>
                 <DashboardSidebar user={user.profile} className="p-4" />
                </SheetContent>
@@ -94,14 +94,14 @@ export function SiteHeader({
          )}
         <div className="flex items-center gap-8">
             <Link href="/" aria-label="Home" className={cn("flex items-center")}>
-              <Logo className={cn(user ? "text-primary-foreground" : "text-primary")} />
+              <Logo className={cn(user ? "text-primary-foreground" : "")} />
             </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(user ? "text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground" : "text-foreground")}>
+                <Button variant="ghost" size="icon" className={cn(user ? "hover:bg-white/20" : "")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -120,9 +120,9 @@ export function SiteHeader({
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary/80">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-white/20">
                     <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
-                      <AvatarFallback className="bg-primary-foreground/10 text-primary-foreground font-semibold">
+                      <AvatarFallback className="bg-transparent text-primary-foreground font-semibold">
                         {getInitials(user.profile.name)}
                       </AvatarFallback>
                     </Avatar>

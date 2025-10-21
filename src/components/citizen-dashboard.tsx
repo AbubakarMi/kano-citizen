@@ -181,7 +181,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                 <p className="text-muted-foreground">An overview of your contributions to the platform.</p>
                 <div className="grid gap-6 md:grid-cols-2 mt-4">
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline text-primary"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
                         <CardContent className="pl-6">
                             {myIdeas.length > 0 ? (
                                 <ul className="list-disc space-y-1 text-sm">
@@ -191,7 +191,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline"><Vote />{t.myVotes}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline text-primary"><Vote />{t.myVotes}</CardTitle></CardHeader>
                         <CardContent className="pl-6">
                            {myVotes.length > 0 ? (
                                 <ul className="list-disc space-y-1 text-sm">
@@ -214,7 +214,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         <CardHeader>
                             <div className="flex justify-between items-start">
                             <div>
-                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'destructive'}>{dir.status}</Badge>
+                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'accent'}>{dir.status}</Badge>
                                 <CardTitle className="font-headline text-primary">{dir.title}</CardTitle>
                             </div>
                             <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
@@ -256,7 +256,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button onClick={() => handleVolunteer(op.id)} variant="landing"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
+                            <Button onClick={() => handleVolunteer(op.id)} variant="accent"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
                         </CardFooter>
                         </Card>
                     ))}

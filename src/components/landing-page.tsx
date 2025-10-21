@@ -145,7 +145,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Complaint Section */}
-      <section className="bg-muted/30 py-20 md:py-24 overflow-hidden">
+      <section className="bg-muted py-20 md:py-24 overflow-hidden">
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
@@ -257,7 +257,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     )
                 })}
                  <div className="text-center mt-8 pt-4 border-t">
-                    <Button asChild size="lg" variant="landing">
+                    <Button asChild size="lg" variant="accent">
                         <Link href="/register">{t.submitIdeaButton}</Link>
                     </Button>
                 </div>
@@ -279,10 +279,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             {directives.map(dir => {
               const isCompleted = dir.status === 'Completed' || dir.status === 'An kammala';
               const isInProgress = dir.status === 'In Progress' || dir.status === 'Ana ci gaba';
+              const isUnderReview = dir.status === 'Under Review' || dir.status === 'Ana dubawa';
               
               return (
                 <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                  <CardHeader className="p-6 bg-muted/30">
+                  <CardHeader className="p-6 bg-muted">
                     <div className="flex items-start gap-4">
                         <div className={cn("h-8 w-8 shrink-0 mt-1 rounded-full flex items-center justify-center", 
                             isCompleted ? "bg-secondary" : isInProgress ? "bg-primary" : "bg-accent"
@@ -290,7 +291,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                             {isCompleted ? <CheckCircle2 className="h-5 w-5 text-secondary-foreground" /> : <FolderClock className="h-5 w-5 text-primary-foreground" />}
                         </div>
                         <div className="flex-1">
-                          <Badge className="mb-2" variant={isCompleted ? 'secondary' : isInProgress ? 'default' : 'destructive'}>{dir.status}</Badge>
+                          <Badge className="mb-2" variant={isCompleted ? 'secondary' : isInProgress ? 'default' : isUnderReview ? 'accent' : 'outline'}>{dir.status}</Badge>
                           <CardTitle className="text-xl font-headline text-primary">{dir.title}</CardTitle>
                         </div>
                     </div>
@@ -355,7 +356,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                       
                        <Dialog>
                           <DialogTrigger asChild>
-                             <Button variant="landing">View Details</Button>
+                             <Button variant="accent">View Details</Button>
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
@@ -411,7 +412,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                 "flex items-center gap-4 text-left p-4 rounded-lg transition-all duration-300",
                                 selectedTestimonial.name === testimonial.name 
                                     ? "bg-background shadow-lg scale-105" 
-                                    : "hover:bg-background/50"
+                                    : "hover:bg-muted"
                             )}
                         >
                             <Avatar className="h-14 w-14 border-2 border-primary/20">
@@ -446,7 +447,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-muted/30 py-20 md:py-24">
+      <section className="bg-muted py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
            <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.faqTitle}</h2>
