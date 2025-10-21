@@ -113,13 +113,11 @@ export default function Home() {
 
 
   useEffect(() => {
-    // This effect runs only once on the client after initial mount.
     if (typeof window !== 'undefined') {
         try {
             const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
             if (session) {
                 const loggedInUser = JSON.parse(session);
-                // Find user in seeded list to get correct role
                 const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
                 
                 if (seededUser) {
@@ -130,7 +128,6 @@ export default function Home() {
                 }
                 setUser(loggedInUser);
                 
-                // Set default view based on role
                 switch(loggedInUser.role) {
                     case 'Citizen':
                         setActiveView('decide');
@@ -158,7 +155,6 @@ export default function Home() {
             console.error("Failed to parse user session", error);
             localStorage.removeItem(FAKE_USER_SESSION_KEY);
         } finally {
-            // Stop loading only after the session check is complete.
             setIsLoading(false); 
         }
     }
@@ -168,7 +164,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem(FAKE_USER_SESSION_KEY);
     setUser(null);
-    setActiveView('overview'); // Reset view on logout
+    setActiveView('overview');
     router.push('/');
   };
   
@@ -188,7 +184,7 @@ export default function Home() {
       />
       <main className="flex-1 pt-20">
         {isLoading ? (
-            <DashboardLoading />
+          <DashboardLoading />
         ) : user ? (
           <RoleBasedDashboard 
             user={user} 
