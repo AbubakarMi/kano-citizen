@@ -29,7 +29,7 @@ interface LandingPageProps {
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
-  const otherIdeas = sortedIdeas.slice(1, 4); // Take the next 3 for the list
+  const otherIdeas = sortedIdeas.slice(1);
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
@@ -193,7 +193,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
           <div className="grid lg:grid-cols-2 gap-8 items-start">
-             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card sticky top-24">
+            <div className="lg:sticky top-24">
+             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
               <CardHeader className="bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />
@@ -205,6 +206,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </CardHeader>
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">{topIdea.title}</h3>
+                 <p className="text-sm text-muted-foreground mb-4">{t.by} {topIdea.author}</p>
                 <p className="text-muted-foreground mb-4 line-clamp-3">
                   {topIdea.description}
                 </p>
@@ -224,6 +226,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 </div>
               </CardContent>
             </Card>
+            </div>
 
             <div className="space-y-6">
                 {otherIdeas.map((idea) => {
@@ -395,5 +398,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
