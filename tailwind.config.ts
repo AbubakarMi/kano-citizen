@@ -51,6 +51,9 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        'warm-white': "hsl(var(--warm-white))",
+        'pure-white': "hsl(var(--pure-white))",
+        charcoal: "hsl(var(--charcoal))",
       },
       fontFamily: {
         sans: ['var(--font-pt-sans)', ...fontFamily.sans],

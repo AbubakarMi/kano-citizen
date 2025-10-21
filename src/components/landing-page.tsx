@@ -279,7 +279,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
      {/* Get Involved Section */}
-      <section id="get-involved" className="py-20 md:py-24 bg-primary text-pure-white">
+     <section id="get-involved" className="py-20 md:py-24 bg-primary text-pure-white">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.getInvolvedTitle}</h2>
@@ -287,7 +287,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="bg-pure-white p-2 rounded-lg shadow-2xl grid md:grid-cols-2 gap-2 text-charcoal overflow-hidden">
+            <div className="bg-card text-card-foreground p-2 rounded-lg shadow-2xl grid md:grid-cols-2 gap-2 overflow-hidden">
               <div className="p-6 space-y-6">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id}>
@@ -295,7 +295,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                        <div className="flex flex-wrap gap-2 my-3">
                           {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                       </div>
-                      <p className="text-charcoal/80 mt-1 mb-4 line-clamp-2">{op.description}</p>
+                      <p className="text-card-foreground/80 mt-1 mb-4 line-clamp-2">{op.description}</p>
                       
                        <Dialog>
                           <DialogTrigger asChild>
@@ -319,14 +319,14 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                   ))}
               </div>
-              <div className="flex flex-col justify-center">
+              <div className="hidden md:flex flex-col justify-center">
                  <Image 
-                    src="https://picsum.photos/seed/nightcity/600/800"
+                    src="https://picsum.photos/seed/cathedral/600/800"
                     alt="Cityscape at night"
                     width={600}
                     height={800}
                     className="rounded-md object-cover w-full h-full min-h-[450px]"
-                    data-ai-hint="city night"
+                    data-ai-hint="cathedral night"
                   />
               </div>
             </div>

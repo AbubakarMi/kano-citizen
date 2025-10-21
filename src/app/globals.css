@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* #fafafa */
+    --background: 0 0% 100%; /* #ffffff */
     --foreground: 215 14% 27%; /* #374151 */
     --card: 0 0% 100%; /* #ffffff */
     --card-foreground: 215 14% 27%;
@@ -29,6 +29,10 @@
     --chart-3: 22 82% 57%;
     --chart-4: 280 70% 60%;
     --chart-5: 350 75% 55%;
+
+    --warm-white: 48 33% 94%; /* #f5f2e9 */
+    --pure-white: 0 0% 100%;
+    --charcoal: 215 14% 27%;
   }
 
   .dark {
@@ -51,6 +55,10 @@
     --border: 215 14% 30%;
     --input: 215 14% 30%;
     --ring: 222 83% 62%;
+    
+    --warm-white: 215 14% 15%;
+    --pure-white: 215 14% 11%;
+    --charcoal: 0 0% 98%;
   }
 }
 
