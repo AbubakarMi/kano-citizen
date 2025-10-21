@@ -39,29 +39,20 @@ interface ExecutiveDashboardProps {
 export function ExecutiveDashboard({ user }: ExecutiveDashboardProps) {
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Good Morning, {user.name.split(' ')[0]}!
-        </h1>
-        <Sun className="h-7 w-7 text-amber-400" />
-      </div>
-
-      <div>
-          <h2 className="text-lg font-semibold tracking-tight mb-4">
-              Platform Metrics
+       <div>
+          <h2 className="text-2xl font-bold tracking-tight mb-4">
+              Executive Overview
           </h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {kpis.map(kpi => (
                   <Card key={kpi.title}>
-                      <CardHeader className="pb-2">
-                          <div className="flex items-center justify-between">
-                            <CardDescription>{kpi.title}</CardDescription>
-                            <kpi.icon className="h-5 w-5 text-muted-foreground" />
-                          </div>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+                          <kpi.icon className="h-5 w-5 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
-                          <div className="text-3xl font-bold">{kpi.value}</div>
-                          {kpi.footer && <p className="text-xs text-muted-foreground mt-1">{kpi.footer}</p>}
+                          <div className="text-2xl font-bold">{kpi.value}</div>
+                          {kpi.footer && <p className="text-xs text-muted-foreground">{kpi.footer}</p>}
                       </CardContent>
                   </Card>
               ))}
