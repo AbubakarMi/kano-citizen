@@ -37,7 +37,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-background text-white py-20 md:py-32">
+      <section className="relative bg-background py-20 md:py-32">
         <div className="absolute inset-0">
           <Image 
             src="https://images.unsplash.com/photo-1582738412492-0a3a37172045?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8a2FubyUyMGNpdHl8ZW58MHx8fHwxNzYxMDQwMTA5fDA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -50,22 +50,22 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         </div>
         
         <div className="container relative z-10 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+          <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start text-white">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              {t.heroTitle}<span className="text-blue-400">{t.heroTitleSpan}</span>
+              {t.heroTitle}<span className="text-primary-foreground/80">{t.heroTitleSpan}</span>
             </h1>
-            <p className="max-w-xl text-lg md:text-xl text-blue-100/90">
+            <p className="max-w-xl text-lg md:text-xl text-primary-foreground/90">
               {t.heroDescription}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-               <Button asChild size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white">
+               <Button asChild size="lg" className="w-full">
                 <Link href="/register">{t.registerButton}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="w-full text-white border-blue-400 hover:bg-blue-500/10 hover:text-white">
+              <Button asChild size="lg" variant="outline" className="w-full bg-transparent hover:bg-white/10 text-white">
                  <Link href="/login">{t.signInButton}</Link>
               </Button>
             </div>
-            <p className="text-sm text-blue-200/70 mt-2">
+            <p className="text-sm text-primary-foreground/70 mt-2">
               {t.registerHint}
             </p>
           </div>
@@ -417,3 +417,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
