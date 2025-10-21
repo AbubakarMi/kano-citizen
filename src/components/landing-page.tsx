@@ -16,16 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 import { HeroDashboard } from "./hero-dashboard";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
 
 
 interface LandingPageProps {
@@ -325,65 +315,59 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Get Involved Section */}
-      <section id="get-involved" className="py-20 md:py-24 bg-background">
+      <section id="get-involved" className="py-20 md:py-24 bg-primary/5">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">{t.getInvolvedDescription}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {volunteerOpportunities.map(op => (
-               <Dialog key={op.id}>
-                <Card className="flex flex-col group hover:shadow-primary/20 hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-xl group-hover:text-primary transition-colors">{op.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-muted-foreground line-clamp-3">{op.description}</p>
-                     <div className="flex flex-wrap gap-2 mt-4">
-                        {op.requiredSkills.slice(0, 2).map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
-                        {op.requiredSkills.length > 2 && <Badge variant="outline">+{op.requiredSkills.length - 2} more</Badge>}
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-start">
+              <div className="flex flex-col">
+                <button
+                  onClick={() => setActiveInvolvedTab('volunteer')}
+                  className={cn(
+                    "px-6 py-3 text-lg font-semibold rounded-t-lg transition-colors",
+                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent text-primary/70 hover:bg-background/50'
+                  )}
+                >
+                  Volunteer
+                </button>
+                {/* Add other tabs here */}
+              </div>
+            </div>
+
+            <div className="bg-background p-8 rounded-b-lg rounded-r-lg shadow-2xl grid md:grid-cols-3 gap-8">
+              <div className="md:col-span-2 space-y-6">
+                  {volunteerOpportunities.map(op => (
+                    <div key={op.id} className="p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                      <h3 className="text-xl font-bold">{op.title}</h3>
+                      <p className="text-muted-foreground mt-1 mb-3 line-clamp-2">{op.description}</p>
+                       <div className="flex flex-wrap gap-2 mb-4">
+                          {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                      </div>
+                       <Button asChild>
+                         <Link href="/register"><Handshake className="mr-2 h-4 w-4"/>Volunteer Now</Link>
+                      </Button>
                     </div>
-                  </CardContent>
-                  <CardFooter>
-                     <DialogTrigger asChild>
-                       <Button variant="outline" className="w-full">View Details</Button>
-                     </DialogTrigger>
-                  </CardFooter>
-                </Card>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl">{op.title}</DialogTitle>
-                    <DialogDescription>{op.description}</DialogDescription>
-                  </DialogHeader>
-                  <div className="py-4">
-                    <h4 className="font-semibold mb-3">Skills Needed</h4>
-                     <div className="flex flex-wrap gap-2">
-                        {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="outline">Close</Button>
-                    </DialogClose>
-                    <Button asChild>
-                       <Link href="/register"><Handshake className="mr-2 h-4 w-4"/>Volunteer Now</Link>
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-               </Dialog>
-            ))}
-             <div className="lg:col-span-3 flex justify-center mt-8">
-                <Image 
-                    src="https://picsum.photos/seed/community-work/1000/400"
-                    alt="Community volunteering work"
-                    width={1000}
-                    height={400}
-                    className="rounded-lg object-cover"
+                  ))}
+              </div>
+              <div className="flex flex-col justify-between bg-primary/10 p-6 rounded-lg">
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-primary">Fancy Becoming a Part of It?</h3>
+                  <p className="text-primary/80">Volunteering is one of the most impactful ways you can contribute to building a better Kano, one project at a time.</p>
+                </div>
+                 <Image 
+                    src="https://picsum.photos/seed/getinvolved/300/200"
+                    alt="Community volunteering"
+                    width={300}
+                    height={200}
+                    className="rounded-lg object-cover w-full mt-4"
                     data-ai-hint="community volunteering"
-                />
-             </div>
+                  />
+              </div>
+            </div>
           </div>
         </div>
       </section>
