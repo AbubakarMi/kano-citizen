@@ -47,7 +47,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section className="bg-background py-20 md:py-24 lg:py-32">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline text-primary">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline">
               {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
             </h1>
             <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
