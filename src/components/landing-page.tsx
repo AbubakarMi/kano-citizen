@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -28,7 +29,7 @@ interface LandingPageProps {
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
-  const otherIdeas = sortedIdeas.slice(1);
+  const otherIdeas = sortedIdeas.slice(1, 4); // Take the next 3 for the list
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
@@ -191,8 +192,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               {t.livePollsDescription}
             </p>
           </div>
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card sticky top-24">
               <CardHeader className="bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />
@@ -209,7 +210,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 </p>
                 <div className="space-y-1">
                     <Progress value={(topIdea.upvotes / totalVotes) * 100} className="h-2" />
-                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes / totalVotes) * 100).toFixed(1)}%</p>
+                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes / totalVotes) * 100).toFixed(1)}% of votes</p>
                 </div>
 
                 <div className="mt-4 flex justify-between items-center text-sm font-medium">
@@ -224,28 +225,17 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </CardContent>
             </Card>
 
-            <div className="relative">
-                <Carousel
-                    opts={{
-                    align: "start",
-                    loop: true,
-                    }}
-                    className="w-full"
-                >
-                    <CarouselContent>
-                    {otherIdeas.map((idea, index) => {
-                        const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
-                        return(
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-full">
-                           <Card className="shadow-md transition-all hover:shadow-lg duration-300 h-full">
-                            <CardContent className="p-6 flex flex-col justify-between h-full">
-                                <div>
-                                    <h3 className="text-lg font-semibold mb-1 line-clamp-2">{idea.title}</h3>
-                                    <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
-                                    <div className="space-y-1 mb-4">
-                                        <Progress value={votePercentage} className="h-2" />
-                                        <p className="text-right text-xs font-medium text-primary">{votePercentage.toFixed(1)}%</p>
-                                    </div>
+            <div className="space-y-6">
+                {otherIdeas.map((idea) => {
+                    const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
+                    return (
+                        <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
+                            <CardContent className="p-6">
+                                <h3 className="text-lg font-semibold mb-1 line-clamp-2">{idea.title}</h3>
+                                <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
+                                <div className="space-y-1 mb-4">
+                                    <Progress value={votePercentage} className="h-2" />
+                                    <p className="text-right text-xs font-medium text-primary">{votePercentage.toFixed(1)}%</p>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 font-bold text-primary">
@@ -257,16 +247,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                     </Button>
                                 </div>
                             </CardContent>
-                            </Card>
-                        </CarouselItem>
-                    )})}
-                    </CarouselContent>
-                    <div className="flex justify-center gap-2 mt-4">
-                        <CarouselPrevious />
-                        <CarouselNext />
-                    </div>
-                </Carousel>
-                 <div className="text-center mt-8">
+                        </Card>
+                    )
+                })}
+                 <div className="text-center mt-8 pt-4 border-t">
                     <Button asChild size="lg" variant="outline">
                         <Link href="/register">{t.submitIdeaButton}</Link>
                     </Button>
@@ -411,3 +395,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
