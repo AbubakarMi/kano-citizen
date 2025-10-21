@@ -12,6 +12,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
+import { HeroDashboard } from "./hero-dashboard";
 
 interface LandingPageProps {
   language: Language;
@@ -41,7 +42,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              {t.heroTitle}<span className="text-muted-foreground">{t.heroTitleSpan}</span>
+              {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
             </h1>
             <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
               {t.heroDescription}
@@ -60,14 +61,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
 
           <div className="hidden lg:block">
-             <Image 
-              src="https://images.unsplash.com/photo-1582738412492-0a3a37172045?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8a2FubyUyMGNpdHl8ZW58MHx8fHwxNzYxMDQwMTA5fDA&ixlib=rb-4.1.0&q=80&w=1080"
-              alt="Kano progress dashboard"
-              width={1200}
-              height={800}
-              className="rounded-xl shadow-2xl object-cover"
-              data-ai-hint="kano dashboard"
-            />
+             <HeroDashboard />
           </div>
         </div>
       </section>
@@ -390,7 +384,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
-
-    
