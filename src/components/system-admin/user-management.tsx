@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { seededUsers } from "@/lib/data";
 
 import {
@@ -26,7 +26,8 @@ import { Input } from "@/components/ui/input";
 import { Users } from "lucide-react";
 
 
-const allUsers: (User & {status: "Active" | "Suspended"})[] = seededUsers.map((u, i) => ({
+const allUsers: (UserProfile & {status: "Active" | "Suspended"})[] = seededUsers.map((u, i) => ({
+    uid: `user-${i}`,
     ...u,
     name: u.name,
     email: u.email,
@@ -37,9 +38,9 @@ const allUsers: (User & {status: "Active" | "Suspended"})[] = seededUsers.map((u
     status: i % 4 === 0 ? "Suspended" : "Active"
 }));
 // Add more diverse citizens
-allUsers.push({ name: "Aisha Bello", email: "citizen1@test.com", role: "Citizen", status: "Active", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
-allUsers.push({ name: "Musa Ibrahim", email: "citizen2@test.com", role: "Citizen", status: "Suspended", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
-allUsers.push({ name: "Fatima Sani", email: "citizen3@test.com", role: "Citizen", status: "Active", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
+allUsers.push({ uid: 'user-citizen-1', name: "Aisha Bello", email: "citizen1@test.com", role: "Citizen", status: "Active", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
+allUsers.push({ uid: 'user-citizen-2', name: "Musa Ibrahim", email: "citizen2@test.com", role: "Citizen", status: "Suspended", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
+allUsers.push({ uid: 'user-citizen-3', name: "Fatima Sani", email: "citizen3@test.com", role: "Citizen", status: "Active", submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] });
 
 export const UserManagement = () => {
     const [searchTerm, setSearchTerm] = useState("");

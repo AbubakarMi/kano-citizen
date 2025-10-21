@@ -74,11 +74,11 @@ const spdLinks: SidebarLink[] = [
 ]
 
 const sysAdminLinks: SidebarLink[] = [
-    { id: "health", label: "System Health", icon: Activity },
-    { id: "users", label: "User Management", icon: Users },
-    { id: "analytics", label: "Analytics", icon: BarChart2 },
-    { id: "logs", label: "System Logs", icon: FileClock },
-    { id: "settings", label: "Configuration", icon: Settings },
+    { id: "health", label: "System Health", icon: Activity, group: "SYSTEM" },
+    { id: "users", label: "User Management", icon: Users, group: "SYSTEM" },
+    { id: "analytics", label: "Analytics", icon: BarChart2, group: "SYSTEM" },
+    { id: "logs", label: "System Logs", icon: FileClock, group: "SYSTEM" },
+    { id: "settings", label: "Configuration", icon: Settings, group: "SYSTEM" },
 ]
 
 const roleLinks: Record<UserProfile["role"], SidebarLink[]> = {
@@ -99,10 +99,10 @@ interface DashboardSidebarProps {
 
 const SidebarGroup = ({ title, children, isCollapsed }: { title: string, children: React.ReactNode, isCollapsed?: boolean }) => (
     <div className={cn(isCollapsed ? "my-4" : "")}>
-        {!isCollapsed ? (
+        {!isCollapsed && title !== 'CITIZEN' && title !== 'SYSTEM' ? (
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2 font-sans">{title}</h3>
         ) : (
-            <div className="flex justify-center my-3">
+             title !== 'CITIZEN' && <div className="flex justify-center my-3">
                 <div className="h-px w-8 bg-border"></div>
             </div>
         )}
@@ -141,7 +141,9 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
     return acc;
   }, {} as Record<string, SidebarLink[]>);
 
-  if (user.role === 'Super Admin') {
+  const isAdmin = user.role === 'Super Admin' || user.role === 'System Administrator';
+
+  if (isAdmin) {
       return (
         <TooltipProvider delayDuration={0}>
           <div className={cn("h-full flex flex-col justify-between", className)}>
@@ -208,7 +210,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                     </Avatar>
                     <div className={cn(isCollapsed && "hidden")}>
                         <p className="font-semibold text-sm">{user.name}</p>
-                        <p className="text-xs text-muted-foreground">Admin Manager</p>
+                        <p className="text-xs text-muted-foreground">{user.role}</p>
                     </div>
                  </div>
                  <button

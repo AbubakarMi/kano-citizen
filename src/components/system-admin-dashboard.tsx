@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { SystemHealth } from "./system-admin/system-health";
 import { UserManagement } from "./system-admin/user-management";
 import { Analytics } from "./system-admin/analytics";
@@ -11,7 +11,7 @@ import { Configuration } from "./system-admin/configuration";
 
 
 interface SystemAdminDashboardProps {
-  user: User;
+  user: UserProfile;
   activeView: string;
 }
 

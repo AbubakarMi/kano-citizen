@@ -1,11 +1,12 @@
+
 "use client";
 
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 
 interface SPDScoordinatorDashboardProps {
-  user: User;
+  user: UserProfile;
 }
 
 export function SPDScoordinatorDashboard({ user }: SPDScoordinatorDashboardProps) {

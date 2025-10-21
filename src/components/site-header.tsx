@@ -60,21 +60,21 @@ export function SiteHeader({
       .join("");
   };
 
-  const isSuperAdmin = user?.profile?.role === 'Super Admin';
+  const isAdmin = user?.profile?.role === 'Super Admin' || user?.profile?.role === 'System Administrator';
   const isLoggedIn = !!user;
 
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full border-b",
-      isLoggedIn ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground'
+      isLoggedIn && !isAdmin ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
-        isSuperAdmin && !isSidebarCollapsed ? "lg:pl-[264px]" : "",
-        isSuperAdmin && isSidebarCollapsed ? "lg:pl-[96px]" : "",
+        isAdmin && !isSidebarCollapsed ? "lg:pl-[264px]" : "",
+        isAdmin && isSidebarCollapsed ? "lg:pl-[96px]" : "",
       )}>
          {user?.profile && (
-           <div className={cn("lg:hidden mr-4", isSuperAdmin && "hidden")}>
+           <div className={cn("lg:hidden mr-4", isAdmin && "hidden")}>
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
                  <Button variant="ghost" size="icon" className="hover:bg-primary/90">
@@ -99,7 +99,7 @@ export function SiteHeader({
           <nav className="hidden md:flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(isLoggedIn ? "text-primary-foreground hover:bg-primary-foreground/10" : "text-foreground hover:bg-muted")}>
+                <Button variant="ghost" size="icon" className={cn(isLoggedIn && !isAdmin ? "text-primary-foreground hover:bg-primary-foreground/10" : "text-foreground hover:bg-muted")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -113,14 +113,14 @@ export function SiteHeader({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {isLoggedIn && <Separator />}
+            {isLoggedIn && <Separator isAdmin={isAdmin} />}
 
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary-foreground/10">
+                  <Button variant="ghost" className={cn("relative h-10 w-10 rounded-full", isAdmin ? "hover:bg-muted" : "hover:bg-primary-foreground/10")}>
                     <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
-                      <AvatarFallback className="bg-transparent text-primary-foreground font-semibold">
+                      <AvatarFallback className={cn("font-semibold", isAdmin ? "bg-muted text-foreground" : "bg-transparent text-primary-foreground")}>
                         {getInitials(user.profile.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -168,4 +168,4 @@ export function SiteHeader({
   );
 }
 
-const Separator = () => <div className="h-6 w-px bg-primary-foreground/20" />;
+const Separator = ({ isAdmin }: { isAdmin?: boolean }) => <div className={cn("h-6 w-px", isAdmin ? 'bg-border' : 'bg-primary-foreground/20')} />;

@@ -1,11 +1,12 @@
+
 "use client";
 
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
 
 interface ModeratorDashboardProps {
-  user: User;
+  user: UserProfile;
 }
 
 export function ModeratorDashboard({ user }: ModeratorDashboardProps) {

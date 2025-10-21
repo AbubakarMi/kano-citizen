@@ -58,11 +58,11 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             <aside 
             className={cn(
                 "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block transition-all duration-300",
-                isSuperAdmin && "bg-card",
-                !isSuperAdmin && "bg-primary",
-                isSuperAdmin && !isSidebarCollapsed && "w-[240px]",
-                isSuperAdmin && isSidebarCollapsed && "w-[72px]",
-                !isSuperAdmin && "w-[240px]"
+                (isSuperAdmin || user.role === 'System Administrator') && "bg-card",
+                !(isSuperAdmin || user.role === 'System Administrator') && "bg-primary",
+                (isSuperAdmin || user.role === 'System Administrator') && !isSidebarCollapsed && "w-[240px]",
+                (isSuperAdmin || user.role === 'System Administrator') && isSidebarCollapsed && "w-[72px]",
+                !(isSuperAdmin || user.role === 'System Administrator') && "w-[240px]"
             )}
             >
                 <DashboardSidebar 
@@ -74,8 +74,8 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             <main className={cn(
             "flex-1 pt-20 transition-all duration-300",
             !isCitizen && "lg:ml-[240px]",
-            isSuperAdmin && !isSidebarCollapsed && "lg:ml-[240px]",
-            isSuperAdmin && isSidebarCollapsed && "lg:ml-[72px]",
+            (isSuperAdmin || user.role === 'System Administrator') && !isSidebarCollapsed && "lg:ml-[240px]",
+            (isSuperAdmin || user.role === 'System Administrator') && isSidebarCollapsed && "lg:ml-[72px]",
             isCitizen && "lg:ml-0" 
             )}>
                 <div className={cn(

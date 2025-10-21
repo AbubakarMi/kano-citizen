@@ -1,11 +1,12 @@
+
 "use client";
 
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Building } from "lucide-react";
 
 interface MDAOfficialDashboardProps {
-  user: User;
+  user: UserProfile;
 }
 
 export function MDAOfficialDashboard({ user }: MDAOfficialDashboardProps) {
