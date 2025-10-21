@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import type { User } from "@/lib/data";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface SiteHeaderProps {
   user: User | null;
@@ -52,10 +54,15 @@ export function SiteHeader({
       .join("");
   };
 
+  const isSuperAdmin = user?.role === 'Super Admin';
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className={cn(
+      "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
+      isSuperAdmin ? 'bg-card' : 'bg-background/95'
+      )}>
       <div className="container flex h-20 items-center">
-         {user && setActiveView && (
+         {user && setActiveView && !isSuperAdmin && (
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
@@ -71,14 +78,14 @@ export function SiteHeader({
                 <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
                     setActiveView(view);
                     setMobileMenuOpen(false);
-                }} className="p-4" />
+                }} className="p-4" onLogout={onLogout} />
                 
                </SheetContent>
              </Sheet>
            </div>
          )}
         <div className="flex items-center gap-8">
-            <Link href="/" aria-label="Home" className="flex items-center">
+            <Link href="/" aria-label="Home" className={cn("flex items-center", isSuperAdmin ? 'hidden' : '')}>
               <Logo />
             </Link>
         </div>
@@ -153,5 +160,3 @@ export function SiteHeader({
 }
 
 const Separator = () => <div className="h-6 w-px bg-border" />;
-
-    

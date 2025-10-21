@@ -1,9 +1,10 @@
 
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import type { User, UserRole } from "@/lib/data";
+import type { User } from "@/lib/data";
 import { SiteHeader } from "@/components/site-header";
 import { LandingPage } from "@/components/landing-page";
 import { CitizenDashboard } from "@/components/citizen-dashboard";
@@ -16,6 +17,7 @@ import { translations, type Language, type Translation } from "@/lib/translation
 import { seededUsers, ideas as allIdeas } from "@/lib/data";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 
 // This is a temporary solution to handle user state without real auth
@@ -25,8 +27,10 @@ const RoleBasedDashboard = ({ user, t, activeView, setActiveView }: { user: User
     const ideas = t.ideas;
     const directives = t.directives;
     const volunteerOpportunities = t.volunteerOpportunities;
+    
+    const isSuperAdmin = user.role === 'Super Admin';
 
-  const dashboardContent = () => {
+    const dashboardContent = () => {
       switch (user.role) {
         case "Citizen":
           return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} activeView={activeView} setActiveView={setActiveView} />;
@@ -47,10 +51,18 @@ const RoleBasedDashboard = ({ user, t, activeView, setActiveView }: { user: User
 
   return (
       <div className="flex">
-        <aside className="fixed left-0 top-20 h-full w-[240px] border-r hidden lg:block">
-            <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} />
+        <aside 
+          className={cn(
+            "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background",
+            isSuperAdmin ? "w-[240px] bg-card" : "w-[240px]"
+          )}
+        >
+            <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} onLogout={() => { /* Implement logout for sidebar if needed */}}/>
         </aside>
-        <div className="flex-1 lg:ml-[240px] p-6 lg:p-8">
+        <div className={cn(
+          "flex-1 p-6 lg:p-8",
+          isSuperAdmin ? "lg:ml-[240px] bg-muted/30" : "lg:ml-[240px]"
+        )}>
             {dashboardContent()}
         </div>
       </div>
@@ -119,6 +131,9 @@ export default function Home() {
                         break;
                     case 'System Administrator':
                         setActiveView('health');
+                        break;
+                    case 'Super Admin':
+                        setActiveView('overview');
                         break;
                     default:
                         setActiveView('overview');

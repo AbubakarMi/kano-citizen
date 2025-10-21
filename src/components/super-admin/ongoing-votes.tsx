@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -60,16 +61,15 @@ export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
     toast({
         title: "Poll Created",
         description: `The poll "${newIdea.title}" is now live.`,
-        className: "bg-primary text-primary-foreground border-primary"
     });
   };
 
   return (
     <>
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-xl flex items-center gap-3"><Vote className="h-6 w-6" /> Live Community Polls</CardTitle>
+            <CardTitle>Live Community Polls</CardTitle>
             <CardDescription>Real-time view of top-voted ideas from citizens.</CardDescription>
           </div>
           <Button onClick={() => setIsSheetOpen(true)}>

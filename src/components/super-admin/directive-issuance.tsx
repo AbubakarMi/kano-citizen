@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
@@ -29,9 +30,9 @@ export function DirectiveIssuance({ ideas, mdas }: DirectiveIssuanceProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
 
   return (
-    <Card>
+    <Card className="shadow-sm">
         <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-3"><Gavel className="h-6 w-6" /> Issue a New Directive</CardTitle>
+            <CardTitle>Issue a New Directive</CardTitle>
             <CardDescription>Select a top citizen submission, draft an official directive, and assign it to an MDA with a deadline.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

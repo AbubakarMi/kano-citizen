@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
@@ -16,14 +17,13 @@ export function SystemSettings() {
         toast({
           title: `Settings Saved`,
           description: `System-wide settings have been updated.`,
-          className: "bg-primary text-primary-foreground border-primary"
         });
     }
 
     return (
-        <Card>
+        <Card className="shadow-sm">
             <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-3"><Settings className="h-6 w-6" /> Platform Settings</CardTitle>
+                <CardTitle>Platform Settings</CardTitle>
                 <CardDescription>Configure system-wide parameters and voting rules for the platform.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

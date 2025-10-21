@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
@@ -25,9 +26,9 @@ export function ApprovalQueue() {
     }
 
     return (
-        <Card>
+        <Card className="shadow-sm">
             <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-3"><CheckCircle className="h-6 w-6" /> Approval Queue</CardTitle>
+                <CardTitle>Approval Queue</CardTitle>
                 <CardDescription>Review and approve major SPD outcomes, reports, and system changes before they are made public or implemented.</CardDescription>
             </CardHeader>
             <CardContent>

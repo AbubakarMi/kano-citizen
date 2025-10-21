@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -193,10 +194,10 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 
     return (
         <div className="space-y-6">
-            <Card>
+            <Card className="shadow-sm">
                  <CardHeader className="flex-row items-center justify-between">
                     <div className="space-y-1">
-                        <CardTitle className="text-xl flex items-center gap-3"><Users className="h-6 w-6" /> Manage Administrative Users</CardTitle>
+                        <CardTitle>Manage Administrative Users</CardTitle>
                         <CardDescription>View, create, edit roles for, and remove all non-citizen users.</CardDescription>
                     </div>
                     <Dialog open={isCreateUserOpen} onOpenChange={setIsCreateUserOpen}>
@@ -386,9 +387,9 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
             </Card>
 
             <div className="grid md:grid-cols-2 gap-6">
-                <Card>
+                <Card className="shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-xl flex items-center gap-3"><Building className="h-6 w-6" /> MDA Management</CardTitle>
+                        <CardTitle>MDA Management</CardTitle>
                         <CardDescription>Add or remove Ministries, Departments, and Agencies (MDAs).</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -410,9 +411,9 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                         <Button onClick={handleAddMda}><PlusCircle className="mr-2 h-4 w-4" /> Add</Button>
                     </CardFooter>
                 </Card>
-                <Card>
+                <Card className="shadow-sm">
                      <CardHeader>
-                        <CardTitle className="text-xl flex items-center gap-3"><Shield className="h-6 w-6" /> Role Management</CardTitle>
+                        <CardTitle>Role Management</CardTitle>
                         <CardDescription>Define administrative roles on the platform.</CardDescription>
                     </CardHeader>
                      <CardContent className="flex flex-wrap gap-2">
