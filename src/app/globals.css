@@ -62,3 +62,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .clip-circle {
+    clip-path: circle(50% at 50% 50%);
+  }
+}

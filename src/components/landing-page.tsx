@@ -69,46 +69,68 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-20 md:py-24 bg-white dark:bg-card">
         <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.howItWorksTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.howItWorksDescription}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
-             <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
-              {speakImage && <Image src={speakImage.imageUrl} alt={speakImage.description} data-ai-hint={speakImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
-                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                  <MessageSquareQuote className="transition-transform group-hover:scale-110"/>{t.step1Title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                <p className="text-muted-foreground">{t.step1Description}</p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
-              {decideImage && <Image src={decideImage.imageUrl} alt={decideImage.description} data-ai-hint={decideImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
-                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                  <Vote className="transition-transform group-hover:scale-110"/>{t.step2Title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                <p className="text-muted-foreground">{t.step2Description}</p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
-             {buildImage && <Image src={buildImage.imageUrl} alt={buildImage.description} data-ai-hint={buildImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
-                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                  <PencilRuler className="transition-transform group-hover:scale-110"/>{t.step3Title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                <p className="text-muted-foreground">{t.step3Description}</p>
-              </CardContent>
-            </Card>
+            
+            {/* Step 1: Speak Up */}
+            <div className="flex flex-col items-center gap-6">
+                <div className="relative w-48 h-48 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-[10px] border-primary/20"></div>
+                    <div className="absolute inset-[10px] rounded-full border-[10px] border-primary"></div>
+                    <div className="relative w-40 h-40 rounded-full overflow-hidden clip-circle">
+                         {speakImage && <Image src={speakImage.imageUrl} alt={t.step1Title} layout="fill" objectFit="cover" data-ai-hint={speakImage.imageHint} />}
+                        <div className="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                            <MessageSquareQuote className="h-16 w-16 text-white" />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-xl font-bold">{t.step1Title}</h3>
+                    <p className="text-muted-foreground max-w-xs mx-auto">{t.step1Description}</p>
+                </div>
+            </div>
+
+            {/* Step 2: Decide */}
+             <div className="flex flex-col items-center gap-6">
+                <div className="relative w-48 h-48 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-[10px] border-secondary/20"></div>
+                    <div className="absolute inset-[10px] rounded-full border-[10px] border-secondary"></div>
+                     <div className="relative w-40 h-40 rounded-full overflow-hidden clip-circle">
+                         {decideImage && <Image src={decideImage.imageUrl} alt={t.step2Title} layout="fill" objectFit="cover" data-ai-hint={decideImage.imageHint} />}
+                        <div className="absolute inset-0 bg-secondary/30 flex items-center justify-center">
+                            <Vote className="h-16 w-16 text-white" />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-xl font-bold">{t.step2Title}</h3>
+                    <p className="text-muted-foreground max-w-xs mx-auto">{t.step2Description}</p>
+                </div>
+            </div>
+
+            {/* Step 3: Build */}
+             <div className="flex flex-col items-center gap-6">
+                <div className="relative w-48 h-48 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-[10px] border-accent/20"></div>
+                    <div className="absolute inset-[10px] rounded-full border-[10px] border-accent"></div>
+                    <div className="relative w-40 h-40 rounded-full overflow-hidden clip-circle">
+                        {buildImage && <Image src={buildImage.imageUrl} alt={t.step3Title} layout="fill" objectFit="cover" data-ai-hint={buildImage.imageHint} />}
+                        <div className="absolute inset-0 bg-accent/30 flex items-center justify-center">
+                           <PencilRuler className="h-16 w-16 text-white" />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-xl font-bold">{t.step3Title}</h3>
+                    <p className="text-muted-foreground max-w-xs mx-auto">{t.step3Description}</p>
+                </div>
+            </div>
+            
           </div>
         </div>
       </section>
@@ -384,5 +406,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
