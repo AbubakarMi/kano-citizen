@@ -64,11 +64,12 @@ export function SiteHeader({
   };
 
   const isSuperAdmin = user?.profile?.role === 'Super Admin';
+  const isLoggedIn = !!user;
 
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full border-b",
-      user ? 'bg-primary text-primary-foreground' : 'bg-card'
+      isLoggedIn ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
@@ -83,8 +84,8 @@ export function SiteHeader({
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
-               <SheetContent side="left" className="p-0 w-64">
-                <div className="p-4 border-b bg-primary text-primary-foreground">
+               <SheetContent side="left" className="p-0 w-64 bg-primary text-primary-foreground">
+                <div className="p-4 border-b border-primary-foreground/20">
                   <Logo />
                 </div>
                 <DashboardSidebar user={user.profile} className="p-4" />
@@ -94,14 +95,14 @@ export function SiteHeader({
          )}
         <div className="flex items-center gap-8">
             <Link href="/" aria-label="Home" className={cn("flex items-center")}>
-              <Logo className={cn(user ? "text-primary-foreground" : "")} />
+              <Logo />
             </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(user ? "hover:bg-primary/90" : "")}>
+                <Button variant="ghost" size="icon" className={cn(isLoggedIn ? "hover:bg-primary-foreground/10" : "hover:bg-muted")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -115,12 +116,12 @@ export function SiteHeader({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {user && <Separator />}
+            {isLoggedIn && <Separator />}
 
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary/90">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary-foreground/10">
                     <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
                       <AvatarFallback className="bg-transparent text-primary-foreground font-semibold">
                         {getInitials(user.profile.name)}
@@ -161,6 +162,9 @@ export function SiteHeader({
               </>
             )}
           </nav>
+          <div className="md:hidden">
+            {/* Mobile menu could be triggered here if needed */}
+          </div>
         </div>
       </div>
     </header>

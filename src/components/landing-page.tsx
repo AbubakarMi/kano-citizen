@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText, Check } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -17,7 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 import { HeroDashboard } from "./hero-dashboard";
-
 
 interface LandingPageProps {
   language: Language;
@@ -40,17 +39,15 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
   const buildImage = PlaceHolderImages.find(p => p.id === 'build');
   
-  const [activeInvolvedTab, setActiveInvolvedTab] = useState('volunteer');
   const [selectedTestimonial, setSelectedTestimonial] = useState(testimonials[0]);
 
-
   return (
-    <>
+    <div className="bg-background text-foreground">
       {/* Hero Section */}
       <section className="bg-background py-20 md:py-24 lg:py-32">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline text-primary">
               {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
             </h1>
             <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
@@ -143,49 +140,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
         </div>
       </section>
-
-      {/* Complaint Section */}
-      <section className="bg-muted py-20 md:py-24 overflow-hidden">
-        <div className="container relative">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight font-headline text-primary">
-                Complaint Management System
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                With Kano Citizens' Voice, you can easily <span className="text-accent font-semibold">track</span>, <span className="text-accent font-semibold">investigate</span>, and <span className="text-accent font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <Button asChild size="lg">
-                  <Link href="/register">Get started</Link>
-                </Button>
-                <Link href="/login" className="flex items-center font-semibold text-primary hover:text-primary/80">
-                  Or take our quick Guided Tour <ChevronRight className="ml-1 h-5 w-5" />
-                </Link>
-              </div>
-            </div>
-            <div className="hidden lg:block relative h-[450px] -mr-32">
-                <div className="absolute inset-0 bg-background [clip-path:url(#complaint-clip)]">
-                    <Image
-                        src="https://picsum.photos/seed/complaint/800/600"
-                        alt="A professional discussing a document"
-                        layout="fill"
-                        objectFit="cover"
-                        data-ai-hint="professional document"
-                    />
-                </div>
-            </div>
-          </div>
-        </div>
-        <svg width="0" height="0">
-            <defs>
-                <clipPath id="complaint-clip" clipPathUnits="objectBoundingBox">
-                <path d="M0.25,0 C0.2,0,0.1,0.05,0.05,0.1 C-0.05,0.25,0,0.75,0.1,0.9 C0.15,0.95,0.25,1,0.3,1 L1,1 L1,0 Z" />
-                </clipPath>
-            </defs>
-        </svg>
-      </section>
-
+      
       {/* Live Polls Section */}
       <section id="live-polls" className="bg-background py-20 md:py-24">
         <div className="container">
@@ -198,12 +153,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div className="lg:sticky top-24">
              <Card className="w-full shadow-2xl overflow-hidden border-2 border-accent/20 bg-card">
-              <CardHeader className="bg-accent/5 p-4">
+              <CardHeader className="bg-accent/5 p-6">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-accent" />
                   <div>
                     <CardTitle className="text-xl leading-none font-headline text-accent">{t.topIdeaTitle}</CardTitle>
-                    <CardDescription className="text-sm">{t.topIdeaDescription}</CardDescription>
+                    <CardDescription className="text-sm text-foreground/80">{t.topIdeaDescription}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -235,7 +190,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 {otherIdeas.map((idea) => {
                     const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
                     return (
-                        <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
+                        <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300 bg-card">
                             <CardContent className="p-6">
                                 <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline text-primary">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
@@ -282,8 +237,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               const isUnderReview = dir.status === 'Under Review' || dir.status === 'Ana dubawa';
               
               return (
-                <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                  <CardHeader className="p-6 bg-muted">
+                <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden bg-card">
+                  <CardHeader className="p-6 bg-muted/50">
                     <div className="flex items-start gap-4">
                         <div className={cn("h-8 w-8 shrink-0 mt-1 rounded-full flex items-center justify-center", 
                             isCompleted ? "bg-secondary" : isInProgress ? "bg-primary" : "bg-accent"
@@ -329,22 +284,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             <p className="mt-4 text-lg text-primary-foreground/80">{t.getInvolvedDescription}</p>
           </div>
 
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-start">
-              <div className="flex flex-col">
-                <button
-                  onClick={() => setActiveInvolvedTab('volunteer')}
-                  className={cn(
-                    "px-8 py-3 text-lg font-semibold rounded-t-lg transition-colors",
-                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent hover:bg-white/10'
-                  )}
-                >
-                  Volunteer
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-card p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-foreground">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-card p-8 rounded-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-foreground">
               <div className="space-y-6">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id} className="p-4 rounded-lg hover:bg-muted transition-colors">
@@ -447,7 +388,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-muted py-20 md:py-24">
+      <section className="bg-background py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
            <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.faqTitle}</h2>
@@ -478,6 +419,6 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           <p className="mt-1 font-semibold font-headline">{t.footerSlogan}</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
