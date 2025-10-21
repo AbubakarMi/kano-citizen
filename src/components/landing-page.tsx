@@ -44,7 +44,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <div className="bg-background text-foreground">
       {/* Hero Section */}
-      <section className="bg-background py-20 md:py-24 lg:py-32">
+      <section className="py-20 md:py-24 lg:py-32">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline">
@@ -142,7 +142,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
       
       {/* Live Polls Section */}
-      <section id="live-polls" className="bg-background py-20 md:py-24">
+      <section id="live-polls" className="py-20 md:py-24">
         <div className="container">
            <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.livePollsTitle}</h2>
@@ -152,7 +152,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div className="lg:sticky top-24">
-             <Card className="w-full shadow-2xl overflow-hidden border-2 border-accent/20 bg-card">
+             <Card className="w-full shadow-lg overflow-hidden border-2 border-accent/20">
               <CardHeader className="bg-accent/5 p-6">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-accent" />
@@ -190,7 +190,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 {otherIdeas.map((idea) => {
                     const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
                     return (
-                        <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300 bg-card">
+                        <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
                             <CardContent className="p-6">
                                 <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline text-primary">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
@@ -212,7 +212,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     )
                 })}
                  <div className="text-center mt-8 pt-4 border-t">
-                    <Button asChild size="lg" variant="accent">
+                    <Button asChild size="lg">
                         <Link href="/register">{t.submitIdeaButton}</Link>
                     </Button>
                 </div>
@@ -237,7 +237,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               const isUnderReview = dir.status === 'Under Review' || dir.status === 'Ana dubawa';
               
               return (
-                <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden bg-card">
+                <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                   <CardHeader className="p-6 bg-muted/50">
                     <div className="flex items-start gap-4">
                         <div className={cn("h-8 w-8 shrink-0 mt-1 rounded-full flex items-center justify-center", 
@@ -388,7 +388,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section className="py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
            <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.faqTitle}</h2>

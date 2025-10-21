@@ -28,24 +28,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   const ideasQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'ideas')) : null, [firestore]);
-  const { data: ideas, loading: ideasLoading } = useCollection<Idea>(ideasQuery);
+  const { data: ideasData } = useCollection<Idea>(ideasQuery);
   
   const directivesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'directives')) : null, [firestore]);
-  const { data: directives, loading: directivesLoading } = useCollection<Directive>(directivesQuery);
+  const { data: directivesData } = useCollection<Directive>(directivesQuery);
   
   const volunteerQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'volunteerOpportunities')) : null, [firestore]);
-  const { data: volunteerOpportunities, loading: volunteerLoading } = useCollection<VolunteerOpportunity>(volunteerQuery);
+  const { data: volunteerOpportunities } = useCollection<VolunteerOpportunity>(volunteerQuery);
 
-  const [internalIdeas, setInternalIdeas] = useState<Idea[]>([]);
-  const [internalDirectives, setInternalDirectives] = useState<Directive[]>([]);
-
-  useEffect(() => {
-    if (ideas) setInternalIdeas(ideas);
-  }, [ideas]);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [directives, setDirectives] = useState<Directive[]>([]);
 
   useEffect(() => {
-    if (directives) setInternalDirectives(directives);
-  }, [directives]);
+    if (ideasData) setIdeas(ideasData);
+  }, [ideasData]);
+
+  useEffect(() => {
+    if (directivesData) setDirectives(directivesData);
+  }, [directivesData]);
 
   useEffect(() => {
     if (user?.profile?.role) {
@@ -71,6 +71,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         default:
           setActiveView('overview');
       }
+    } else {
+      // Default for non-logged-in users or those without a role
+      setActiveView('overview');
     }
   }, [user?.profile?.role]);
 
@@ -79,10 +82,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setActiveView,
     isSidebarCollapsed,
     setSidebarCollapsed,
-    ideas: internalIdeas || [],
-    setIdeas: setInternalIdeas,
-    directives: internalDirectives || [],
-    setDirectives: setInternalDirectives,
+    ideas: ideas || [],
+    setIdeas: setIdeas,
+    directives: directives || [],
+    setDirectives,
     volunteerOpportunities: volunteerOpportunities || [],
   };
 

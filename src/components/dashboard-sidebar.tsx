@@ -168,9 +168,9 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                                                 href={`#${link.id}`}
                                                 onClick={(e) => handleClick(e, link.id)}
                                                 className={cn(
-                                                buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost", size: "icon" }),
+                                                buttonVariants({ variant: activeView === link.id ? "default" : "ghost", size: "icon" }),
                                                 "h-10 w-10",
-                                                activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-card-foreground"
+                                                activeView !== link.id && "text-muted-foreground hover:bg-muted/50 hover:text-card-foreground"
                                                 )}
                                             >
                                                 <link.icon className="h-5 w-5" />

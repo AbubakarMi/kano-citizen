@@ -76,8 +76,8 @@ export function SiteHeader({
         isSuperAdmin && !isSidebarCollapsed ? "lg:pl-[264px]" : "",
         isSuperAdmin && isSidebarCollapsed ? "lg:pl-[96px]" : "",
       )}>
-         {user?.profile && !isSuperAdmin && (
-           <div className="lg:hidden mr-4">
+         {user?.profile && (
+           <div className={cn("lg:hidden mr-4", isSuperAdmin && "hidden")}>
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
                  <Button variant="ghost" size="icon" className="hover:bg-primary/90">
@@ -94,7 +94,7 @@ export function SiteHeader({
            </div>
          )}
         <div className="flex items-center gap-8">
-            <Link href="/" aria-label="Home" className={cn("flex items-center")}>
+            <Link href="/" aria-label="Home" className={cn("flex items-center", isLoggedIn && "hidden lg:flex")}>
               <Logo />
             </Link>
         </div>
@@ -102,7 +102,7 @@ export function SiteHeader({
           <nav className="hidden md:flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn(isLoggedIn ? "hover:bg-primary-foreground/10" : "hover:bg-muted")}>
+                <Button variant="ghost" size="icon" className={cn(isLoggedIn ? "text-primary-foreground hover:bg-primary-foreground/10" : "text-foreground hover:bg-muted")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -152,7 +152,7 @@ export function SiteHeader({
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild variant="ghost">
+                <Button asChild variant="outline">
                   <Link href="/login">{t.signIn}</Link>
                 </Button>
 

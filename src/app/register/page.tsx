@@ -21,21 +21,21 @@ export default function RegisterPage() {
     const t = translations[language];
 
     return (
-        <div className="relative min-h-screen w-full bg-background">
+        <div className="relative min-h-screen w-full">
             <header className="absolute top-0 z-40 w-full bg-primary text-primary-foreground">
                 <div className="container flex h-20 items-center justify-between">
                     <Link href="/" aria-label="Home">
                         <Logo />
                     </Link>
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" asChild className="hover:bg-primary/90">
+                        <Button variant="ghost" size="icon" asChild className="hover:bg-primary/90 text-primary-foreground hover:text-primary-foreground">
                             <Link href="/" aria-label="Home">
                                 <Home className="h-5 w-5" />
                             </Link>
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="hover:bg-primary/90">
+                                <Button variant="ghost" size="icon" className="hover:bg-primary/90 text-primary-foreground hover:text-primary-foreground">
                                 <Globe className="h-5 w-5" />
                                 </Button>
                             </DropdownMenuTrigger>

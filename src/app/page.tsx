@@ -28,12 +28,10 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
         setActiveView, 
         isSidebarCollapsed, 
         setSidebarCollapsed, 
-        ideas, 
-        directives, 
-        volunteerOpportunities 
     } = useAppContext();
 
     const isSuperAdmin = user.role === 'Super Admin';
+    const isCitizen = user.role === 'Citizen';
 
     const dashboardContent = () => {
       switch (user.role) {
@@ -58,8 +56,9 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
         <div className="flex">
             <aside 
             className={cn(
-                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-card transition-all duration-300",
-                isSuperAdmin ? '' : 'bg-primary',
+                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block transition-all duration-300",
+                isSuperAdmin && "bg-card",
+                !isSuperAdmin && "bg-primary",
                 isSuperAdmin && !isSidebarCollapsed && "w-[240px]",
                 isSuperAdmin && isSidebarCollapsed && "w-[72px]",
                 !isSuperAdmin && "w-[240px]"
@@ -73,9 +72,10 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             </aside>
             <main className={cn(
             "flex-1 pt-20 transition-all duration-300",
+            !isCitizen && "lg:ml-[240px]",
             isSuperAdmin && !isSidebarCollapsed && "lg:ml-[240px]",
             isSuperAdmin && isSidebarCollapsed && "lg:ml-[72px]",
-            !isSuperAdmin && "lg:ml-[240px]"
+            isCitizen && "lg:ml-0" 
             )}>
                 <div className={cn(
                     "p-6 lg:p-8",
@@ -89,19 +89,19 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
 
 const DashboardLoading = () => (
     <div className="flex h-screen">
-      <div className="hidden lg:block w-[240px] border-r p-4">
+      <div className="hidden lg:block w-[240px] border-r p-4 bg-muted">
         <div className="flex flex-col gap-2 mt-20">
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full bg-muted-foreground/20" />
+            <Skeleton className="h-9 w-full bg-muted-foreground/20" />
+            <Skeleton className="h-9 w-full bg-muted-foreground/20" />
         </div>
       </div>
       <div className="flex-1 p-8 mt-20">
-        <Skeleton className="h-12 w-1/3 mb-4" />
-        <Skeleton className="h-4 w-1/2 mb-8" />
+        <Skeleton className="h-12 w-1/3 mb-4 bg-muted-foreground/20" />
+        <Skeleton className="h-4 w-1/2 mb-8 bg-muted-foreground/20" />
         <div className="space-y-4">
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-32 w-full bg-muted-foreground/20" />
+            <Skeleton className="h-32 w-full bg-muted-foreground/20" />
         </div>
       </div>
     </div>
@@ -110,7 +110,7 @@ const DashboardLoading = () => (
 function HomePageContent() {
   const { user, loading: userLoading } = useUser();
   const [language, setLanguage] = useState<Language>('en');
-  const { activeView, setActiveView, isSidebarCollapsed } = useAppContext();
+  const { isSidebarCollapsed } = useAppContext();
   
   const t = translations[language];
 
@@ -128,8 +128,8 @@ function HomePageContent() {
         isSidebarCollapsed={isSidebarCollapsed}
       />
       <main className="flex-1">
-        {user ? (
-          <RoleBasedDashboard user={user.profile!} t={t} />
+        {user?.profile ? (
+          <RoleBasedDashboard user={user.profile} t={t} />
         ) : (
           <LandingPage 
             language={language} 
