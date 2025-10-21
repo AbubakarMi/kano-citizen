@@ -61,7 +61,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center lg:justify-end">
             <Card className="w-full max-w-md shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
               <CardHeader className="bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
