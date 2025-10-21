@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, Users } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -44,30 +44,49 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <div className="bg-background text-foreground">
       {/* Hero Section */}
-      <section className="py-20 md:py-24 lg:py-32">
-        <div className="container grid lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline">
-              {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
-            </h1>
-            <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
-              {t.heroDescription}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-               <Button asChild size="lg" className="w-full">
-                <Link href="/register">{t.registerButton}</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="w-full">
-                 <Link href="/login">{t.signInButton}</Link>
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              {t.registerHint}
-            </p>
+      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center text-center text-white overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://picsum.photos/seed/kano-cityscape/1800/1200"
+            alt="Kano Cityscape"
+            layout="fill"
+            objectFit="cover"
+            className="object-center"
+            data-ai-hint="Kano cityscape"
+          />
+          <div className="absolute inset-0 bg-black/50 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+        </div>
+        <div className="relative z-10 flex flex-col items-center gap-6 px-4">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight font-headline">
+            {t.heroTitle} <span className="text-primary">{t.heroTitleSpan}</span>
+          </h1>
+          <p className="max-w-2xl text-lg md:text-xl text-white/90">
+            {t.heroDescription}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Button asChild size="lg" className="w-full">
+              <Link href="/register">{t.registerButton}</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="w-full border-white text-white hover:bg-white hover:text-primary">
+              <Link href="/login">{t.signInButton}</Link>
+            </Button>
           </div>
-
-          <div>
-             <HeroDashboard />
+          <div className="flex items-center gap-4 mt-6">
+              <div className="flex -space-x-2 overflow-hidden">
+                  <Avatar className="inline-block h-10 w-10 rounded-full ring-2 ring-background">
+                      <AvatarImage src="https://picsum.photos/seed/Aisha/40/40" />
+                      <AvatarFallback>AB</AvatarFallback>
+                  </Avatar>
+                  <Avatar className="inline-block h-10 w-10 rounded-full ring-2 ring-background">
+                      <AvatarImage src="https://picsum.photos/seed/Musa/40/40" />
+                      <AvatarFallback>MI</AvatarFallback>
+                  </Avatar>
+                   <Avatar className="inline-block h-10 w-10 rounded-full ring-2 ring-background">
+                      <AvatarImage src="https://picsum.photos/seed/Fatima/40/40" />
+                      <AvatarFallback>FS</AvatarFallback>
+                  </Avatar>
+              </div>
+              <p className="text-sm font-medium text-white/80">Join 15,000+ citizens already making a difference.</p>
           </div>
         </div>
       </section>
