@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image";
@@ -441,5 +440,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </div>
   );
 }
-
-    
