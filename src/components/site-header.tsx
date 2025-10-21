@@ -34,6 +34,7 @@ interface SiteHeaderProps {
   t: Translation['header'];
   activeView?: string;
   setActiveView?: (view: string) => void;
+  isSidebarCollapsed?: boolean;
 }
 
 export function SiteHeader({
@@ -44,6 +45,7 @@ export function SiteHeader({
   t,
   activeView,
   setActiveView,
+  isSidebarCollapsed
 }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -61,7 +63,11 @@ export function SiteHeader({
       "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
       isSuperAdmin ? 'bg-card' : 'bg-background/95'
       )}>
-      <div className="container flex h-20 items-center">
+      <div className={cn(
+        "container flex h-20 items-center transition-all duration-300",
+        isSuperAdmin && !isSidebarCollapsed ? "lg:pl-[264px]" : "",
+        isSuperAdmin && isSidebarCollapsed ? "lg:pl-[96px]" : "",
+      )}>
          {user && setActiveView && !isSuperAdmin && (
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

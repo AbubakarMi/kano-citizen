@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 // This is a temporary solution to handle user state without real auth
 const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
-const RoleBasedDashboard = ({ user, t, activeView, setActiveView }: { user: User, t: Translation, activeView: string, setActiveView: (view: string) => void }) => {
+const RoleBasedDashboard = ({ user, t, activeView, setActiveView, isSidebarCollapsed, setSidebarCollapsed }: { user: User, t: Translation, activeView: string, setActiveView: (view: string) => void, isSidebarCollapsed: boolean, setSidebarCollapsed: (collapsed: boolean) => void }) => {
     const ideas = t.ideas;
     const directives = t.directives;
     const volunteerOpportunities = t.volunteerOpportunities;
@@ -53,15 +53,29 @@ const RoleBasedDashboard = ({ user, t, activeView, setActiveView }: { user: User
       <div className="flex">
         <aside 
           className={cn(
-            "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background",
-            isSuperAdmin ? "w-[240px] bg-card" : "w-[240px]"
+            "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background transition-all duration-300",
+            isSuperAdmin && !isSidebarCollapsed && "w-[240px] bg-card",
+            isSuperAdmin && isSidebarCollapsed && "w-[72px] bg-card"
           )}
         >
-            <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} onLogout={() => { /* Implement logout for sidebar if needed */}}/>
+             {isSuperAdmin ? (
+                <DashboardSidebar 
+                    user={user} 
+                    activeView={activeView} 
+                    setActiveView={setActiveView} 
+                    onLogout={() => { /* Implement logout for sidebar if needed */}}
+                    isCollapsed={isSidebarCollapsed}
+                    setIsCollapsed={setSidebarCollapsed}
+                />
+            ) : (
+                <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} onLogout={() => { /* Implement logout for sidebar if needed */}}/>
+            )}
         </aside>
         <div className={cn(
-          "flex-1 p-6 lg:p-8",
-          isSuperAdmin ? "lg:ml-[240px] bg-muted/30" : "lg:ml-[240px]"
+          "flex-1 p-6 lg:p-8 transition-all duration-300",
+          isSuperAdmin && !isSidebarCollapsed && "lg:ml-[240px] bg-muted/30",
+          isSuperAdmin && isSidebarCollapsed && "lg:ml-[72px] bg-muted/30",
+           !isSuperAdmin && "lg:ml-[240px]"
         )}>
             {dashboardContent()}
         </div>
@@ -96,6 +110,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [activeView, setActiveView] = useState('overview');
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+
 
   useEffect(() => {
     // This effect runs only once on the client after initial mount.
@@ -169,12 +185,20 @@ export default function Home() {
         t={t.header}
         activeView={activeView}
         setActiveView={setActiveView}
+        isSidebarCollapsed={isSidebarCollapsed}
       />
       <main className="flex-1 pt-20">
         {isLoading ? (
             <DashboardLoading />
         ) : user ? (
-          <RoleBasedDashboard user={user} t={t} activeView={activeView} setActiveView={setActiveView} />
+          <RoleBasedDashboard 
+            user={user} 
+            t={t} 
+            activeView={activeView} 
+            setActiveView={setActiveView}
+            isSidebarCollapsed={isSidebarCollapsed}
+            setSidebarCollapsed={setSidebarCollapsed}
+           />
         ) : (
           <LandingPage 
             language={language} 

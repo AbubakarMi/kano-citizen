@@ -23,15 +23,17 @@ import {
   FileClock,
   LogOut,
   ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 interface SidebarLink {
   id: string;
   label: string;
   icon: React.ElementType;
-  group?: "MARKETING" | "SYSTEM" | "PAYMENTS" | "CITIZEN";
+  group?: "Engagement" | "Administration" | "SYSTEM" | "CITIZEN";
 }
 
 const getInitials = (name: string) => {
@@ -48,12 +50,12 @@ const citizenLinks: SidebarLink[] = [
 ];
 
 const superAdminLinks: SidebarLink[] = [
-  { id: "overview", label: "Dashboard", icon: LayoutDashboard, group: "MARKETING" },
-  { id: "votes", label: "Ongoing Votes", icon: Vote, group: "MARKETING" },
-  { id: "directives", label: "Directive Issuance", icon: Gavel, group: "MARKETING" },
-  { id: "approvals", label: "Approval Queue", icon: CheckCircle, group: "PAYMENTS" },
-  { id: "users", label: "User Management", icon: Users, group: "PAYMENTS" },
-  { id: "settings", label: "System Settings", icon: Settings, group: "SYSTEM" },
+  { id: "overview", label: "Dashboard", icon: LayoutDashboard, group: "Engagement" },
+  { id: "votes", label: "Ongoing Votes", icon: Vote, group: "Engagement" },
+  { id: "directives", label: "Directive Issuance", icon: Gavel, group: "Engagement" },
+  { id: "approvals", label: "Approval Queue", icon: CheckCircle, group: "Administration" },
+  { id: "users", label: "User Management", icon: Users, group: "Administration" },
+  { id: "settings", label: "System Settings", icon: Settings, group: "Administration" },
 ];
 
 const mdaLinks: SidebarLink[] = [
@@ -91,18 +93,30 @@ interface DashboardSidebarProps {
   setActiveView?: (view: string) => void;
   onLogout: () => void;
   className?: string;
+  isCollapsed?: boolean;
+  setIsCollapsed?: (isCollapsed: boolean) => void;
 }
 
-const SidebarGroup = ({ title, children }: { title: string, children: React.ReactNode }) => (
-    <div>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">{title}</h3>
-        <div className="flex flex-col gap-1">
+const SidebarGroup = ({ title, children, isCollapsed }: { title: string, children: React.ReactNode, isCollapsed?: boolean }) => (
+    <div className={cn(isCollapsed ? "my-4" : "")}>
+        {!isCollapsed ? (
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">{title}</h3>
+        ) : (
+            <div className="flex justify-center my-3">
+                <div className="h-px w-8 bg-border"></div>
+            </div>
+        )}
+        <div className={cn("flex flex-col", isCollapsed ? "items-center" : "gap-1")}>
             {children}
         </div>
     </div>
 )
 
-export function DashboardSidebar({ user, activeView, setActiveView, onLogout, className }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, activeView, setActiveView, onLogout, className, isCollapsed: isCollapsedProp, setIsCollapsed: setIsCollapsedProp }: DashboardSidebarProps) {
+  const [internalIsCollapsed, setInternalIsCollapsed] = useState(false);
+  const isCollapsed = isCollapsedProp !== undefined ? isCollapsedProp : internalIsCollapsed;
+  const setIsCollapsed = setIsCollapsedProp !== undefined ? setIsCollapsedProp : setInternalIsCollapsed;
+  
   const links = roleLinks[user.role] || [];
   const [internalActiveView, setInternalActiveView] = useState('overview');
 
@@ -125,31 +139,56 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
 
   if (user.role === 'Super Admin') {
       return (
+        <TooltipProvider delayDuration={0}>
           <div className={cn("h-full flex flex-col justify-between text-card-foreground", className)}>
               <div>
-                  <div className="flex items-center justify-between p-4 mb-4">
-                      <Logo className="text-foreground"/>
-                      <button className="p-2 rounded-md hover:bg-muted">
-                        <ChevronLeft className="h-5 w-5"/>
+                  <div className={cn("flex items-center justify-between p-4 mb-4", isCollapsed && "justify-center")}>
+                      <div className={cn(isCollapsed && 'hidden')}>
+                        <Logo className="text-foreground"/>
+                      </div>
+                      <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-muted -mr-2">
+                        {isCollapsed ? <ChevronRight className="h-5 w-5"/> : <ChevronLeft className="h-5 w-5"/>}
                       </button>
                   </div>
-                  <nav className="flex flex-col gap-6 px-2">
+                  <nav className={cn("flex flex-col gap-6", isCollapsed ? 'px-2' : 'px-2')}>
                      {Object.entries(groupedLinks).map(([group, links]) => (
-                        <SidebarGroup key={group} title={group}>
+                        <SidebarGroup key={group} title={group} isCollapsed={isCollapsed}>
                             {links.map((link) => (
-                                <a
-                                    key={link.id}
-                                    href={`#${link.id}`}
-                                    onClick={(e) => handleClick(e, link.id)}
-                                    className={cn(
-                                    buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost" }),
-                                    "justify-start text-sm font-medium",
-                                     currentView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                                    )}
-                                >
-                                    <link.icon className="mr-3 h-5 w-5" />
-                                    {link.label}
-                                </a>
+                                isCollapsed ? (
+                                    <Tooltip key={link.id}>
+                                        <TooltipTrigger asChild>
+                                            <a
+                                                href={`#${link.id}`}
+                                                onClick={(e) => handleClick(e, link.id)}
+                                                className={cn(
+                                                buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost", size: "icon" }),
+                                                "h-10 w-10",
+                                                currentView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                                )}
+                                            >
+                                                <link.icon className="h-5 w-5" />
+                                                <span className="sr-only">{link.label}</span>
+                                            </a>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right" className="ml-2">
+                                            {link.label}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ) : (
+                                    <a
+                                        key={link.id}
+                                        href={`#${link.id}`}
+                                        onClick={(e) => handleClick(e, link.id)}
+                                        className={cn(
+                                        buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost" }),
+                                        "justify-start text-sm font-medium",
+                                        currentView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        )}
+                                    >
+                                        <link.icon className="mr-3 h-5 w-5" />
+                                        {link.label}
+                                    </a>
+                                )
                             ))}
                         </SidebarGroup>
                     ))}
@@ -157,26 +196,31 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
               </div>
 
               <div className="p-4 border-t border-border/10 space-y-4">
-                 <div className="flex items-center gap-3">
+                 <div className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
                      <Avatar className="h-10 w-10 border-2 border-primary/20">
                         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                             {getInitials(user.name)}
                         </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className={cn(isCollapsed && "hidden")}>
                         <p className="font-semibold text-sm">{user.name}</p>
                         <p className="text-xs text-muted-foreground">Admin Manager</p>
                     </div>
                  </div>
                  <button
                     onClick={onLogout}
-                    className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start text-muted-foreground hover:text-foreground")}
+                    className={cn(
+                        buttonVariants({ variant: "ghost" }), 
+                        "w-full justify-start text-muted-foreground hover:text-foreground",
+                        isCollapsed && "justify-center"
+                        )}
                  >
-                    <LogOut className="mr-3 h-5 w-5" />
-                    Log out
+                    <LogOut className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+                    {!isCollapsed && "Log out"}
                  </button>
               </div>
           </div>
+        </TooltipProvider>
       )
   }
 
