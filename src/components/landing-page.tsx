@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText, Check } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
@@ -316,14 +317,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
      {/* Get Involved Section */}
-      <section id="get-involved" className="py-20 md:py-24 bg-primary/5">
+      <section id="get-involved" className="py-20 md:py-24 bg-primary text-primary-foreground">
         <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-             <div className="flex justify-center items-center gap-3">
-                <Check className="h-8 w-8 text-primary bg-primary/10 p-1.5 rounded-full" />
-                 <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
-             </div>
-            <p className="mt-4 text-lg text-muted-foreground">{t.getInvolvedDescription}</p>
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
+            <p className="mt-4 text-lg text-primary-foreground/80">{t.getInvolvedDescription}</p>
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -332,8 +330,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <button
                   onClick={() => setActiveInvolvedTab('volunteer')}
                   className={cn(
-                    "px-6 py-2 text-base font-semibold rounded-t-lg transition-colors text-primary",
-                    activeInvolvedTab === 'volunteer' ? 'bg-background' : 'bg-transparent hover:bg-background/50'
+                    "px-8 py-3 text-lg font-semibold rounded-t-lg transition-colors",
+                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent hover:bg-primary/80'
                   )}
                 >
                   Volunteer
@@ -341,34 +339,47 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </div>
             </div>
 
-            <div className="bg-background p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-3 gap-8">
-              <div className="md:col-span-2 space-y-8">
+            <div className="bg-background p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-foreground">
+              <div className="space-y-6">
                   {volunteerOpportunities.map(op => (
-                    <div key={op.id} className="p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                    <div key={op.id} className="p-4 rounded-lg hover:bg-muted transition-colors">
                       <h3 className="text-xl font-bold">{op.title}</h3>
-                      <p className="text-muted-foreground mt-1 mb-4 line-clamp-2">{op.description}</p>
-                       <div className="flex flex-wrap gap-2 mb-4">
-                          {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
+                       <div className="flex flex-wrap gap-2 my-3">
+                          {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                       </div>
-                       <Button asChild>
-                         <Link href="/register"><Handshake className="mr-2 h-4 w-4"/>Volunteer Now</Link>
-                      </Button>
+                      <p className="text-muted-foreground mt-1 mb-4 line-clamp-2">{op.description}</p>
+                      
+                       <Dialog>
+                          <DialogTrigger asChild>
+                             <Button variant="outline">View Details</Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>{op.title}</DialogTitle>
+                              <div className="flex flex-wrap gap-2 pt-2">
+                                {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                              </div>
+                            </DialogHeader>
+                            <div className="py-4">
+                              <p className="text-muted-foreground">{op.description}</p>
+                            </div>
+                            <DialogFooter>
+                              <Button asChild><Link href="/register">Volunteer Now</Link></Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                     </div>
                   ))}
               </div>
-              <div className="flex flex-col justify-between p-6 rounded-lg">
+              <div className="flex flex-col justify-center">
                  <Image 
-                    src="https://picsum.photos/seed/getinvolved/600/800"
+                    src="https://picsum.photos/seed/teamwork/600/800"
                     alt="Community volunteering"
                     width={600}
                     height={800}
-                    className="rounded-lg object-cover w-full h-full"
-                    data-ai-hint="city traffic"
+                    className="rounded-lg object-cover w-full h-[450px]"
+                    data-ai-hint="community teamwork"
                   />
-                  <div className="mt-4 bg-secondary/10 p-4 rounded-lg text-center">
-                    <h3 className="text-lg font-bold text-secondary-foreground">Ready to build?</h3>
-                    <p className="text-sm text-secondary-foreground/80 mt-1">Your garden to make a real contribution. Volunteers are the backbone of our movement.</p>
-                  </div>
               </div>
             </div>
           </div>
