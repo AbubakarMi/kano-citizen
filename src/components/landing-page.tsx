@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand, ChevronRight } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand, ChevronRight, FolderClock, CheckCircle2 } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { ComplaintForm } from "@/components/complaint-form";
@@ -273,28 +273,42 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2">
-            {directives.map(dir => (
-              <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <Badge className="mb-2" variant={dir.status === 'Completed' || dir.status === 'An kammala' ? 'default' : 'secondary'}>{dir.status}</Badge>
-                      <CardTitle className="text-xl">{dir.title}</CardTitle>
+            {directives.map(dir => {
+              const isCompleted = dir.status === 'Completed' || dir.status === 'An kammala';
+              const Icon = isCompleted ? CheckCircle2 : FolderClock;
+              
+              return (
+                <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                  <CardHeader className="p-6 bg-muted/30">
+                    <div className="flex items-start gap-4">
+                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-green-500" : "text-amber-500")} />
+                        <div className="flex-1">
+                          <Badge className="mb-2" variant={isCompleted ? 'default' : 'secondary'}>{dir.status}</Badge>
+                          <CardTitle className="text-xl">{dir.title}</CardTitle>
+                        </div>
                     </div>
-                    <FileText className="h-8 w-8 text-muted-foreground/50 shrink-0" />
-                  </div>
-                  <CardDescription>{dir.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <h4 className="font-semibold mb-3 text-base">{t.latestUpdates}</h4>
-                  <ul className="space-y-3">
-                  {dir.updates.map((update, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0 text-primary/70" /><span>{update}</span></li>
-                  ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardHeader>
+                  <CardContent className="p-6 flex-grow">
+                    <p className="text-muted-foreground mb-6">{dir.description}</p>
+                    
+                    <h4 className="font-semibold mb-4 text-base">{t.latestUpdates}</h4>
+                    <div className="relative pl-6">
+                        <div className="absolute left-[11px] top-1 h-full w-0.5 bg-border"></div>
+                        <ul className="space-y-8">
+                        {dir.updates.map((update, i) => (
+                          <li key={i} className="relative flex items-start gap-4 text-sm">
+                            <div className="absolute left-[-15px] top-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border-2 border-primary">
+                                <Pin className="h-3 w-3 text-primary" />
+                            </div>
+                            <span className="text-muted-foreground">{update}</span>
+                          </li>
+                        ))}
+                        </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -398,5 +412,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
 
     
