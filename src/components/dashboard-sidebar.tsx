@@ -2,8 +2,8 @@
 
 "use client";
 
-import React, { useState } from "react";
-import type { User } from "@/lib/data";
+import React from "react";
+import type { UserProfile } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -28,6 +28,11 @@ import {
 import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useAppContext } from "@/app/app-provider";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+
 
 interface SidebarLink {
   id: string;
@@ -78,7 +83,7 @@ const sysAdminLinks: SidebarLink[] = [
     { id: "settings", label: "Configuration", icon: Settings },
 ]
 
-const roleLinks: Record<User["role"], SidebarLink[]> = {
+const roleLinks: Record<UserProfile["role"], SidebarLink[]> = {
   "Citizen": citizenLinks,
   "Super Admin": superAdminLinks,
   "MDA Official": mdaLinks,
@@ -88,10 +93,7 @@ const roleLinks: Record<User["role"], SidebarLink[]> = {
 };
 
 interface DashboardSidebarProps {
-  user: User;
-  activeView?: string;
-  setActiveView?: (view: string) => void;
-  onLogout: () => void;
+  user: UserProfile;
   className?: string;
   isCollapsed?: boolean;
   setIsCollapsed?: (isCollapsed: boolean) => void;
@@ -100,7 +102,7 @@ interface DashboardSidebarProps {
 const SidebarGroup = ({ title, children, isCollapsed }: { title: string, children: React.ReactNode, isCollapsed?: boolean }) => (
     <div className={cn(isCollapsed ? "my-4" : "")}>
         {!isCollapsed ? (
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">{title}</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2 font-sans">{title}</h3>
         ) : (
             <div className="flex justify-center my-3">
                 <div className="h-px w-8 bg-border"></div>
@@ -112,22 +114,28 @@ const SidebarGroup = ({ title, children, isCollapsed }: { title: string, childre
     </div>
 )
 
-export function DashboardSidebar({ user, activeView, setActiveView, onLogout, className, isCollapsed: isCollapsedProp, setIsCollapsed: setIsCollapsedProp }: DashboardSidebarProps) {
-  const [internalIsCollapsed, setInternalIsCollapsed] = useState(false);
-  const isCollapsed = isCollapsedProp !== undefined ? isCollapsedProp : internalIsCollapsed;
-  const setIsCollapsed = setIsCollapsedProp !== undefined ? setIsCollapsedProp : setInternalIsCollapsed;
+export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp, setIsCollapsed: setIsCollapsedProp }: DashboardSidebarProps) {
+  const { activeView, setActiveView } = useAppContext();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const isCollapsed = isCollapsedProp !== undefined ? isCollapsedProp : false;
+  const setIsCollapsed = setIsCollapsedProp !== undefined ? setIsCollapsedProp : () => {};
   
   const links = roleLinks[user.role] || [];
-  const [internalActiveView, setInternalActiveView] = useState('overview');
-
-  const currentView = activeView || internalActiveView;
-  const setCurrentView = setActiveView || setInternalActiveView;
   
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    setCurrentView(id);
+    setActiveView(id);
   };
   
+  const handleLogout = async () => {
+    if (auth) {
+        await signOut(auth);
+        router.push('/');
+    }
+  }
+
   const groupedLinks = links.reduce((acc, link) => {
     const group = link.group || 'GENERAL';
     if (!acc[group]) {
@@ -161,9 +169,9 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
                                                 href={`#${link.id}`}
                                                 onClick={(e) => handleClick(e, link.id)}
                                                 className={cn(
-                                                buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost", size: "icon" }),
+                                                buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost", size: "icon" }),
                                                 "h-10 w-10",
-                                                currentView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                                activeView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                                 )}
                                             >
                                                 <link.icon className="h-5 w-5" />
@@ -180,9 +188,9 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
                                         href={`#${link.id}`}
                                         onClick={(e) => handleClick(e, link.id)}
                                         className={cn(
-                                        buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost" }),
+                                        buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
                                         "justify-start text-sm font-medium",
-                                        currentView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        activeView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                         )}
                                     >
                                         <link.icon className="mr-3 h-5 w-5" />
@@ -208,7 +216,7 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
                     </div>
                  </div>
                  <button
-                    onClick={onLogout}
+                    onClick={handleLogout}
                     className={cn(
                         buttonVariants({ variant: "ghost" }), 
                         "w-full justify-start text-muted-foreground hover:text-foreground",
@@ -232,7 +240,7 @@ export function DashboardSidebar({ user, activeView, setActiveView, onLogout, cl
             href={`#${link.id}`}
             onClick={(e) => handleClick(e, link.id)}
             className={cn(
-              buttonVariants({ variant: currentView === link.id ? "secondary" : "ghost" }),
+              buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
               "justify-start text-base md:text-sm"
             )}
           >

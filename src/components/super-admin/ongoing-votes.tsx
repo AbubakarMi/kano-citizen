@@ -7,7 +7,7 @@ import type { Idea } from "@/lib/data";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowUp, PlusCircle, Vote } from "lucide-react";
+import { ArrowUp, PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Sheet,
@@ -21,22 +21,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useFirestore, useUser } from "@/firebase";
+import { addIdea } from "@/firebase/firestore/ideas";
+import { useAppContext } from "@/app/app-provider";
 
-interface OngoingVotesProps {
-  initialIdeas: Idea[];
-}
-
-export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
-  const [ideas, setIdeas] = useState(initialIdeas);
+export function OngoingVotes() {
+  const firestore = useFirestore();
+  const { user } = useUser();
+  const { ideas, setIdeas } = useAppContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
   const { toast } = useToast();
 
-  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
-  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
+  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes.length - a.upvotes.length);
+  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes.length, 0);
 
-  const handleCreatePoll = () => {
+  const handleCreatePoll = async () => {
     if (!newIdeaTitle || !newIdeaDescription) {
         toast({
             variant: "destructive",
@@ -45,23 +46,34 @@ export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
         });
         return;
     }
+    if (!firestore || !user?.profile) return;
 
-    const newIdea: Idea = {
-        id: `idea-${Date.now()}`,
-        title: newIdeaTitle,
-        description: newIdeaDescription,
-        author: "Super Admin",
-        upvotes: 0,
-    };
+    try {
+        const newIdea = {
+            title: newIdeaTitle,
+            description: newIdeaDescription,
+            author: user.profile.name,
+            authorId: user.uid,
+            upvotes: [],
+        };
+        const newIdeaWithId = await addIdea(firestore, newIdea);
+        setIdeas(prevIdeas => [newIdeaWithId, ...prevIdeas]);
 
-    setIdeas(prevIdeas => [newIdea, ...prevIdeas]);
-    setIsSheetOpen(false);
-    setNewIdeaTitle("");
-    setNewIdeaDescription("");
-    toast({
-        title: "Poll Created",
-        description: `The poll "${newIdea.title}" is now live.`,
-    });
+        setIsSheetOpen(false);
+        setNewIdeaTitle("");
+        setNewIdeaDescription("");
+        toast({
+            title: "Poll Created",
+            description: `The poll "${newIdea.title}" is now live.`,
+        });
+    } catch (error) {
+        console.error(error);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not create poll.",
+        });
+    }
   };
 
   return (
@@ -79,7 +91,7 @@ export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {sortedIdeas.map((idea) => {
-            const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
+            const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
             return (
               <div key={idea.id} className="space-y-2 border-b pb-4 last:border-none last:pb-0">
                 <div className="flex justify-between items-center">
@@ -89,7 +101,7 @@ export function OngoingVotes({ initialIdeas }: OngoingVotesProps) {
                   </div>
                   <div className="flex items-center gap-2 font-bold text-lg text-primary">
                     <ArrowUp className="h-5 w-5" />
-                    {idea.upvotes}
+                    {idea.upvotes.length}
                   </div>
                 </div>
                 <div>

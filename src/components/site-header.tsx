@@ -2,7 +2,7 @@
 
 "use client";
 
-import type { User } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,29 +25,37 @@ import {
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useAppContext } from "@/app/app-provider";
 
 interface SiteHeaderProps {
-  user: User | null;
-  onLogout: () => void;
+  user: { uid: string; profile: UserProfile | null; } | null;
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translation['header'];
-  activeView?: string;
-  setActiveView?: (view: string) => void;
   isSidebarCollapsed?: boolean;
 }
 
 export function SiteHeader({
   user,
-  onLogout,
   language,
   setLanguage,
   t,
-  activeView,
-  setActiveView,
   isSidebarCollapsed
 }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { setActiveView } = useAppContext();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (auth) {
+        await signOut(auth);
+        router.push('/');
+    }
+  }
   
   const getInitials = (name: string) => {
     return name
@@ -56,7 +64,7 @@ export function SiteHeader({
       .join("");
   };
 
-  const isSuperAdmin = user?.role === 'Super Admin';
+  const isSuperAdmin = user?.profile?.role === 'Super Admin';
 
   return (
     <header className={cn(
@@ -68,7 +76,7 @@ export function SiteHeader({
         isSuperAdmin && !isSidebarCollapsed ? "lg:pl-[264px]" : "",
         isSuperAdmin && isSidebarCollapsed ? "lg:pl-[96px]" : "",
       )}>
-         {user && setActiveView && !isSuperAdmin && (
+         {user?.profile && !isSuperAdmin && (
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
@@ -81,10 +89,7 @@ export function SiteHeader({
                   <Logo />
                 </div>
                 
-                <DashboardSidebar user={user} activeView={activeView} setActiveView={(view) => {
-                    setActiveView(view);
-                    setMobileMenuOpen(false);
-                }} className="p-4" onLogout={onLogout} />
+                <DashboardSidebar user={user.profile} className="p-4" />
                 
                </SheetContent>
              </Sheet>
@@ -115,13 +120,13 @@ export function SiteHeader({
             
             <Separator />
 
-            {user ? (
+            {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10 border-2 border-primary/50">
                       <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                        {getInitials(user.name)}
+                        {getInitials(user.profile.name)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -129,9 +134,9 @@ export function SiteHeader({
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm font-medium leading-none">{user.profile.name}</p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
+                        {user.profile.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -141,7 +146,7 @@ export function SiteHeader({
                     {t.myProfile}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onLogout} className="text-red-500 focus:text-red-500">
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
                     <LogOut />
                     {t.logout}
                   </DropdownMenuItem>

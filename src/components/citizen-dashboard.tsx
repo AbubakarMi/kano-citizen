@@ -1,8 +1,10 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import type { User, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
+import { useState } from "react";
+import { useUser, useFirestore, useCollection } from "@/firebase";
+import { collection, doc, writeBatch, arrayUnion, arrayRemove } from "firebase/firestore";
+import type { Idea, Directive } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,112 +15,142 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, Users, FileText, Bell, Pin, Vote } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
 import { Separator } from "./ui/separator";
+import { addIdea } from "@/firebase/firestore/ideas";
+import { useAppContext } from "@/app/app-provider";
 
 interface CitizenDashboardProps {
-  user: User;
   t: Translation['dashboard'];
-  ideas: Idea[];
-  directives: Directive[];
-  volunteerOpportunities: VolunteerOpportunity[];
-  activeView: string;
-  setActiveView: (view: string) => void;
 }
 
-export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportunities, activeView, setActiveView }: CitizenDashboardProps) {
+export function CitizenDashboard({ t }: CitizenDashboardProps) {
+  const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
-  const [localIdeas, setLocalIdeas] = useState(ideas);
-  const [localUser, setLocalUser] = useState(user);
-  
-  useEffect(() => {
-    // The activeView is now controlled by the parent page component.
-    // This component will just respond to the activeView prop.
-  }, [activeView]);
+  const { ideas, directives, volunteerOpportunities, activeView } = useAppContext();
 
-  const handleUpvote = (ideaId: string) => {
-    if (localUser.votedOnIdeas.includes(ideaId)) {
-      toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
-      return;
-    }
+  const [newIdeaTitle, setNewIdeaTitle] = useState("");
+  const [newIdeaDescription, setNewIdeaDescription] = useState("");
+
+  const handleUpvote = async (ideaId: string) => {
+    if (!user || !firestore) return;
     
-    setLocalIdeas(prevIdeas => prevIdeas.map(idea => 
-      idea.id === ideaId ? { ...idea, upvotes: idea.upvotes + 1 } : idea
-    ));
-    setLocalUser(prevUser => ({
-      ...prevUser,
-      votedOnIdeas: [...prevUser.votedOnIdeas, ideaId]
-    }));
-    toast({ title: t.voteCasted, description: t.voteCastedDescription });
+    const userRef = doc(firestore, "users", user.uid);
+    const ideaRef = doc(firestore, "ideas", ideaId);
+    
+    const isVoted = user.profile?.votedOnIdeas?.includes(ideaId);
+
+    try {
+      const batch = writeBatch(firestore);
+      if (isVoted) {
+        toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
+        return;
+      } else {
+        batch.update(ideaRef, { upvotes: arrayUnion(user.uid) });
+        batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
+      }
+      await batch.commit();
+      toast({ title: t.voteCasted, description: t.voteCastedDescription });
+    } catch (error) {
+      console.error("Error upvoting:", error);
+      toast({ variant: "destructive", title: "Error", description: "Could not cast vote." });
+    }
   };
 
-  const handleFollow = (directiveId: string) => {
-    const isFollowing = localUser.followedDirectives.includes(directiveId);
-    setLocalUser(prevUser => ({
-      ...prevUser,
-      followedDirectives: isFollowing
-        ? prevUser.followedDirectives.filter(id => id !== directiveId)
-        : [...prevUser.followedDirectives, directiveId]
-    }));
-    toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription });
+  const handleFollow = async (directiveId: string) => {
+    if (!user || !firestore) return;
+    const userRef = doc(firestore, "users", user.uid);
+    const isFollowing = user.profile?.followedDirectives?.includes(directiveId);
+    
+    try {
+      await writeBatch(firestore).update(userRef, {
+        followedDirectives: isFollowing ? arrayRemove(directiveId) : arrayUnion(directiveId)
+      }).commit();
+      toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription });
+    } catch(e) {
+      console.error(e);
+    }
   };
   
   const handleVolunteer = (opportunityId: string) => {
     toast({ title: t.volunteerThankYou, description: t.volunteerThankYouDescription });
   };
   
-  const handleSubmitIdea = () => {
-     toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription })
+  const handleSubmitIdea = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firestore || !user?.profile) return;
+    
+    try {
+      await addIdea(firestore, {
+        title: newIdeaTitle,
+        description: newIdeaDescription,
+        author: user.profile.name,
+        authorId: user.uid,
+        upvotes: [],
+      });
+      setNewIdeaTitle("");
+      setNewIdeaDescription("");
+      toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription });
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Error", description: "Could not submit idea."});
+    }
   }
 
-  const myIdeas = localIdeas.filter(idea => localUser.submittedIdeas.includes(idea.id));
-  const myVotes = localIdeas.filter(idea => localUser.votedOnIdeas.includes(idea.id));
+  const myIdeas = ideas.filter(idea => idea.authorId === user?.uid);
+  const myVotes = ideas.filter(idea => user?.profile?.votedOnIdeas?.includes(idea.id));
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-        {t.welcome} {user.name.split(" ")[0]}!
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">
+        {t.welcome} {user?.profile?.name.split(" ")[0]}!
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
 
-      <Tabs value={activeView} onValueChange={setActiveView} className="mt-8">
-        <TabsList className="hidden">
-          <TabsTrigger value="speak">{t.tabSpeak}</TabsTrigger>
-          <TabsTrigger value="decide">{t.tabDecide}</TabsTrigger>
-          <TabsTrigger value="build">{t.tabBuild}</TabsTrigger>
-        </TabsList>
-        
+      <Tabs value={activeView} className="mt-8">
         <TabsContent value="speak" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">{t.submitIdeaTitle}</CardTitle>
+              <CardTitle className="text-2xl font-headline">{t.submitIdeaTitle}</CardTitle>
               <CardDescription>
                 {t.submitIdeaDescription}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form className="space-y-4">
-                <Input placeholder={t.ideaTitlePlaceholder} />
-                <Textarea placeholder={t.ideaDescriptionPlaceholder} rows={6} />
-              </form>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSubmitIdea}>{t.submitIdeaButton}</Button>
-            </CardFooter>
+            <form onSubmit={handleSubmitIdea}>
+              <CardContent className="space-y-4">
+                  <Input 
+                    placeholder={t.ideaTitlePlaceholder} 
+                    value={newIdeaTitle}
+                    onChange={(e) => setNewIdeaTitle(e.target.value)}
+                    required
+                  />
+                  <Textarea 
+                    placeholder={t.ideaDescriptionPlaceholder} 
+                    rows={6}
+                    value={newIdeaDescription}
+                    onChange={(e) => setNewIdeaDescription(e.target.value)}
+                    required
+                  />
+              </CardContent>
+              <CardFooter>
+                <Button type="submit">{t.submitIdeaButton}</Button>
+              </CardFooter>
+            </form>
           </Card>
         </TabsContent>
 
         <TabsContent value="decide" className="mt-6">
            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-             {localIdeas.sort((a,b) => b.upvotes - a.upvotes).map((idea) => (
+             {ideas.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
                <Card key={idea.id} className="flex flex-col">
                  <CardHeader>
-                   <CardTitle>{idea.title}</CardTitle>
+                   <CardTitle className="font-headline">{idea.title}</CardTitle>
                    <CardDescription>{t.by} {idea.author}</CardDescription>
                  </CardHeader>
                  <CardContent className="flex-grow">
@@ -127,14 +159,15 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
                  <CardFooter className="flex justify-between items-center">
                    <div className="flex items-center gap-2 font-bold text-lg">
                      <ArrowUp className="h-5 w-5"/>
-                     {idea.upvotes}
+                     {idea.upvotes.length}
                    </div>
                    <Button 
-                     variant={localUser.votedOnIdeas.includes(idea.id) ? "secondary" : "outline"}
+                     variant={user?.profile?.votedOnIdeas?.includes(idea.id) ? "secondary" : "outline"}
                      onClick={() => handleUpvote(idea.id)}
+                     disabled={user?.profile?.votedOnIdeas?.includes(idea.id)}
                    >
-                     {localUser.votedOnIdeas.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
-                     {localUser.votedOnIdeas.includes(idea.id) ? t.voted : t.upvote}
+                     {user?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
+                     {user?.profile?.votedOnIdeas?.includes(idea.id) ? t.voted : t.upvote}
                    </Button>
                  </CardFooter>
                </Card>
@@ -144,11 +177,11 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
 
         <TabsContent value="build" className="mt-6 space-y-8">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">{t.myActivity}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.myActivity}</h2>
                 <p className="text-muted-foreground">An overview of your contributions to the platform.</p>
                 <div className="grid gap-6 md:grid-cols-2 mt-4">
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
                         <CardContent className="pl-6">
                             {myIdeas.length > 0 ? (
                                 <ul className="list-disc space-y-1 text-sm">
@@ -158,7 +191,7 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Vote />{t.myVotes}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline"><Vote />{t.myVotes}</CardTitle></CardHeader>
                         <CardContent className="pl-6">
                            {myVotes.length > 0 ? (
                                 <ul className="list-disc space-y-1 text-sm">
@@ -173,7 +206,7 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
             <Separator />
 
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">{t.followDirectives}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.followDirectives}</h2>
                 <p className="text-muted-foreground">Track the progress of ideas that have been turned into official government projects.</p>
                 <div className="mt-4 space-y-4">
                     {directives.map(dir => (
@@ -182,17 +215,17 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
                             <div className="flex justify-between items-start">
                             <div>
                                 <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'default' : 'secondary'}>{dir.status}</Badge>
-                                <CardTitle>{dir.title}</CardTitle>
+                                <CardTitle className="font-headline">{dir.title}</CardTitle>
                             </div>
                             <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
-                                {localUser.followedDirectives.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
-                                {localUser.followedDirectives.includes(dir.id) ? t.following : t.follow}
+                                {user?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
+                                {user?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
                             </Button>
                             </div>
                             <CardDescription>{dir.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <h4 className="font-semibold mb-2">{t.latestUpdates}</h4>
+                            <h4 className="font-semibold mb-2 font-headline">{t.latestUpdates}</h4>
                             <ul className="space-y-2">
                             {dir.updates.map((update, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0" /><span>{update}</span></li>
@@ -207,17 +240,17 @@ export function CitizenDashboard({ user, t, ideas, directives, volunteerOpportun
             <Separator />
 
              <div>
-                <h2 className="text-2xl font-bold tracking-tight">{t.volunteer}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.volunteer}</h2>
                 <p className="text-muted-foreground">Your skills and time can make a huge difference. Volunteer for a project today.</p>
                 <div className="mt-4 grid md:grid-cols-2 gap-6">
                     {volunteerOpportunities.map(op => (
                         <Card key={op.id} className="mb-4">
                         <CardHeader>
-                            <CardTitle>{op.title}</CardTitle>
+                            <CardTitle className="font-headline">{op.title}</CardTitle>
                             <CardDescription>{op.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <h4 className="font-semibold text-sm mb-2">{t.skillsNeeded}</h4>
+                            <h4 className="font-semibold text-sm mb-2 font-headline">{t.skillsNeeded}</h4>
                             <div className="flex flex-wrap gap-2">
                             {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
                             </div>

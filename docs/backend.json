@@ -1,0 +1,79 @@
+{
+    "entities": {
+        "UserProfile": {
+            "title": "User Profile",
+            "description": "Represents a user's profile in the system.",
+            "type": "object",
+            "properties": {
+                "uid": { "type": "string", "description": "The user's unique ID from Firebase Auth." },
+                "name": { "type": "string", "description": "The user's full name." },
+                "email": { "type": "string", "format": "email", "description": "The user's email address." },
+                "role": { "type": "string", "enum": ["Citizen", "MDA Official", "Moderator", "SPD Coordinator", "System Administrator", "Super Admin"] },
+                "location": { "type": "string", "description": "The user's location or ward." },
+                "mda": { "type": "string", "description": "The MDA the user belongs to, if applicable." },
+                "submittedIdeas": { "type": "array", "items": { "type": "string" }, "description": "Array of idea IDs submitted by the user." },
+                "votedOnIdeas": { "type": "array", "items": { "type": "string" }, "description": "Array of idea IDs the user has voted on." },
+                "followedDirectives": { "type": "array", "items": { "type": "string" }, "description": "Array of directive IDs the user is following." },
+                "volunteeredFor": { "type": "array", "items": { "type": "string" }, "description": "Array of volunteer opportunity IDs the user has signed up for." }
+            },
+            "required": ["uid", "name", "email", "role"]
+        },
+        "Idea": {
+            "title": "Idea",
+            "description": "Represents a citizen's submitted idea.",
+            "type": "object",
+            "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "author": { "type": "string" },
+                "authorId": { "type": "string" },
+                "upvotes": { "type": "array", "items": { "type": "string" }, "description": "Array of user UIDs who have upvoted." }
+            },
+            "required": ["title", "description", "author", "authorId"]
+        },
+        "Directive": {
+            "title": "Directive",
+            "description": "Represents an official government directive.",
+            "type": "object",
+            "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "status": { "type": "string", "enum": ["In Progress", "Completed", "Under Review"] },
+                "updates": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["title", "description", "status"]
+        },
+        "VolunteerOpportunity": {
+            "title": "Volunteer Opportunity",
+            "description": "Represents a chance for citizens to volunteer.",
+            "type": "object",
+            "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "requiredSkills": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["title", "description"]
+        }
+    },
+    "auth": {
+        "providers": ["password", "google.com"]
+    },
+    "firestore": {
+        "/users/{userId}": {
+            "schema": { "$ref": "#/entities/UserProfile" },
+            "description": "Stores public profiles for all users."
+        },
+        "/ideas/{ideaId}": {
+            "schema": { "$ref": "#/entities/Idea" },
+            "description": "Collection of all ideas submitted by citizens."
+        },
+        "/directives/{directiveId}": {
+            "schema": { "$ref": "#/entities/Directive" },
+            "description": "Collection of all official government directives."
+        },
+        "/volunteerOpportunities/{opportunityId}": {
+            "schema": { "$ref": "#/entities/VolunteerOpportunity" },
+            "description": "Collection of all volunteer opportunities."
+        }
+    }
+}

@@ -21,8 +21,7 @@ export default function RegisterPage() {
     const t = translations[language];
 
     return (
-        <div className="relative min-h-screen w-full bg-background">
-            <div className="absolute top-0 left-0 h-full w-1.5 bg-primary/20"></div>
+        <div className="relative min-h-screen w-full bg-muted/30">
             <header className="absolute top-0 z-40 w-full">
                 <div className="container flex h-20 items-center justify-between">
                     <Link href="/" aria-label="Home">
@@ -55,7 +54,7 @@ export default function RegisterPage() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="w-full max-w-sm space-y-6">
                     <div className="text-center">
-                        <h1 className="text-3xl font-bold tracking-tight">{t.register.title}</h1>
+                        <h1 className="text-3xl font-bold tracking-tight font-headline">{t.register.title}</h1>
                         <p className="text-muted-foreground mt-2">{t.register.description}</p>
                     </div>
                     <RegisterForm t={t.register} />

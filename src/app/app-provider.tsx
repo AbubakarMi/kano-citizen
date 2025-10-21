@@ -1,0 +1,102 @@
+
+'use client';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useUser, useFirestore, useCollection } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import type { UserProfile, Idea, Directive, VolunteerOpportunity } from '@/lib/data';
+import { seededUsers } from '@/lib/data'; // for roles
+
+type AppContextType = {
+  activeView: string;
+  setActiveView: (view: string) => void;
+  isSidebarCollapsed: boolean;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  ideas: Idea[];
+  setIdeas: (ideas: Idea[]) => void;
+  directives: Directive[];
+  setDirectives: (directives: Directive[]) => void;
+  volunteerOpportunities: VolunteerOpportunity[];
+};
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const { user } = useUser();
+  const firestore = useFirestore();
+  
+  const [activeView, setActiveView] = useState('overview');
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  const ideasQuery = firestore ? query(collection(firestore, 'ideas')) : null;
+  const { data: ideas, loading: ideasLoading } = useCollection<Idea>(ideasQuery);
+  
+  const directivesQuery = firestore ? query(collection(firestore, 'directives')) : null;
+  const { data: directives, loading: directivesLoading } = useCollection<Directive>(directivesQuery);
+  
+  const volunteerQuery = firestore ? query(collection(firestore, 'volunteerOpportunities')) : null;
+  const { data: volunteerOpportunities, loading: volunteerLoading } = useCollection<VolunteerOpportunity>(volunteerQuery);
+
+  const [internalIdeas, setInternalIdeas] = useState<Idea[]>([]);
+  const [internalDirectives, setInternalDirectives] = useState<Directive[]>([]);
+
+  useEffect(() => {
+    if (ideas) setInternalIdeas(ideas);
+  }, [ideas]);
+
+  useEffect(() => {
+    if (directives) setInternalDirectives(directives);
+  }, [directives]);
+
+  useEffect(() => {
+    if (user?.profile?.role) {
+      switch (user.profile.role) {
+        case 'Citizen':
+          setActiveView('decide');
+          break;
+        case 'MDA Official':
+          setActiveView('directives');
+          break;
+        case 'Moderator':
+          setActiveView('queue');
+          break;
+        case 'SPD Coordinator':
+          setActiveView('events');
+          break;
+        case 'System Administrator':
+          setActiveView('health');
+          break;
+        case 'Super Admin':
+          setActiveView('overview');
+          break;
+        default:
+          setActiveView('overview');
+      }
+    }
+  }, [user?.profile?.role]);
+
+  const value = {
+    activeView,
+    setActiveView,
+    isSidebarCollapsed,
+    setSidebarCollapsed,
+    ideas: internalIdeas || [],
+    setIdeas: setInternalIdeas,
+    directives: internalDirectives || [],
+    setDirectives: setInternalDirectives,
+    volunteerOpportunities: volunteerOpportunities || [],
+  };
+
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+export function useAppContext() {
+  const context = useContext(AppContext);
+  if (context === undefined) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
+}

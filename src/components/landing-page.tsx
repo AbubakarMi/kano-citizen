@@ -32,10 +32,10 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
-  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
+  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes.length - a.upvotes.length);
   const topIdea = sortedIdeas[0];
   const otherIdeas = sortedIdeas.slice(1);
-  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
+  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes.length, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
@@ -51,7 +51,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section className="bg-background py-20 md:py-24 lg:py-32">
         <div className="container grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight font-headline">
               {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
             </h1>
             <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
@@ -80,7 +80,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="how-it-works" className="py-20 md:py-24 bg-white dark:bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.howItWorksTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.howItWorksTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.howItWorksDescription}
             </p>
@@ -100,7 +100,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold">{t.step1Title}</h3>
+                    <h3 className="text-xl font-bold font-headline">{t.step1Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step1Description}</p>
                 </div>
             </div>
@@ -118,7 +118,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold">{t.step2Title}</h3>
+                    <h3 className="text-xl font-bold font-headline">{t.step2Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step2Description}</p>
                 </div>
             </div>
@@ -136,7 +136,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold">{t.step3Title}</h3>
+                    <h3 className="text-xl font-bold font-headline">{t.step3Title}</h3>
                     <p className="text-muted-foreground max-w-xs mx-auto">{t.step3Description}</p>
                 </div>
             </div>
@@ -146,11 +146,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Complaint Section */}
-      <section className="bg-background py-20 md:py-24 overflow-hidden">
+      <section className="bg-muted/30 py-20 md:py-24 overflow-hidden">
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight font-headline">
                 Complaint Management System
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -191,7 +191,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="live-polls" className="bg-background py-20 md:py-24">
         <div className="container">
            <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.livePollsTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.livePollsTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.livePollsDescription}
             </p>
@@ -203,26 +203,26 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />
                   <div>
-                    <CardTitle className="text-xl leading-none">{t.topIdeaTitle}</CardTitle>
+                    <CardTitle className="text-xl leading-none font-headline">{t.topIdeaTitle}</CardTitle>
                     <CardDescription className="text-sm">{t.topIdeaDescription}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">{topIdea.title}</h3>
+                <h3 className="text-xl font-bold mb-2 font-headline">{topIdea.title}</h3>
                  <p className="text-sm text-muted-foreground mb-4">{t.by} {topIdea.author}</p>
                 <p className="text-muted-foreground mb-4 line-clamp-3">
                   {topIdea.description}
                 </p>
                 <div className="space-y-1">
-                    <Progress value={(topIdea.upvotes / totalVotes) * 100} className="h-2" />
-                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes / totalVotes) * 100).toFixed(1)}% of votes</p>
+                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2" />
+                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes.length / totalVotes) * 100).toFixed(1)}% of votes</p>
                 </div>
 
                 <div className="mt-4 flex justify-between items-center text-sm font-medium">
                   <div className="flex items-center gap-2 font-bold text-lg text-primary">
                     <ArrowUp className="h-5 w-5" />
-                    <span>{topIdea.upvotes} {t.votes}</span>
+                    <span>{topIdea.upvotes.length} {t.votes}</span>
                   </div>
                    <Button asChild size="lg">
                     <Link href="/login">{t.voteButton}</Link>
@@ -234,11 +234,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
 
             <div className="space-y-6">
                 {otherIdeas.map((idea) => {
-                    const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
+                    const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
                     return (
                         <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
                             <CardContent className="p-6">
-                                <h3 className="text-lg font-semibold mb-1 line-clamp-2">{idea.title}</h3>
+                                <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
                                 <div className="space-y-1 mb-4">
                                     <Progress value={votePercentage} className="h-2" />
@@ -247,7 +247,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 font-bold text-primary">
                                         <ArrowUp className="h-4 w-4" />
-                                        {idea.upvotes}
+                                        {idea.upvotes.length}
                                     </div>
                                     <Button asChild variant="secondary">
                                         <Link href="/login">{t.voteButton}</Link>
@@ -271,7 +271,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="directives" className="py-20 md:py-24 bg-white dark:bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.ideaToActionTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.ideaToActionTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.ideaToActionDescription}
             </p>
@@ -288,14 +288,14 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                         <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-green-500" : "text-amber-500")} />
                         <div className="flex-1">
                           <Badge className="mb-2" variant={isCompleted ? 'default' : 'secondary'}>{dir.status}</Badge>
-                          <CardTitle className="text-xl">{dir.title}</CardTitle>
+                          <CardTitle className="text-xl font-headline">{dir.title}</CardTitle>
                         </div>
                     </div>
                   </CardHeader>
                   <CardContent className="p-6 flex-grow">
                     <p className="text-muted-foreground mb-6">{dir.description}</p>
                     
-                    <h4 className="font-semibold mb-4 text-base">{t.latestUpdates}</h4>
+                    <h4 className="font-semibold mb-4 text-base font-headline">{t.latestUpdates}</h4>
                     <div className="relative pl-6">
                         <div className="absolute left-[11px] top-1 h-full w-0.5 bg-border"></div>
                         <ul className="space-y-8">
@@ -321,7 +321,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="get-involved" className="py-20 md:py-24 bg-primary text-primary-foreground">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.getInvolvedTitle}</h2>
             <p className="mt-4 text-lg text-primary-foreground/80">{t.getInvolvedDescription}</p>
           </div>
 
@@ -344,7 +344,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               <div className="space-y-6">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id} className="p-4 rounded-lg hover:bg-muted transition-colors">
-                      <h3 className="text-xl font-bold">{op.title}</h3>
+                      <h3 className="text-xl font-bold font-headline">{op.title}</h3>
                        <div className="flex flex-wrap gap-2 my-3">
                           {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                       </div>
@@ -356,7 +356,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
-                              <DialogTitle>{op.title}</DialogTitle>
+                              <DialogTitle className="font-headline">{op.title}</DialogTitle>
                               <div className="flex flex-wrap gap-2 pt-2">
                                 {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                               </div>
@@ -393,9 +393,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             <div className="mb-16">
                 <div className="flex items-center gap-2">
                   <div className="h-1 w-4 bg-primary"></div>
-                  <p className="text-sm font-bold uppercase tracking-wider text-primary">TESTIMONIALS</p>
+                  <p className="text-sm font-bold uppercase tracking-wider text-primary font-sans">TESTIMONIALS</p>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4">{t.voicesOfKanoTitle}</h2>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4 font-headline">{t.voicesOfKanoTitle}</h2>
                 <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t.voicesOfKanoDescription}</p>
             </div>
             <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -416,7 +416,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-bold text-lg">{testimonial.name}</p>
+                                <p className="font-bold text-lg font-headline">{testimonial.name}</p>
                                 <p className="text-sm text-muted-foreground">{testimonial.location}</p>
                             </div>
                              <Quote className={cn(
@@ -433,7 +433,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                             "{selectedTestimonial.quote}"
                         </p>
                         <div className="mt-8">
-                            <p className="text-xl font-bold">{selectedTestimonial.name}</p>
+                            <p className="text-xl font-bold font-headline">{selectedTestimonial.name}</p>
                             <p className="text-muted-foreground">{selectedTestimonial.location}</p>
                         </div>
                     </div>
@@ -443,10 +443,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-background py-20 md:py-24">
+      <section className="bg-muted/30 py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
            <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.faqTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.faqTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.faqDescription}
             </p>
@@ -454,7 +454,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="text-lg text-left font-semibold p-6">
+                <AccordionTrigger className="text-lg text-left font-semibold p-6 font-headline">
                     {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground px-6 pb-6">
@@ -471,11 +471,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <footer className="bg-card border-t">
         <div className="container py-8 text-center text-muted-foreground text-sm">
           <p>&copy; {new Date().getFullYear()} {t.footerText}</p>
-          <p className="mt-1 font-semibold text-foreground/80">{t.footerSlogan}</p>
+          <p className="mt-1 font-semibold text-foreground/80 font-headline">{t.footerSlogan}</p>
         </div>
       </footer>
     </>
   );
 }
-
-    

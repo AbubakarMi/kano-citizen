@@ -3,7 +3,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import type { User } from "@/lib/data";
+import { useUser, useFirestore } from '@/firebase';
+import { collection, getDocs, query } from 'firebase/firestore';
+import type { UserProfile, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
+
 import { SiteHeader } from "@/components/site-header";
 import { LandingPage } from "@/components/landing-page";
 import { CitizenDashboard } from "@/components/citizen-dashboard";
@@ -13,26 +16,29 @@ import { SPDScoordinatorDashboard } from "@/components/spd-coordinator-dashboard
 import { SystemAdminDashboard } from "@/components/system-admin-dashboard";
 import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
 import { translations, type Language, type Translation } from "@/lib/translations";
-import { seededUsers, ideas as allIdeas } from "@/lib/data";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
+import { AppProvider, useAppContext } from "@/app/app-provider";
 
-// This is a temporary solution to handle user state without real auth
-const FAKE_USER_SESSION_KEY = 'fake_user_session';
+const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) => {
+    const { 
+        activeView, 
+        setActiveView, 
+        isSidebarCollapsed, 
+        setSidebarCollapsed, 
+        ideas, 
+        directives, 
+        volunteerOpportunities 
+    } = useAppContext();
 
-const RoleBasedDashboard = ({ user, t, activeView, setActiveView, isSidebarCollapsed, setSidebarCollapsed }: { user: User, t: Translation, activeView: string, setActiveView: (view: string) => void, isSidebarCollapsed: boolean, setSidebarCollapsed: (collapsed: boolean) => void }) => {
-    const ideas = t.ideas;
-    const directives = t.directives;
-    const volunteerOpportunities = t.volunteerOpportunities;
-    
     const isSuperAdmin = user.role === 'Super Admin';
 
     const dashboardContent = () => {
       switch (user.role) {
         case "Citizen":
-          return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} activeView={activeView} setActiveView={setActiveView} />;
+          return <CitizenDashboard t={t.dashboard} />;
         case "MDA Official":
           return <MDAOfficialDashboard user={user} />;
         case "Moderator":
@@ -42,44 +48,44 @@ const RoleBasedDashboard = ({ user, t, activeView, setActiveView, isSidebarColla
         case "System Administrator":
           return <SystemAdminDashboard user={user} activeView={activeView} />;
         case "Super Admin":
-          return <SuperAdminDashboard user={user} ideas={ideas} activeView={activeView} />;
+          return <SuperAdminDashboard user={user} activeView={activeView} />;
         default:
-          return <CitizenDashboard user={user} t={t.dashboard} ideas={ideas} directives={directives} volunteerOpportunities={volunteerOpportunities} activeView={activeView} setActiveView={setActiveView} />;
+          return <CitizenDashboard t={t.dashboard} />;
       }
-  }
+    }
 
-  return (
-      <div className="flex">
-        <aside 
-          className={cn(
-            "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background transition-all duration-300",
-            isSuperAdmin && !isSidebarCollapsed && "w-[240px] bg-card",
-            isSuperAdmin && isSidebarCollapsed && "w-[72px] bg-card"
-          )}
-        >
-             {isSuperAdmin ? (
+    return (
+        <div className="flex">
+            <aside 
+            className={cn(
+                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block bg-background transition-all duration-300",
+                isSuperAdmin ? 'bg-card' : '',
+                isSuperAdmin && !isSidebarCollapsed && "w-[240px]",
+                isSuperAdmin && isSidebarCollapsed && "w-[72px]",
+                !isSuperAdmin && "w-[240px]"
+            )}
+            >
                 <DashboardSidebar 
                     user={user} 
-                    activeView={activeView} 
-                    setActiveView={setActiveView} 
-                    onLogout={() => { /* Implement logout for sidebar if needed */}}
                     isCollapsed={isSidebarCollapsed}
                     setIsCollapsed={setSidebarCollapsed}
                 />
-            ) : (
-                <DashboardSidebar user={user} activeView={activeView} setActiveView={setActiveView} onLogout={() => { /* Implement logout for sidebar if needed */}}/>
-            )}
-        </aside>
-        <div className={cn(
-          "flex-1 p-6 lg:p-8 transition-all duration-300",
-          isSuperAdmin && !isSidebarCollapsed && "lg:ml-[240px] bg-muted/30",
-          isSuperAdmin && isSidebarCollapsed && "lg:ml-[72px] bg-muted/30",
-           !isSuperAdmin && "lg:ml-[240px]"
-        )}>
-            {dashboardContent()}
+            </aside>
+            <main className={cn(
+            "flex-1 pt-20 transition-all duration-300",
+            isSuperAdmin && !isSidebarCollapsed && "lg:ml-[240px]",
+            isSuperAdmin && isSidebarCollapsed && "lg:ml-[72px]",
+            !isSuperAdmin && "lg:ml-[240px]"
+            )}>
+                <div className={cn(
+                    "p-6 lg:p-8",
+                    isSuperAdmin ? 'bg-muted/30' : ''
+                )}>
+                    {dashboardContent()}
+                </div>
+            </main>
         </div>
-      </div>
-  )
+    )
 };
 
 const DashboardLoading = () => (
@@ -102,98 +108,29 @@ const DashboardLoading = () => (
     </div>
 );
 
-
-export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+function HomePageContent() {
+  const { user, loading: userLoading } = useUser();
   const [language, setLanguage] = useState<Language>('en');
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const [activeView, setActiveView] = useState('overview');
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-        try {
-            const session = localStorage.getItem(FAKE_USER_SESSION_KEY);
-            if (session) {
-                const loggedInUser = JSON.parse(session);
-                const seededUser = seededUsers.find(u => u.email.toLowerCase() === loggedInUser.email.toLowerCase());
-                
-                if (seededUser) {
-                    loggedInUser.role = seededUser.role;
-                    loggedInUser.mda = seededUser.mda;
-                } else {
-                    loggedInUser.role = loggedInUser.role || 'Citizen';
-                }
-                setUser(loggedInUser);
-                
-                switch(loggedInUser.role) {
-                    case 'Citizen':
-                        setActiveView('decide');
-                        break;
-                    case 'MDA Official':
-                        setActiveView('directives');
-                        break;
-                    case 'Moderator':
-                        setActiveView('queue');
-                        break;
-                    case 'SPD Coordinator':
-                        setActiveView('events');
-                        break;
-                    case 'System Administrator':
-                        setActiveView('health');
-                        break;
-                    case 'Super Admin':
-                        setActiveView('overview');
-                        break;
-                    default:
-                        setActiveView('overview');
-                }
-            }
-        } catch (error) {
-            console.error("Failed to parse user session", error);
-            localStorage.removeItem(FAKE_USER_SESSION_KEY);
-        } finally {
-            setIsLoading(false); 
-        }
-    }
-  }, []);
-
-
-  const handleLogout = () => {
-    localStorage.removeItem(FAKE_USER_SESSION_KEY);
-    setUser(null);
-    setActiveView('overview');
-    router.push('/');
-  };
+  const { activeView, setActiveView, isSidebarCollapsed } = useAppContext();
   
   const t = translations[language];
+
+  if (userLoading) {
+    return <DashboardLoading />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
        <SiteHeader
         user={user}
-        onLogout={handleLogout}
         language={language}
         setLanguage={setLanguage}
         t={t.header}
-        activeView={activeView}
-        setActiveView={setActiveView}
         isSidebarCollapsed={isSidebarCollapsed}
       />
-      <main className="flex-1 pt-20">
-        {isLoading ? (
-          <DashboardLoading />
-        ) : user ? (
-          <RoleBasedDashboard 
-            user={user} 
-            t={t} 
-            activeView={activeView} 
-            setActiveView={setActiveView}
-            isSidebarCollapsed={isSidebarCollapsed}
-            setSidebarCollapsed={setSidebarCollapsed}
-           />
+      <main className="flex-1">
+        {user ? (
+          <RoleBasedDashboard user={user} t={t} />
         ) : (
           <LandingPage 
             language={language} 
@@ -209,4 +146,12 @@ export default function Home() {
       </main>
     </div>
   );
+}
+
+export default function Home() {
+    return (
+        <AppProvider>
+            <HomePageContent />
+        </AppProvider>
+    )
 }

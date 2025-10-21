@@ -19,9 +19,12 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
-import { seededUsers, type User } from "@/lib/data";
 import { Checkbox } from "./ui/checkbox";
 import { WelcomeDialog } from "./welcome-dialog";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useAuth, useFirestore } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
+
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -29,7 +32,6 @@ const loginSchema = z.object({
   rememberMe: z.boolean().default(false),
 });
 
-const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
 interface LoginFormProps {
     t: Translation['login'];
@@ -39,6 +41,9 @@ export function LoginForm({ t }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const auth = useAuth();
+  const firestore = useFirestore();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({ title: "", description: "" });
 
@@ -47,58 +52,59 @@ export function LoginForm({ t }: LoginFormProps) {
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    setIsLoading(true);
+  const showWelcomeDialog = async (userId: string) => {
+    if (!firestore) return;
+    const userDoc = await getDoc(doc(firestore, "users", userId));
+    const userName = userDoc.exists() ? userDoc.data().name : "Citizen";
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Check if the user is one of the seeded admins
-    const seededUser = seededUsers.find(u => u.email.toLowerCase() === values.email.toLowerCase());
-    
-    let userToLogin: User;
-
-    if (seededUser) {
-      // It's a seeded admin user
-      userToLogin = {
-        name: seededUser.name,
-        email: seededUser.email,
-        role: seededUser.role,
-        mda: seededUser.mda,
-        submittedIdeas: ["idea-1"],
-        votedOnIdeas: ["idea-2", "idea-3"],
-        followedDirectives: ["dir-1"],
-        volunteeredFor: [],
-      };
-    } else {
-      // It's a regular citizen user
-       userToLogin = {
-        name: "Kano Citizen",
-        email: values.email,
-        role: "Citizen",
-        submittedIdeas: [],
-        votedOnIdeas: [],
-        followedDirectives: [],
-        volunteeredFor: [],
-      };
-    }
-
-    // Simulate session by storing user in localStorage
-    localStorage.setItem(FAKE_USER_SESSION_KEY, JSON.stringify(userToLogin));
-
     setDialogContent({
-        title: `${t.toastWelcome} ${userToLogin.name.split(' ')[0]}!`,
+        title: `${t.toastWelcome} ${userName.split(' ')[0]}!`,
         description: t.toastDescription,
     });
     setDialogOpen(true);
-
-    setIsLoading(false);
   };
   
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    if (!auth) return;
+    setIsLoading(true);
+    
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      await showWelcomeDialog(userCredential.user.uid);
+    } catch (error: any) {
+        console.error(error);
+        toast({
+            variant: "destructive",
+            title: t.toastErrorTitle,
+            description: error.message || t.toastErrorDescription,
+        });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+  
+  const handleGoogleSignIn = async () => {
+    if (!auth) return;
+    setIsLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        await showWelcomeDialog(result.user.uid);
+    } catch(error: any) {
+        console.error(error);
+        toast({
+            variant: "destructive",
+            title: t.toastErrorTitle,
+            description: error.message || t.toastErrorDescription,
+        });
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
   const handleDialogConfirm = () => {
     setDialogOpen(false);
     router.push('/');
-    router.refresh();
   }
 
   return (
@@ -111,7 +117,7 @@ export function LoginForm({ t }: LoginFormProps) {
         onConfirm={handleDialogConfirm}
       />
       <div className="space-y-6">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
               <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 111.8 512 0 400.2 0 261.8 0 123.8 111.8 12.8 244 12.8c70.3 0 129.8 27.8 174.2 71.9l-65.4 63.8C324.7 114.6 289.4 96 244 96c-82.6 0-149.7 67.5-149.7 150.9s67.1 150.9 149.7 150.9c97.1 0 131.2-70.9 135.9-108.9H244v-75.3h236.1c2.4 12.6 3.9 26.1 3.9 40.2z"></path></svg>
               Login with Google
           </Button>
@@ -121,7 +127,7 @@ export function LoginForm({ t }: LoginFormProps) {
                   <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="bg-muted/30 px-2 text-muted-foreground font-sans">
                   or Login with Email
                   </span>
               </div>
@@ -146,7 +152,7 @@ export function LoginForm({ t }: LoginFormProps) {
               render={({ field }) => (
                   <FormItem>
                   <FormLabel>{t.passwordLabel}</FormLabel>
-                  <FormControl><Input type="password" placeholder="any password" {...field} /></FormControl>
+                  <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
                   <FormMessage />
                   </FormItem>
               )}
@@ -170,7 +176,7 @@ export function LoginForm({ t }: LoginFormProps) {
                           </FormItem>
                       )}
                   />
-                  <Link href="#" className="text-sm text-primary hover:underline">
+                  <Link href="#" className="text-sm text-secondary hover:underline">
                       {t.forgotPasswordLink}
                   </Link>
               </div>

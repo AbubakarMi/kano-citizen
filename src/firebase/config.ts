@@ -1,9 +1,7 @@
-"use client";
 
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-
-const firebaseConfig = {
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+export const firebaseConfig = {
   apiKey: "AIzaSyDRo9Vnm8Tlg5jjGRgE9-uvIXoKyLPPUBU",
   authDomain: "kano-citizen-s-voice.firebaseapp.com",
   projectId: "kano-citizen-s-voice",
@@ -12,9 +10,3 @@ const firebaseConfig = {
   appId: "1:392979246627:web:156ae10eb515d7928ccb96",
   measurementId: "G-9C2Y5SLX1D"
 };
-
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-
-export { app, auth };

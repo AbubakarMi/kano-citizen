@@ -15,11 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
-import type { User } from "@/lib/data";
 import { WelcomeDialog } from "./welcome-dialog";
+import { useAuth, useFirestore } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+import type { UserProfile } from "@/lib/data";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -28,7 +31,6 @@ const registerSchema = z.object({
   location: z.string().optional(),
 });
 
-const FAKE_USER_SESSION_KEY = 'fake_user_session';
 
 interface RegisterFormProps {
     t: Translation['register'];
@@ -37,6 +39,9 @@ interface RegisterFormProps {
 export function RegisterForm({ t }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -45,34 +50,43 @@ export function RegisterForm({ t }: RegisterFormProps) {
   });
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
+    if (!auth || !firestore) return;
     setIsLoading(true);
     
-    // Simulate API call for user creation
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
 
-    // All registered users are citizens by default.
-    const newUser: User = {
-        name: values.fullName,
-        email: values.email,
-        role: "Citizen",
-        location: values.location,
-        submittedIdeas: [],
-        votedOnIdeas: [],
-        followedDirectives: [],
-        volunteeredFor: [],
-    };
-    
-    // Simulate session by storing user in localStorage
-    localStorage.setItem(FAKE_USER_SESSION_KEY, JSON.stringify(newUser));
+      const newUserProfile: Omit<UserProfile, 'uid'> = {
+          name: values.fullName,
+          email: values.email,
+          role: "Citizen",
+          location: values.location,
+          submittedIdeas: [],
+          votedOnIdeas: [],
+          followedDirectives: [],
+          volunteeredFor: [],
+      };
 
-    setDialogOpen(true);
-    setIsLoading(false);
+      await setDoc(doc(firestore, "users", user.uid), newUserProfile);
+      
+      setDialogOpen(true);
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+          variant: "destructive",
+          title: t.toastErrorTitle,
+          description: error.message || t.toastErrorDescription,
+      });
+    } finally {
+        setIsLoading(false);
+    }
   };
   
   const handleDialogConfirm = () => {
     setDialogOpen(false);
     router.push('/');
-    router.refresh();
   }
 
   return (
@@ -86,7 +100,7 @@ export function RegisterForm({ t }: RegisterFormProps) {
         />
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <p className="text-xs text-muted-foreground text-center">{t.formHint}</p>
+                <p className="text-xs text-muted-foreground text-center font-sans">{t.formHint}</p>
                 <FormField
                 control={form.control}
                 name="fullName"
@@ -115,7 +129,7 @@ export function RegisterForm({ t }: RegisterFormProps) {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>{t.passwordLabel}</FormLabel>
-                    <FormControl><Input type="password" {...field} /></FormControl>
+                    <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
                     <FormMessage />
                     </FormItem>
                 )}

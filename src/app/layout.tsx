@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
+import { Poppins, PT_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-import { Inter as FontSans } from "next/font/google"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import "./globals.css";
-
+import { FirebaseProvider } from "@/firebase/provider";
+import { FirebaseErrorListener } from "@/components/FirebaseErrorListener";
 
 export const metadata: Metadata = {
   title: "Kano Citizens' Voice",
   description: "Speak. Decide. Build Together.",
 };
 
-const fontSans = FontSans({
+const fontPoppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-sans",
-})
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-poppins",
+});
+
+const fontPtSans = PT_Sans({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-pt-sans",
+});
 
 export default function RootLayout({
   children,
@@ -24,12 +32,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          "min-h-screen bg-background font-body antialiased",
+          fontPoppins.variable,
+          fontPtSans.variable
         )}
       >
-        {children}
-        <Toaster />
+        <FirebaseProvider>
+          {children}
+          <Toaster />
+          <FirebaseErrorListener />
+        </FirebaseProvider>
       </body>
     </html>
   );
