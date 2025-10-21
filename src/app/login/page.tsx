@@ -1,13 +1,13 @@
+
 "use client";
 
 import { useState } from "react";
 import { LoginForm } from "@/components/login-form";
 import { Logo } from "@/components/logo";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { translations, type Language } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
+import { Globe, Home } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,21 +28,28 @@ export default function LoginPage() {
                 <Link href="/" aria-label="Home">
                   <Logo />
                 </Link>
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                        <Globe className="h-5 w-5" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setLanguage('en')}>
-                        English
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLanguage('ha')}>
-                        Hausa
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link href="/" aria-label="Home">
+                            <Home className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                            <Globe className="h-5 w-5" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setLanguage('en')}>
+                            English
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setLanguage('ha')}>
+                            Hausa
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
         </header>
         <div className="flex min-h-screen flex-col items-center justify-center p-4">
