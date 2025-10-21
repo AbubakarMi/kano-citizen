@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -59,8 +59,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
 
-          <div className="flex items-center justify-center lg:justify-end">
-            <Card className="w-full max-w-lg shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
+          <div className="lg:justify-self-end">
+            <Card className="w-full max-w-md shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
               <CardHeader className="bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />
@@ -318,12 +318,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="relative flex flex-col justify-between bg-card shadow-lg overflow-hidden border">
-                <Quote className="absolute top-6 left-6 h-16 w-16 text-muted/50" />
-                <CardHeader className="relative z-10 pt-12">
-                   <p className="text-xl font-medium italic text-foreground/90">"{testimonial.quote}"</p>
+              <Card key={index} className="flex flex-col justify-between bg-card shadow-lg border">
+                <CardHeader className="p-6 pb-4">
+                   <p className="text-base text-foreground/90">"{testimonial.quote}"</p>
                 </CardHeader>
-                <CardFooter className="relative z-10 p-6 pt-4 mt-auto bg-muted/40">
+                <CardFooter className="p-6 pt-4 mt-auto bg-muted/40">
                   <div className="flex items-center gap-4">
                     <Avatar className="border-2 border-primary/50">
                       <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/40/40`} />
@@ -407,5 +406,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
 
     
