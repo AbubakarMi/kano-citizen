@@ -79,7 +79,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="how-it-works" className="py-20 md:py-24 bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.howItWorksTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.howItWorksTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.howItWorksDescription}
             </p>
@@ -149,11 +149,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight font-headline">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight font-headline text-primary">
                 Complaint Management System
               </h2>
               <p className="text-lg text-muted-foreground">
-                With Kano Citizens' Voice, you can easily <span className="text-primary font-semibold">track</span>, <span className="text-primary font-semibold">investigate</span>, and <span className="text-primary font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
+                With Kano Citizens' Voice, you can easily <span className="text-accent font-semibold">track</span>, <span className="text-accent font-semibold">investigate</span>, and <span className="text-accent font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <Button asChild size="lg">
@@ -190,19 +190,19 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="live-polls" className="bg-background py-20 md:py-24">
         <div className="container">
            <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.livePollsTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.livePollsTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.livePollsDescription}
             </p>
           </div>
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div className="lg:sticky top-24">
-             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
-              <CardHeader className="bg-primary/5 p-4">
+             <Card className="w-full shadow-2xl overflow-hidden border-2 border-accent/20 bg-card">
+              <CardHeader className="bg-accent/5 p-4">
                 <div className="flex items-center gap-3">
-                  <Award className="h-8 w-8 text-primary" />
+                  <Award className="h-8 w-8 text-accent" />
                   <div>
-                    <CardTitle className="text-xl leading-none font-headline">{t.topIdeaTitle}</CardTitle>
+                    <CardTitle className="text-xl leading-none font-headline text-accent">{t.topIdeaTitle}</CardTitle>
                     <CardDescription className="text-sm">{t.topIdeaDescription}</CardDescription>
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes.length} {t.votes}</span>
                   </div>
-                   <Button asChild size="lg">
+                   <Button asChild size="lg" variant="secondary">
                     <Link href="/login">{t.voteButton}</Link>
                   </Button>
                 </div>
@@ -248,7 +248,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                         <ArrowUp className="h-4 w-4" />
                                         {idea.upvotes.length}
                                     </div>
-                                    <Button asChild variant="outline">
+                                    <Button asChild variant="secondary">
                                         <Link href="/login">{t.voteButton}</Link>
                                     </Button>
                                 </div>
@@ -270,7 +270,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section id="directives" className="py-20 md:py-24 bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.ideaToActionTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.ideaToActionTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.ideaToActionDescription}
             </p>
@@ -278,16 +278,20 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           <div className="grid gap-8 md:grid-cols-2">
             {directives.map(dir => {
               const isCompleted = dir.status === 'Completed' || dir.status === 'An kammala';
-              const Icon = isCompleted ? CheckCircle2 : FolderClock;
+              const isInProgress = dir.status === 'In Progress' || dir.status === 'Ana ci gaba';
               
               return (
                 <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                   <CardHeader className="p-6 bg-muted/30">
                     <div className="flex items-start gap-4">
-                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-secondary" : "text-accent")} />
+                        <div className={cn("h-8 w-8 shrink-0 mt-1 rounded-full flex items-center justify-center", 
+                            isCompleted ? "bg-secondary" : isInProgress ? "bg-primary" : "bg-accent"
+                        )}>
+                            {isCompleted ? <CheckCircle2 className="h-5 w-5 text-secondary-foreground" /> : <FolderClock className="h-5 w-5 text-primary-foreground" />}
+                        </div>
                         <div className="flex-1">
-                          <Badge className="mb-2" variant={isCompleted ? 'secondary' : 'default'}>{dir.status}</Badge>
-                          <CardTitle className="text-xl font-headline">{dir.title}</CardTitle>
+                          <Badge className="mb-2" variant={isCompleted ? 'secondary' : isInProgress ? 'default' : 'destructive'}>{dir.status}</Badge>
+                          <CardTitle className="text-xl font-headline text-primary">{dir.title}</CardTitle>
                         </div>
                     </div>
                   </CardHeader>
@@ -343,7 +347,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               <div className="space-y-6">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id} className="p-4 rounded-lg hover:bg-muted transition-colors">
-                      <h3 className="text-xl font-bold font-headline">{op.title}</h3>
+                      <h3 className="text-xl font-bold font-headline text-primary">{op.title}</h3>
                        <div className="flex flex-wrap gap-2 my-3">
                           {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                       </div>
@@ -351,11 +355,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                       
                        <Dialog>
                           <DialogTrigger asChild>
-                             <Button variant="outline">View Details</Button>
+                             <Button variant="landing">View Details</Button>
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
-                              <DialogTitle className="font-headline">{op.title}</DialogTitle>
+                              <DialogTitle className="font-headline text-primary">{op.title}</DialogTitle>
                               <div className="flex flex-wrap gap-2 pt-2">
                                 {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                               </div>
@@ -364,7 +368,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                               <p className="text-muted-foreground">{op.description}</p>
                             </div>
                             <DialogFooter>
-                              <Button asChild><Link href="/register">Volunteer Now</Link></Button>
+                              <Button asChild variant="secondary"><Link href="/register">Volunteer Now</Link></Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
@@ -394,7 +398,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   <div className="h-1 w-4 bg-accent"></div>
                   <p className="text-sm font-bold uppercase tracking-wider text-accent font-sans">TESTIMONIALS</p>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4 font-headline">{t.voicesOfKanoTitle}</h2>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4 font-headline text-primary">{t.voicesOfKanoTitle}</h2>
                 <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t.voicesOfKanoDescription}</p>
             </div>
             <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -445,7 +449,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       <section className="bg-muted/30 py-20 md:py-24">
         <div className="container max-w-4xl mx-auto">
            <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.faqTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">{t.faqTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.faqDescription}
             </p>
@@ -453,7 +457,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="text-lg text-left font-semibold p-6 font-headline">
+                <AccordionTrigger className="text-lg text-left font-semibold p-6 font-headline hover:text-primary">
                     {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground px-6 pb-6">
@@ -467,10 +471,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
 
 
       {/* Footer */}
-      <footer className="bg-card border-t">
-        <div className="container py-8 text-center text-muted-foreground text-sm">
+      <footer className="bg-primary text-primary-foreground border-t">
+        <div className="container py-8 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} {t.footerText}</p>
-          <p className="mt-1 font-semibold text-foreground/80 font-headline">{t.footerSlogan}</p>
+          <p className="mt-1 font-semibold font-headline">{t.footerSlogan}</p>
         </div>
       </footer>
     </>

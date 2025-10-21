@@ -25,14 +25,14 @@ export function HeroDashboard() {
   return (
     <div className="relative w-full max-w-2xl mx-auto bg-card/60 backdrop-blur-xl border rounded-xl shadow-2xl">
       <div className="p-6">
-        <h2 className="text-xl font-bold text-foreground">Kano Progress Dashboard</h2>
+        <h2 className="text-xl font-bold text-primary">Kano Progress Dashboard</h2>
         <p className="text-sm text-muted-foreground">A snapshot of citizen engagement & government action.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
           <div className="lg:col-span-3">
             <Card className="h-full bg-background/70">
               <CardHeader>
-                <CardTitle className="text-lg">Top Community Idea</CardTitle>
+                <CardTitle className="text-lg text-primary">Top Community Idea</CardTitle>
                 <CardDescription>Waste-to-Wealth Recycling Project</CardDescription>
               </CardHeader>
               <CardContent>
@@ -51,18 +51,18 @@ export function HeroDashboard() {
           <div className="lg:col-span-2">
             <Card className="h-full bg-background/70">
               <CardHeader>
-                <CardTitle className="text-lg">Live Polls</CardTitle>
+                <CardTitle className="text-lg text-primary">Live Polls</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3 text-sm">
                   <li className="flex justify-between items-center">
-                    <span>Community Solar</span> <span className="font-bold text-primary">128</span>
+                    <span>Community Solar</span> <span className="font-bold text-accent">128</span>
                   </li>
                   <li className="flex justify-between items-center">
-                    <span>Public Transport</span> <span className="font-bold text-primary">98</span>
+                    <span>Public Transport</span> <span className="font-bold text-accent">98</span>
                   </li>
                    <li className="flex justify-between items-center">
-                    <span>Youth Tech Training</span> <span className="font-bold text-primary">77</span>
+                    <span>Youth Tech Training</span> <span className="font-bold text-accent">77</span>
                   </li>
                 </ul>
               </CardContent>
@@ -73,7 +73,7 @@ export function HeroDashboard() {
         <div className="mt-6">
           <Card className="bg-background/70">
             <CardHeader>
-              <CardTitle className="text-lg">Directives in Progress</CardTitle>
+              <CardTitle className="text-lg text-primary">Directives in Progress</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -87,7 +87,7 @@ export function HeroDashboard() {
                   <TableRow>
                     <TableCell>Streetlight Repair Phase 1</TableCell>
                     <TableCell>
-                      <Badge variant="default" className="text-accent-foreground border-accent bg-accent">
+                      <Badge variant="default" className="text-primary-foreground border-primary bg-primary">
                         <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
                       </Badge>
                     </TableCell>
@@ -125,7 +125,7 @@ export function HeroDashboard() {
               <AvatarImage src="https://picsum.photos/seed/Umar/40/40" />
               <AvatarFallback>UF</AvatarFallback>
             </Avatar>
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-xs font-semibold text-accent">
               +12k
             </div>
           </div>

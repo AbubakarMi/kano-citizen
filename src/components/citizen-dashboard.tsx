@@ -56,7 +56,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
       }
       await batch.commit();
-      toast({ title: t.voteCasted, description: t.voteCastedDescription });
+      toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch (error) {
       console.error("Error upvoting:", error);
       toast({ variant: "destructive", title: "Error", description: "Could not cast vote." });
@@ -79,7 +79,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   };
   
   const handleVolunteer = (opportunityId: string) => {
-    toast({ title: t.volunteerThankYou, description: t.volunteerThankYouDescription });
+    toast({ title: t.volunteerThankYou, description: t.volunteerThankYouDescription, className: "bg-secondary text-secondary-foreground" });
   };
   
   const handleSubmitIdea = async (e: React.FormEvent) => {
@@ -96,7 +96,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
       });
       setNewIdeaTitle("");
       setNewIdeaDescription("");
-      toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription });
+      toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch (error) {
       console.error(error);
       toast({ variant: "destructive", title: "Error", description: "Could not submit idea."});
@@ -108,7 +108,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">
         {t.welcome} {user?.profile?.name.split(" ")[0]}!
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
@@ -117,7 +117,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         <TabsContent value="speak" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl font-headline">{t.submitIdeaTitle}</CardTitle>
+              <CardTitle className="text-2xl font-headline text-primary">{t.submitIdeaTitle}</CardTitle>
               <CardDescription>
                 {t.submitIdeaDescription}
               </CardDescription>
@@ -150,7 +150,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
              {ideas.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
                <Card key={idea.id} className="flex flex-col">
                  <CardHeader>
-                   <CardTitle className="font-headline">{idea.title}</CardTitle>
+                   <CardTitle className="font-headline text-primary">{idea.title}</CardTitle>
                    <CardDescription>{t.by} {idea.author}</CardDescription>
                  </CardHeader>
                  <CardContent className="flex-grow">
@@ -177,7 +177,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
         <TabsContent value="build" className="mt-6 space-y-8">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.myActivity}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.myActivity}</h2>
                 <p className="text-muted-foreground">An overview of your contributions to the platform.</p>
                 <div className="grid gap-6 md:grid-cols-2 mt-4">
                     <Card>
@@ -206,7 +206,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
             <Separator />
 
             <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.followDirectives}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.followDirectives}</h2>
                 <p className="text-muted-foreground">Track the progress of ideas that have been turned into official government projects.</p>
                 <div className="mt-4 space-y-4">
                     {directives.map(dir => (
@@ -214,8 +214,8 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         <CardHeader>
                             <div className="flex justify-between items-start">
                             <div>
-                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : 'default'}>{dir.status}</Badge>
-                                <CardTitle className="font-headline">{dir.title}</CardTitle>
+                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'destructive'}>{dir.status}</Badge>
+                                <CardTitle className="font-headline text-primary">{dir.title}</CardTitle>
                             </div>
                             <Button variant="outline" size="sm" onClick={() => handleFollow(dir.id)}>
                                 {user?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
@@ -228,7 +228,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                             <h4 className="font-semibold mb-2 font-headline">{t.latestUpdates}</h4>
                             <ul className="space-y-2">
                             {dir.updates.map((update, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0" /><span>{update}</span></li>
+                            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0 text-accent" /><span>{update}</span></li>
                             ))}
                             </ul>
                         </CardContent>
@@ -240,13 +240,13 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
             <Separator />
 
              <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline">{t.volunteer}</h2>
+                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.volunteer}</h2>
                 <p className="text-muted-foreground">Your skills and time can make a huge difference. Volunteer for a project today.</p>
                 <div className="mt-4 grid md:grid-cols-2 gap-6">
                     {volunteerOpportunities.map(op => (
                         <Card key={op.id} className="mb-4">
                         <CardHeader>
-                            <CardTitle className="font-headline">{op.title}</CardTitle>
+                            <CardTitle className="font-headline text-primary">{op.title}</CardTitle>
                             <CardDescription>{op.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -256,7 +256,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button onClick={() => handleVolunteer(op.id)}><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
+                            <Button onClick={() => handleVolunteer(op.id)} variant="landing"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
                         </CardFooter>
                         </Card>
                     ))}

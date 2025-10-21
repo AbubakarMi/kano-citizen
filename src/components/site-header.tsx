@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import type { UserProfile } from "@/lib/data";
@@ -69,7 +68,7 @@ export function SiteHeader({
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      isSuperAdmin ? 'bg-card' : 'bg-background/95'
+      isSuperAdmin ? 'bg-card' : 'bg-primary'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
@@ -80,31 +79,29 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon">
+                 <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
                <SheetContent side="left" className="p-0 w-64">
-                <div className="p-4 border-b">
-                  <Logo />
+                <div className="p-4 border-b bg-primary text-primary-foreground">
+                  <Logo className="text-primary-foreground"/>
                 </div>
-                
                 <DashboardSidebar user={user.profile} className="p-4" />
-                
                </SheetContent>
              </Sheet>
            </div>
          )}
         <div className="flex items-center gap-8">
             <Link href="/" aria-label="Home" className={cn("flex items-center", isSuperAdmin ? 'hidden' : '')}>
-              <Logo />
+              <Logo className="text-primary-foreground" />
             </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -123,9 +120,9 @@ export function SiteHeader({
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10 border-2 border-primary/50">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-primary/80">
+                    <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
+                      <AvatarFallback className="bg-primary-foreground/10 text-primary-foreground font-semibold">
                         {getInitials(user.profile.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -154,11 +151,11 @@ export function SiteHeader({
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild variant="ghost">
+                <Button asChild variant="ghost" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
                   <Link href="/login">{t.signIn}</Link>
                 </Button>
 
-                <Button asChild>
+                <Button asChild variant="secondary">
                   <Link href="/register">{t.register}</Link>
                 </Button>
               </>
@@ -170,4 +167,4 @@ export function SiteHeader({
   );
 }
 
-const Separator = () => <div className="h-6 w-px bg-border" />;
+const Separator = () => <div className="h-6 w-px bg-primary-foreground/20" />;
