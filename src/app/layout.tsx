@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { FirebaseProvider } from "@/firebase/provider";
 import { FirebaseErrorListener } from "@/components/FirebaseErrorListener";
+import { MockAuthProvider } from "@/firebase/auth/use-user";
 
 export const metadata: Metadata = {
   title: "Kano Citizens' Voice",
@@ -33,16 +34,18 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen font-sans antialiased",
+          "min-h-screen font-sans antialiased bg-background text-foreground",
           fontPoppins.variable,
           fontPtSans.variable
         )}
       >
-        <FirebaseProvider>
-          {children}
-          <Toaster />
-          <FirebaseErrorListener />
-        </FirebaseProvider>
+        <MockAuthProvider>
+          <FirebaseProvider>
+            {children}
+            <Toaster />
+            <FirebaseErrorListener />
+          </FirebaseProvider>
+        </MockAuthProvider>
       </body>
     </html>
   );

@@ -21,9 +21,8 @@ import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
 import { Checkbox } from "./ui/checkbox";
 import { WelcomeDialog } from "./welcome-dialog";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useAuth, useFirestore } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/firebase/auth/use-user";
+import { seededUsers } from "@/lib/data";
 
 
 const loginSchema = z.object({
@@ -41,8 +40,7 @@ export function LoginForm({ t }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
+  const { login } = useUser();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({ title: "", description: "" });
@@ -52,10 +50,9 @@ export function LoginForm({ t }: LoginFormProps) {
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  const showWelcomeDialog = async (userId: string) => {
-    if (!firestore) return;
-    const userDoc = await getDoc(doc(firestore, "users", userId));
-    const userName = userDoc.exists() ? userDoc.data().name : "Citizen";
+  const showWelcomeDialog = async (email: string) => {
+    const user = seededUsers.find(u => u.email === email);
+    const userName = user ? user.name : "Citizen";
     
     setDialogContent({
         title: `${t.toastWelcome} ${userName.split(' ')[0]}!`,
@@ -65,22 +62,26 @@ export function LoginForm({ t }: LoginFormProps) {
   };
   
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    if (!auth) return;
     setIsLoading(true);
     
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      await showWelcomeDialog(userCredential.user.uid);
-    } catch (error: any) {
-        console.error(error);
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Find user in seeded data
+    const foundUser = seededUsers.find(u => u.email === values.email);
+
+    if (foundUser) {
+        login(values.email);
+        await showWelcomeDialog(values.email);
+    } else {
         toast({
             variant: "destructive",
             title: t.toastErrorTitle,
-            description: error.message || t.toastErrorDescription,
+            description: t.toastErrorDescription,
         });
-    } finally {
-        setIsLoading(false);
     }
+    
+    setIsLoading(false);
   };
 
   const handleDialogConfirm = () => {
@@ -106,7 +107,16 @@ export function LoginForm({ t }: LoginFormProps) {
               render={({ field }) => (
                   <FormItem>
                   <FormLabel>{t.emailLabel}</FormLabel>
-                  <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g. citizen@test.com" 
+                      {...field} 
+                      list="emails"
+                    />
+                  </FormControl>
+                  <datalist id="emails">
+                    {seededUsers.map(u => <option key={u.email} value={u.email} />)}
+                  </datalist>
                   <FormMessage />
                   </FormItem>
               )}
@@ -117,7 +127,7 @@ export function LoginForm({ t }: LoginFormProps) {
               render={({ field }) => (
                   <FormItem>
                   <FormLabel>{t.passwordLabel}</FormLabel>
-                  <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
+                  <FormControl><Input type="password" placeholder="any password" {...field} /></FormControl>
                   <FormMessage />
                   </FormItem>
               )}

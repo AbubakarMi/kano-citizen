@@ -1,7 +1,8 @@
 
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { useUser, useFirestore, useCollection } from '@/firebase';
+import { useUser } from '@/firebase/auth/use-user';
+import { useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { UserProfile, Idea, Directive, VolunteerOpportunity } from '@/lib/data';
 import { useMemoFirebase } from '@/lib/utils';

@@ -18,9 +18,6 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
 import { WelcomeDialog } from "./welcome-dialog";
-import { useAuth, useFirestore } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import type { UserProfile } from "@/lib/data";
 
@@ -39,8 +36,6 @@ interface RegisterFormProps {
 export function RegisterForm({ t }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const auth = useAuth();
-  const firestore = useFirestore();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -50,43 +45,25 @@ export function RegisterForm({ t }: RegisterFormProps) {
   });
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
-    if (!auth || !firestore) return;
     setIsLoading(true);
     
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-
-      const newUserProfile: Omit<UserProfile, 'uid'> = {
-          name: values.fullName,
-          email: values.email,
-          role: "Citizen",
-          location: values.location,
-          submittedIdeas: [],
-          votedOnIdeas: [],
-          followedDirectives: [],
-          volunteeredFor: [],
-      };
-
-      await setDoc(doc(firestore, "users", user.uid), newUserProfile);
+    // Simulate network delay and success
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    console.log("Mock registration successful for:", values.email);
+    
+    toast({
+        title: t.toastSuccessTitle,
+        description: `(Mock) Account for ${values.fullName} created.`,
+    });
       
-      setDialogOpen(true);
-
-    } catch (error: any) {
-      console.error(error);
-      toast({
-          variant: "destructive",
-          title: t.toastErrorTitle,
-          description: error.message || t.toastErrorDescription,
-      });
-    } finally {
-        setIsLoading(false);
-    }
+    setDialogOpen(true);
+    setIsLoading(false);
   };
   
   const handleDialogConfirm = () => {
     setDialogOpen(false);
-    router.push('/');
+    router.push('/login');
   }
 
   return (

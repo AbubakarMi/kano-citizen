@@ -41,7 +41,8 @@ export function FirebaseProvider({
   firestore,
 }: FirebaseProviderProps) {
   // If instances are provided, use them. Otherwise, use the client provider.
-  if (app && auth && firestore) {
+  if (app && firestore) {
+     // auth is optional now with mock
     return (
       <FirebaseContext.Provider value={{ app, auth, firestore }}>
         {children}
@@ -64,6 +65,7 @@ export const useFirebaseApp = () => {
   return context.app;
 };
 
+// useAuth is no longer used for user state, but can be kept for other auth operations if needed later
 export const useAuth = () => {
   const context = useContext(FirebaseContext);
   if (context === undefined) {

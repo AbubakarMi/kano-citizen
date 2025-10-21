@@ -28,8 +28,7 @@ import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useAppContext } from "@/app/app-provider";
-import { useAuth } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { useUser } from "@/firebase/auth/use-user";
 import { useRouter } from "next/navigation";
 
 
@@ -115,7 +114,7 @@ const SidebarGroup = ({ title, children, isCollapsed }: { title: string, childre
 
 export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp, setIsCollapsed: setIsCollapsedProp }: DashboardSidebarProps) {
   const { activeView, setActiveView } = useAppContext();
-  const auth = useAuth();
+  const { logout } = useUser();
   const router = useRouter();
 
   const isCollapsed = isCollapsedProp !== undefined ? isCollapsedProp : false;
@@ -129,10 +128,8 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
   };
   
   const handleLogout = async () => {
-    if (auth) {
-        await signOut(auth);
-        router.push('/');
-    }
+    logout();
+    router.push('/');
   }
 
   const groupedLinks = links.reduce((acc, link) => {

@@ -1,73 +1,89 @@
 
 'use client';
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { doc, onSnapshot, type DocumentData } from 'firebase/firestore';
-import { useAuth, useFirestore } from '../provider';
+import { useEffect, useState, createContext, useContext, ReactNode } from 'react';
 import type { UserProfile } from '@/lib/data';
+import { seededUsers, mdas } from '@/lib/data';
 
-// Define a type for the user state which includes the profile
-type UserState = {
+// Create a new context for our mock auth
+type MockAuthContextType = {
+  user: { uid: string; profile: UserProfile | null } | null;
   loading: boolean;
-  user: {
-    uid: string;
-    profile: UserProfile | null;
-  } | null;
+  login: (email: string) => void;
+  logout: () => void;
 };
 
-export function useUser() {
-  const auth = useAuth();
-  const firestore = useFirestore();
-  const [userState, setUserState] = useState<UserState>({
-    loading: true,
-    user: null,
-  });
+const MockAuthContext = createContext<MockAuthContextType | undefined>(undefined);
+
+// Create a provider for this context
+export function MockAuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<{ uid: string; profile: UserProfile | null } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
-      setUserState({ loading: false, user: null });
-      return;
+    // On initial load, check if we have a mocked user in session storage
+    const storedUserEmail = sessionStorage.getItem('mockUserEmail');
+    if (storedUserEmail) {
+      login(storedUserEmail);
     }
+    setLoading(false);
+  }, []);
 
-    const unsubscribeAuth = onAuthStateChanged(auth, (authUser: User | null) => {
-      if (authUser && firestore) {
-        const userDocRef = doc(firestore, 'users', authUser.uid);
-        const unsubscribeSnapshot = onSnapshot(userDocRef, (snapshot) => {
-          if (snapshot.exists()) {
-            setUserState({
-              loading: false,
-              user: {
-                uid: authUser.uid,
-                profile: snapshot.data() as UserProfile,
-              },
-            });
-          } else {
-            // Handle case where user exists in Auth but not in Firestore
-             setUserState({
-              loading: false,
-              user: {
-                uid: authUser.uid,
-                profile: null, // Or a default profile
-              },
-            });
-          }
-        }, (error) => {
-           console.error("Error fetching user profile:", error);
-           setUserState({ loading: false, user: null });
-        });
+  const login = (email: string) => {
+    const foundUserSeed = seededUsers.find(u => u.email === email);
+    if (foundUserSeed) {
+      const uid = `mock-uid-${foundUserSeed.email}`;
+      const profile: UserProfile = {
+        uid: uid,
+        name: foundUserSeed.name,
+        email: foundUserSeed.email,
+        role: foundUserSeed.role,
+        mda: foundUserSeed.mda,
+        location: foundUserSeed.location,
+        submittedIdeas: ['idea-1'],
+        votedOnIdeas: ['idea-2'],
+        followedDirectives: ['dir-1'],
+        volunteeredFor: [],
+      };
+      setUser({ uid, profile });
+      sessionStorage.setItem('mockUserEmail', email);
+    } else {
+      // Default to citizen if email not found
+      const uid = 'mock-uid-citizen';
+      setUser({
+        uid,
+        profile: {
+          uid,
+          name: 'Mock Citizen',
+          email: 'citizen@test.com',
+          role: 'Citizen',
+          location: 'Kano',
+          submittedIdeas: [],
+          votedOnIdeas: [],
+          followedDirectives: [],
+          volunteeredFor: [],
+        },
+      });
+      sessionStorage.setItem('mockUserEmail', 'citizen@test.com');
+    }
+     setLoading(false);
+  };
 
-        // Return the snapshot listener's unsubscribe function
-        return () => unsubscribeSnapshot();
+  const logout = () => {
+    setUser(null);
+    sessionStorage.removeItem('mockUserEmail');
+    setLoading(false);
+  };
 
-      } else {
-        // No user is authenticated
-        setUserState({ loading: false, user: null });
-      }
-    });
+  const value = { user, loading, login, logout };
 
-    // Return the auth listener's unsubscribe function
-    return () => unsubscribeAuth();
-  }, [auth, firestore]);
+  return <MockAuthContext.Provider value={value}>{children}</MockAuthContext.Provider>;
+}
 
-  return userState;
+// The new useUser hook that components will use
+export function useUser() {
+  const context = useContext(MockAuthContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a MockAuthProvider');
+  }
+  return context;
 }

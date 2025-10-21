@@ -24,8 +24,7 @@ import {
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { useUser } from "@/firebase/auth/use-user";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/app/app-provider";
 
@@ -46,14 +45,12 @@ export function SiteHeader({
 }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setActiveView } = useAppContext();
-  const auth = useAuth();
+  const { logout } = useUser();
   const router = useRouter();
 
   const handleLogout = async () => {
-    if (auth) {
-        await signOut(auth);
-        router.push('/');
-    }
+    logout();
+    router.push('/');
   }
   
   const getInitials = (name: string) => {

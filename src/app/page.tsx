@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser } from '@/firebase/auth/use-user';
+import { useFirestore } from '@/firebase';
 import { collection, getDocs, query } from 'firebase/firestore';
 import type { UserProfile, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
 

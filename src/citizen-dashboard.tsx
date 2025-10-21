@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useUser } from "@/firebase/auth/use-user";
-import { useFirestore, useCollection } from "@/firebase";
+import { useFirestore } from "@/firebase";
 import { collection, doc, writeBatch, arrayUnion, arrayRemove } from "firebase/firestore";
 import type { Idea, Directive } from "@/lib/data";
 import { Button } from "@/components/ui/button";
@@ -42,41 +42,28 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const handleUpvote = async (ideaId: string) => {
     if (!user || !firestore) return;
     
-    const userRef = doc(firestore, "users", user.uid);
-    const ideaRef = doc(firestore, "ideas", ideaId);
-    
+    // In a real app, you'd update this in Firestore. Here we just show a toast.
     const isVoted = user.profile?.votedOnIdeas?.includes(ideaId);
 
-    try {
-      const batch = writeBatch(firestore);
-      if (isVoted) {
+    if (isVoted) {
         toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
         return;
-      } else {
-        batch.update(ideaRef, { upvotes: arrayUnion(user.uid) });
-        batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
-      }
-      await batch.commit();
-      toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
-    } catch (error) {
-      console.error("Error upvoting:", error);
-      toast({ variant: "destructive", title: "Error", description: "Could not cast vote." });
     }
+    
+    // Simulate updating user profile locally for immediate feedback
+    if(user.profile) {
+        user.profile.votedOnIdeas.push(ideaId);
+    }
+
+    toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
   };
 
   const handleFollow = async (directiveId: string) => {
     if (!user || !firestore) return;
-    const userRef = doc(firestore, "users", user.uid);
+    
     const isFollowing = user.profile?.followedDirectives?.includes(directiveId);
     
-    try {
-      await writeBatch(firestore).update(userRef, {
-        followedDirectives: isFollowing ? arrayRemove(directiveId) : arrayUnion(directiveId)
-      }).commit();
-      toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription, className: "bg-secondary text-secondary-foreground" });
-    } catch(e) {
-      console.error(e);
-    }
+    toast({ title: isFollowing ? t.unfollowed : t.followed, description: isFollowing ? t.unfollowedDescription : t.followedDescription, className: "bg-secondary text-secondary-foreground" });
   };
   
   const handleVolunteer = (opportunityId: string) => {
@@ -88,6 +75,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     if (!firestore || !user?.profile) return;
     
     try {
+      // This still calls firestore, can be mocked if needed
       await addIdea(firestore, {
         title: newIdeaTitle,
         description: newIdeaDescription,
@@ -269,5 +257,3 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
-    

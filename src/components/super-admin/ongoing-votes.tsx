@@ -21,7 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useFirestore, useUser } from "@/firebase";
+import { useFirestore } from "@/firebase";
+import { useUser } from "@/firebase/auth/use-user";
 import { addIdea } from "@/firebase/firestore/ideas";
 import { useAppContext } from "@/app/app-provider";
 
@@ -147,3 +148,5 @@ export function OngoingVotes() {
     </>
   );
 }
+
+    
