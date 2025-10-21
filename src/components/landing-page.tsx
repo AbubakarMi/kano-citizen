@@ -1,5 +1,8 @@
 
+"use client"
+
 import Image from "next/image";
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText } from "lucide-react";
@@ -34,6 +37,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
   const buildImage = PlaceHolderImages.find(p => p.id === 'build');
+  
+  const [activeInvolvedTab, setActiveInvolvedTab] = useState('volunteer');
+
 
   return (
     <>
@@ -341,35 +347,68 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Get Involved Section */}
-      <section className="py-20 md:py-24 bg-white dark:bg-card">
-        <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-             {t.getInvolvedDescription}
-            </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-2">
-            {volunteerOpportunities.map(op => (
-              <Card key={op.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl">{op.title}</CardTitle>
-                  <CardDescription>{op.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <h4 className="font-semibold text-sm mb-2">{t.skillsNeeded}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                    <Button asChild>
-                        <Link href="/register"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Link>
-                    </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+      <section className="bg-primary/90 text-primary-foreground py-20 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url(/assets/subtle-pattern.svg)] bg-repeat opacity-10"></div>
+        <div className="container relative">
+            <div className="grid grid-cols-12">
+                <div className="col-span-12 lg:col-span-1 flex flex-col items-center lg:items-start">
+                    <Handshake className="h-10 w-10 mb-4 text-secondary"/>
+                    <div className="flex lg:flex-col gap-4">
+                        {['volunteer'].map((tab, index) => (
+                           <div key={tab} className="flex items-center gap-2">
+                                <div className={cn("h-3 w-3 rounded-full border-2 border-secondary", activeInvolvedTab === tab ? "bg-secondary" : "")}></div>
+                           </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="col-span-12 lg:col-span-11 mt-8 lg:mt-0">
+                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">{t.getInvolvedTitle}</h2>
+                    <p className="text-primary-foreground/80 mt-2">{t.getInvolvedDescription}</p>
+                    
+                    <div className="mt-8 flex gap-8 border-b-2 border-primary-foreground/20">
+                        <button 
+                            onClick={() => setActiveInvolvedTab('volunteer')}
+                            className={cn(
+                                "flex items-center gap-2 pb-3 font-bold text-2xl border-b-4",
+                                activeInvolvedTab === 'volunteer' ? 'border-secondary text-white' : 'border-transparent text-primary-foreground/60 hover:text-white'
+                            )}>
+                            <span className="text-secondary">1</span>
+                            <span>{t.volunteerButton}</span>
+                        </button>
+                    </div>
+
+                    <div className="bg-background text-foreground rounded-b-lg -mx-6 p-6 lg:p-8 lg:-mx-8">
+                        {activeInvolvedTab === 'volunteer' && (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 space-y-8">
+                                    {volunteerOpportunities.map(op => (
+                                      <div key={op.id}>
+                                        <h3 className="text-xl font-bold">{op.title}</h3>
+                                        <p className="text-muted-foreground mt-2">{op.description}</p>
+                                        <div className="flex flex-wrap gap-2 mt-4">
+                                            {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
+                                        </div>
+                                        <Button asChild className="mt-4">
+                                            <Link href="/register"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Link>
+                                        </Button>
+                                      </div>
+                                    ))}
+                                </div>
+                                <div className="hidden lg:grid grid-cols-2 gap-4">
+                                    <Image src="https://picsum.photos/seed/volunteer1/400/600" alt="Volunteering" width={400} height={600} className="rounded-lg object-cover w-full h-full col-span-2" data-ai-hint="volunteering community"/>
+                                    <Card className="col-span-2 bg-secondary/10 border-secondary/20">
+                                        <CardContent className="p-6">
+                                            <h4 className="font-bold text-lg">Ready to build?</h4>
+                                            <p className="text-muted-foreground mt-2 text-sm">Use your passion to make a real contribution. Volunteers are the backbone of our movement.</p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
       </section>
 
@@ -406,3 +445,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
