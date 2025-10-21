@@ -22,11 +22,12 @@ export function ApprovalQueue() {
         toast({
           title: `Decision Recorded`,
           description: `The item has been marked as ${status}.`,
+          className: status === 'Approved' ? 'bg-secondary text-secondary-foreground' : 'bg-destructive text-destructive-foreground',
         });
     }
 
     return (
-        <Card className="shadow-sm">
+        <Card>
             <CardHeader>
                 <CardTitle>Approval Queue</CardTitle>
                 <CardDescription>Review and approve major SPD outcomes, reports, and system changes before they are made public or implemented.</CardDescription>
@@ -46,18 +47,19 @@ export function ApprovalQueue() {
                         {approvalItems.map(item => (
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{item.title}</TableCell>
-                                <TableCell><Badge variant="secondary">{item.type}</Badge></TableCell>
+                                <TableCell><Badge variant="outline">{item.type}</Badge></TableCell>
                                 <TableCell>{item.submittedBy}</TableCell>
-                                <TableCell><Badge variant={item.status === 'Approved' ? 'default' : 'outline'}>{item.status}</Badge></TableCell>
+                                <TableCell><Badge variant={item.status === 'Approved' ? 'secondary' : item.status === 'Pending' ? 'default' : 'destructive'}>{item.status}</Badge></TableCell>
                                 <TableCell className="text-right space-x-2">
                                     {item.status === "Pending" && <>
-                                        <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700" onClick={() => handleApproval('Approved')}>
+                                        <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary" onClick={() => handleApproval('Approved')}>
                                             <FileCheck className="mr-2 h-4 w-4" /> Approve
                                         </Button>
-                                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleApproval('Rejected')}>
+                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleApproval('Rejected')}>
                                             <FileX className="mr-2 h-4 w-4" /> Reject
                                         </Button>
                                     </>}
+                                    {item.status === "Approved" && <span className="flex items-center justify-end text-secondary text-sm font-medium"><CheckCircle className="mr-2 h-4 w-4"/>Approved</span>}
                                 </TableCell>
                             </TableRow>
                         ))}

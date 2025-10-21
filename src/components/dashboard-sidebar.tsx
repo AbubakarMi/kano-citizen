@@ -171,7 +171,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                                                 className={cn(
                                                 buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost", size: "icon" }),
                                                 "h-10 w-10",
-                                                activeView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                                activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                                 )}
                                             >
                                                 <link.icon className="h-5 w-5" />
@@ -190,7 +190,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                                         className={cn(
                                         buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
                                         "justify-start text-sm font-medium",
-                                        activeView === link.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        activeView === link.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                         )}
                                     >
                                         <link.icon className="mr-3 h-5 w-5" />
@@ -219,7 +219,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                     onClick={handleLogout}
                     className={cn(
                         buttonVariants({ variant: "ghost" }), 
-                        "w-full justify-start text-muted-foreground hover:text-foreground",
+                        "w-full justify-start text-muted-foreground hover:text-destructive",
                         isCollapsed && "justify-center"
                         )}
                  >
@@ -233,7 +233,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
   }
 
   return (
-    <nav className={cn("flex flex-col gap-1 py-6 pr-6 lg:py-8", className)}>
+    <nav className={cn("flex flex-col gap-1 py-6", className)}>
         {links.map((link) => (
           <a
             key={link.id}
@@ -241,7 +241,8 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
             onClick={(e) => handleClick(e, link.id)}
             className={cn(
               buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
-              "justify-start text-base md:text-sm"
+              "justify-start text-base md:text-sm",
+              activeView === link.id ? 'bg-secondary text-secondary-foreground hover:bg-secondary/90' : 'text-primary-foreground hover:bg-primary-foreground/10'
             )}
           >
             <link.icon className="mr-3 h-4 w-4" />

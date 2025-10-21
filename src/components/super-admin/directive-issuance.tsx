@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Gavel } from "lucide-react";
+import { useAppContext } from "@/app/app-provider";
 
 interface DirectiveIssuanceProps {
     ideas: Idea[];
@@ -18,6 +19,7 @@ interface DirectiveIssuanceProps {
 
 export function DirectiveIssuance({ ideas, mdas }: DirectiveIssuanceProps) {
   const { toast } = useToast();
+  const { directives, setDirectives } = useAppContext();
   
   const handleIssueDirective = () => {
     toast({
@@ -27,10 +29,10 @@ export function DirectiveIssuance({ ideas, mdas }: DirectiveIssuanceProps) {
     });
   }
 
-  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
+  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes.length - a.upvotes.length);
 
   return (
-    <Card className="shadow-sm">
+    <Card>
         <CardHeader>
             <CardTitle>Issue a New Directive</CardTitle>
             <CardDescription>Select a top citizen submission, draft an official directive, and assign it to an MDA with a deadline.</CardDescription>
@@ -44,7 +46,7 @@ export function DirectiveIssuance({ ideas, mdas }: DirectiveIssuanceProps) {
                     </SelectTrigger>
                     <SelectContent>
                         {sortedIdeas.map(idea => (
-                            <SelectItem key={idea.id} value={idea.id}>{idea.title} ({idea.upvotes} votes)</SelectItem>
+                            <SelectItem key={idea.id} value={idea.id}>{idea.title} ({idea.upvotes.length} votes)</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>

@@ -190,7 +190,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 
     return (
         <div className="space-y-6">
-            <Card className="shadow-sm">
+            <Card>
                  <CardHeader className="flex-row items-center justify-between">
                     <div className="space-y-1">
                         <CardTitle>Manage Administrative Users</CardTitle>
@@ -348,7 +348,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                 <TableRow key={user.email}>
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell><Badge variant="outline">{user.role}{user.role === 'MDA Official' && user.mda ? ` (${mdas.find(m => m.id === user.mda)?.name || ''})` : ''}</Badge></TableCell>
+                                    <TableCell><Badge variant="secondary">{user.role}{user.role === 'MDA Official' && user.mda ? ` (${mdas.find(m => m.id === user.mda)?.name || ''})` : ''}</Badge></TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -363,7 +363,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                     <span>Edit Role</span>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDeleteClick(user)}>
+                                                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteClick(user)}>
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     <span>Delete User</span>
                                                 </DropdownMenuItem>
@@ -383,7 +383,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
             </Card>
 
             <div className="grid md:grid-cols-2 gap-6">
-                <Card className="shadow-sm">
+                <Card>
                     <CardHeader>
                         <CardTitle>MDA Management</CardTitle>
                         <CardDescription>Add or remove Ministries, Departments, and Agencies (MDAs).</CardDescription>
@@ -407,7 +407,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                         <Button onClick={handleAddMda}><PlusCircle className="mr-2 h-4 w-4" /> Add</Button>
                     </CardFooter>
                 </Card>
-                <Card className="shadow-sm">
+                <Card>
                      <CardHeader>
                         <CardTitle>Role Management</CardTitle>
                         <CardDescription>Define administrative roles on the platform.</CardDescription>
@@ -482,4 +482,3 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 }
 
       
-

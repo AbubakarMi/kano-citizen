@@ -68,7 +68,7 @@ export function SiteHeader({
   return (
     <header className={cn(
       "sticky top-0 z-40 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      isSuperAdmin ? 'bg-card' : 'bg-primary'
+      user ? 'bg-primary' : 'bg-background'
       )}>
       <div className={cn(
         "container flex h-20 items-center transition-all duration-300",
@@ -93,15 +93,15 @@ export function SiteHeader({
            </div>
          )}
         <div className="flex items-center gap-8">
-            <Link href="/" aria-label="Home" className={cn("flex items-center", isSuperAdmin ? 'hidden' : '')}>
-              <Logo className="text-primary-foreground" />
+            <Link href="/" aria-label="Home" className={cn("flex items-center")}>
+              <Logo className={cn(user ? "text-primary-foreground" : "text-primary")} />
             </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
+                <Button variant="ghost" size="icon" className={cn(user ? "text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground" : "text-foreground")}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -115,7 +115,7 @@ export function SiteHeader({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Separator />
+            {user && <Separator />}
 
             {user?.profile ? (
               <DropdownMenu>
@@ -143,7 +143,7 @@ export function SiteHeader({
                     {t.myProfile}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
                     <LogOut />
                     {t.logout}
                   </DropdownMenuItem>
@@ -151,11 +151,11 @@ export function SiteHeader({
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild variant="ghost" className="text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground">
+                <Button asChild variant="ghost">
                   <Link href="/login">{t.signIn}</Link>
                 </Button>
 
-                <Button asChild variant="secondary">
+                <Button asChild>
                   <Link href="/register">{t.register}</Link>
                 </Button>
               </>
