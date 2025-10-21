@@ -5,12 +5,12 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%; /* Warm Background: #fafafa */
-    --foreground: 220 13% 27%; /* Charcoal Text: #374151 */
+    --background: 0 0% 98%; /* Warm Background: #fafafa */
+    --foreground: 215 14% 27%; /* Charcoal Text: #374151 */
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 27%;
+    --card-foreground: 215 14% 27%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 27%;
+    --popover-foreground: 215 14% 27%;
     --primary: 222 83% 52%; /* Deep Blue: #2563eb */
     --primary-foreground: 210 40% 98%;
     --secondary: 145 73% 35%; /* Vibrant Green: #16a34a */

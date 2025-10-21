@@ -284,7 +284,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                   <CardHeader className="p-6 bg-muted/30">
                     <div className="flex items-start gap-4">
-                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-secondary" : "text-amber-500")} />
+                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-secondary" : "text-accent")} />
                         <div className="flex-1">
                           <Badge className="mb-2" variant={isCompleted ? 'secondary' : 'default'}>{dir.status}</Badge>
                           <CardTitle className="text-xl font-headline">{dir.title}</CardTitle>

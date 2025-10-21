@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -34,8 +35,8 @@ const AccordionTrigger = React.forwardRef<
       {...props}
     >
       {children}
-      <Plus className="h-4 w-4 shrink-0 transition-transform duration-200 plus" />
-      <Minus className="h-4 w-4 shrink-0 transition-transform duration-200 minus" />
+      <Plus className="h-4 w-4 shrink-0 transition-transform duration-200 plus text-primary" />
+      <Minus className="h-4 w-4 shrink-0 transition-transform duration-200 minus text-primary" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))

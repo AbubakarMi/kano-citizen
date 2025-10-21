@@ -87,7 +87,7 @@ export function HeroDashboard() {
                   <TableRow>
                     <TableCell>Streetlight Repair Phase 1</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-accent-foreground border-accent bg-accent">
+                      <Badge variant="default" className="text-accent-foreground border-accent bg-accent">
                         <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
                       </Badge>
                     </TableCell>
