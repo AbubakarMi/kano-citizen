@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { UserProfile, Idea, Directive, VolunteerOpportunity } from '@/lib/data';
-import { seededUsers } from '@/lib/data'; // for roles
+import { useMemoFirebase } from '@/lib/utils';
 
 type AppContextType = {
   activeView: string;
@@ -27,13 +27,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [activeView, setActiveView] = useState('overview');
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   
-  const ideasQuery = firestore ? query(collection(firestore, 'ideas')) : null;
+  const ideasQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'ideas')) : null, [firestore]);
   const { data: ideas, loading: ideasLoading } = useCollection<Idea>(ideasQuery);
   
-  const directivesQuery = firestore ? query(collection(firestore, 'directives')) : null;
+  const directivesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'directives')) : null, [firestore]);
   const { data: directives, loading: directivesLoading } = useCollection<Directive>(directivesQuery);
   
-  const volunteerQuery = firestore ? query(collection(firestore, 'volunteerOpportunities')) : null;
+  const volunteerQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'volunteerOpportunities')) : null, [firestore]);
   const { data: volunteerOpportunities, loading: volunteerLoading } = useCollection<VolunteerOpportunity>(volunteerQuery);
 
   const [internalIdeas, setInternalIdeas] = useState<Idea[]>([]);
