@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import Image from "next/image";
@@ -224,7 +223,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes.length} {t.votes}</span>
                   </div>
-                   <Button asChild size="lg" variant="landing">
+                   <Button asChild size="lg">
                     <Link href="/login">{t.voteButton}</Link>
                   </Button>
                 </div>
@@ -258,7 +257,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     )
                 })}
                  <div className="text-center mt-8 pt-4 border-t">
-                    <Button asChild size="lg" variant="outline">
+                    <Button asChild size="lg" variant="landing">
                         <Link href="/register">{t.submitIdeaButton}</Link>
                     </Button>
                 </div>
@@ -332,7 +331,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   onClick={() => setActiveInvolvedTab('volunteer')}
                   className={cn(
                     "px-8 py-3 text-lg font-semibold rounded-t-lg transition-colors",
-                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent hover:bg-primary/80'
+                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent hover:bg-white/10'
                   )}
                 >
                   Volunteer

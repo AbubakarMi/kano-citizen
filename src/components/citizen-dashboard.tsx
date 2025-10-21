@@ -139,7 +139,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                   />
               </CardContent>
               <CardFooter>
-                <Button type="submit" variant="landing">{t.submitIdeaButton}</Button>
+                <Button type="submit">{t.submitIdeaButton}</Button>
               </CardFooter>
             </form>
           </Card>
