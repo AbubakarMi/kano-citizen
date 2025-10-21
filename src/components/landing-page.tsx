@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, Users } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, Users, Sparkles } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -44,10 +44,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <div className="bg-warm-white text-charcoal">
       {/* Hero Section */}
-      <section className="relative bg-warm-white py-20 md:py-32 overflow-hidden">
+       <section className="relative bg-warm-white py-20 md:py-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute h-[500px] w-[500px] bg-primary/5 rounded-full -top-40 -left-40"></div>
-          <div className="absolute h-[400px] w-[400px] bg-secondary/5 rounded-full -bottom-20 -right-20"></div>
+           <div className="absolute -inset-2 bg-gradient-to-tr from-primary to-secondary rounded-xl blur-3xl opacity-10"></div>
+           <div className="absolute h-[500px] w-[500px] bg-primary/5 rounded-full -top-40 -left-40"></div>
+           <div className="absolute h-[400px] w-[400px] bg-secondary/5 rounded-full -bottom-20 -right-20"></div>
         </div>
         <div className="container relative z-10 grid lg:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col items-start text-left gap-6">
@@ -286,10 +287,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="bg-pure-white p-8 rounded-lg shadow-2xl grid md:grid-cols-2 gap-12 items-center text-charcoal">
-              <div className="space-y-6">
+            <div className="bg-pure-white p-2 rounded-lg shadow-2xl grid md:grid-cols-2 gap-2 text-charcoal overflow-hidden">
+              <div className="p-6 space-y-6">
                   {volunteerOpportunities.map(op => (
-                    <div key={op.id} className="p-4 rounded-lg hover:bg-warm-white transition-colors">
+                    <div key={op.id}>
                       <h3 className="text-xl font-bold font-headline text-primary">{op.title}</h3>
                        <div className="flex flex-wrap gap-2 my-3">
                           {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
@@ -320,12 +321,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </div>
               <div className="flex flex-col justify-center">
                  <Image 
-                    src="https://picsum.photos/seed/teamwork/600/800"
-                    alt="Community volunteering"
+                    src="https://picsum.photos/seed/nightcity/600/800"
+                    alt="Cityscape at night"
                     width={600}
                     height={800}
-                    className="rounded-lg object-cover w-full h-[450px]"
-                    data-ai-hint="community teamwork"
+                    className="rounded-md object-cover w-full h-full min-h-[450px]"
+                    data-ai-hint="city night"
                   />
               </div>
             </div>
