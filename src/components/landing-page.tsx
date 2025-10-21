@@ -12,6 +12,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 
 interface LandingPageProps {
   language: Language;
@@ -27,6 +28,7 @@ interface LandingPageProps {
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
   const sortedIdeas = [...ideas].sort((a, b) => b.upvotes - a.upvotes);
   const topIdea = sortedIdeas[0];
+  const otherIdeas = sortedIdeas.slice(1);
   const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
@@ -183,46 +185,82 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       {/* Live Polls Section */}
       <section id="live-polls" className="bg-background py-20 md:py-24">
         <div className="container">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.livePollsTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t.livePollsDescription}
             </p>
           </div>
-          <div className="max-w-4xl mx-auto space-y-8">
-            {sortedIdeas.map((idea) => {
-              const votePercentage = totalVotes > 0 ? (idea.upvotes / totalVotes) * 100 : 0;
-              return (
-                <Card key={idea.id} className="overflow-hidden shadow-md transition-all hover:shadow-lg duration-300">
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                      <div className="md:col-span-3">
-                        <h3 className="text-lg font-semibold mb-1">{idea.title}</h3>
-                        <p className="text-sm text-muted-foreground">{t.by} {idea.author}</p>
-                      </div>
-                      <div className="flex items-center justify-start md:justify-end gap-4 text-right">
-                         <div className="flex items-center gap-2 font-bold text-lg text-primary">
-                           <ArrowUp className="h-5 w-5" />
-                           {idea.upvotes}
-                         </div>
-                         <Button asChild>
-                            <Link href="/login">{t.voteButton}</Link>
-                         </Button>
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <Progress value={votePercentage} aria-label={`${votePercentage.toFixed(0)}% of votes`} />
-                      <p className="text-right text-sm font-medium text-primary mt-1">{votePercentage.toFixed(1)}%</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          <div className="text-center mt-12">
-             <Button asChild size="lg">
-                <Link href="/register">{t.submitIdeaButton}</Link>
-            </Button>
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+             <Card className="w-full shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
+              <CardHeader className="bg-primary/5 p-4">
+                <div className="flex items-center gap-3">
+                  <Award className="h-8 w-8 text-primary" />
+                  <div>
+                    <CardTitle className="text-xl leading-none">{t.topIdeaTitle}</CardTitle>
+                    <CardDescription className="text-sm">{t.topIdeaDescription}</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-2">{topIdea.title}</h3>
+                <p className="text-muted-foreground mb-4 line-clamp-3">
+                  {topIdea.description}
+                </p>
+                <Progress value={(topIdea.upvotes / totalVotes) * 100} className="mb-4 h-3" />
+
+                <div className="flex justify-between items-center text-sm font-medium">
+                  <div className="flex items-center gap-2 font-bold text-lg text-primary">
+                    <ArrowUp className="h-5 w-5" />
+                    <span>{topIdea.upvotes} {t.votes}</span>
+                  </div>
+                   <Button asChild size="lg">
+                    <Link href="/login">{t.voteButton}</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="relative">
+                <Carousel
+                    opts={{
+                    align: "start",
+                    loop: true,
+                    }}
+                    className="w-full"
+                >
+                    <CarouselContent>
+                    {otherIdeas.map((idea, index) => (
+                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-full">
+                           <Card className="shadow-md transition-all hover:shadow-lg duration-300 h-full">
+                            <CardContent className="p-6 flex flex-col justify-between h-full">
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-1 line-clamp-2">{idea.title}</h3>
+                                    <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2 font-bold text-primary">
+                                        <ArrowUp className="h-4 w-4" />
+                                        {idea.upvotes}
+                                    </div>
+                                    <Button asChild variant="secondary">
+                                        <Link href="/login">{t.voteButton}</Link>
+                                    </Button>
+                                </div>
+                            </CardContent>
+                            </Card>
+                        </CarouselItem>
+                    ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
+                </Carousel>
+                 <div className="text-center mt-8">
+                    <Button asChild size="lg" variant="outline">
+                        <Link href="/register">{t.submitIdeaButton}</Link>
+                    </Button>
+                </div>
+            </div>
           </div>
         </div>
       </section>
@@ -362,5 +400,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
