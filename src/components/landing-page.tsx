@@ -136,27 +136,27 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Complaint Section */}
-       <section className="bg-white dark:bg-black py-20 md:py-24 overflow-hidden">
+      <section className="bg-background py-20 md:py-24 overflow-hidden">
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-blue-900 dark:text-white">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
                 Complaint Management System
               </h2>
               <p className="text-lg text-muted-foreground">
-                With Kano Citizens' Voice, you can easily <span className="text-blue-600 font-semibold">track</span>, <span className="text-blue-600 font-semibold">investigate</span>, and <span className="text-blue-600 font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
+                With Kano Citizens' Voice, you can easily <span className="text-primary font-semibold">track</span>, <span className="text-primary font-semibold">investigate</span>, and <span className="text-primary font-semibold">correct</span> issues affecting your community, which helps in our complaint handling.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <Button asChild size="lg" className="bg-blue-800 hover:bg-blue-900 text-white rounded-full">
+                <Button asChild size="lg">
                   <Link href="/register">Get started</Link>
                 </Button>
-                <Link href="/login" className="flex items-center font-semibold text-blue-700 hover:text-blue-800">
+                <Link href="/login" className="flex items-center font-semibold text-primary hover:text-primary/80">
                   Or take our quick Guided Tour <ChevronRight className="ml-1 h-5 w-5" />
                 </Link>
               </div>
             </div>
             <div className="hidden lg:block relative h-[450px] -mr-32">
-                <div className="absolute inset-0 bg-white dark:bg-black [clip-path:url(#complaint-clip)]">
+                <div className="absolute inset-0 bg-background [clip-path:url(#complaint-clip)]">
                     <Image
                         src="https://picsum.photos/seed/complaint/800/600"
                         alt="A professional discussing a document"
@@ -168,7 +168,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </div>
           </div>
         </div>
-         <svg width="0" height="0">
+        <svg width="0" height="0">
             <defs>
                 <clipPath id="complaint-clip" clipPathUnits="objectBoundingBox">
                 <path d="M0.25,0 C0.2,0,0.1,0.05,0.05,0.1 C-0.05,0.25,0,0.75,0.1,0.9 C0.15,0.95,0.25,1,0.3,1 L1,1 L1,0 Z" />
@@ -406,3 +406,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
