@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -18,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
 import type { User } from "@/lib/data";
+import { WelcomeDialog } from "./welcome-dialog";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -34,8 +36,8 @@ interface RegisterFormProps {
 
 export function RegisterForm({ t }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -63,71 +65,77 @@ export function RegisterForm({ t }: RegisterFormProps) {
     // Simulate session by storing user in localStorage
     localStorage.setItem(FAKE_USER_SESSION_KEY, JSON.stringify(newUser));
 
-    toast({
-      title: t.toastSuccessTitle,
-      description: t.toastSuccessDescription,
-      variant: "default",
-      className: "bg-primary text-primary-foreground border-primary",
-    });
-
-    router.push('/');
-    router.refresh();
-
+    setDialogOpen(true);
     setIsLoading(false);
   };
+  
+  const handleDialogConfirm = () => {
+    setDialogOpen(false);
+    router.push('/');
+    router.refresh();
+  }
 
   return (
-    <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <p className="text-xs text-muted-foreground text-center">{t.formHint}</p>
-            <FormField
-            control={form.control}
-            name="fullName"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>{t.nameLabel}</FormLabel>
-                <FormControl><Input placeholder={t.namePlaceholder} {...field} /></FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-            <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>{t.emailLabel}</FormLabel>
-                <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-            <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>{t.passwordLabel}</FormLabel>
-                <FormControl><Input type="password" {...field} /></FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-            <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>{t.locationLabel}</FormLabel>
-                <FormControl><Input placeholder={t.locationPlaceholder} {...field} /></FormControl>
-                <FormMessage />
-                </FormItem>
-            )}
-            />
-            <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? t.creatingAccountButton : t.submitButton}
-            </Button>
-        </form>
-    </Form>
+    <>
+        <WelcomeDialog 
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            title={t.toastSuccessTitle}
+            description={t.toastSuccessDescription}
+            onConfirm={handleDialogConfirm}
+        />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <p className="text-xs text-muted-foreground text-center">{t.formHint}</p>
+                <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>{t.nameLabel}</FormLabel>
+                    <FormControl><Input placeholder={t.namePlaceholder} {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>{t.emailLabel}</FormLabel>
+                    <FormControl><Input placeholder="you@example.com" {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>{t.passwordLabel}</FormLabel>
+                    <FormControl><Input type="password" {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>{t.locationLabel}</FormLabel>
+                    <FormControl><Input placeholder={t.locationPlaceholder} {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? t.creatingAccountButton : t.submitButton}
+                </Button>
+            </form>
+        </Form>
+    </>
   );
 }
