@@ -77,7 +77,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 md:py-24 bg-white dark:bg-card">
+      <section id="how-it-works" className="py-20 md:py-24 bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.howItWorksTitle}</h2>
@@ -90,11 +90,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             {/* Step 1: Speak Up */}
             <div className="flex flex-col items-center gap-6">
                 <div className="relative w-48 h-48 flex items-center justify-center">
-                    <div className="absolute inset-0 rounded-full border-[10px] border-primary/20"></div>
-                    <div className="absolute inset-[10px] rounded-full border-[10px] border-primary"></div>
+                    <div className="absolute inset-0 rounded-full border-[10px] border-accent/20"></div>
+                    <div className="absolute inset-[10px] rounded-full border-[10px] border-accent"></div>
                     <div className="relative w-40 h-40 rounded-full overflow-hidden clip-circle">
                          {speakImage && <Image src={speakImage.imageUrl} alt={t.step1Title} layout="fill" objectFit="cover" data-ai-hint={speakImage.imageHint} />}
-                        <div className="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-accent/30 flex items-center justify-center">
                             <MessageSquareQuote className="h-16 w-16 text-white" />
                         </div>
                     </div>
@@ -126,11 +126,11 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             {/* Step 3: Build */}
              <div className="flex flex-col items-center gap-6">
                 <div className="relative w-48 h-48 flex items-center justify-center">
-                    <div className="absolute inset-0 rounded-full border-[10px] border-accent/20"></div>
-                    <div className="absolute inset-[10px] rounded-full border-[10px] border-accent"></div>
+                    <div className="absolute inset-0 rounded-full border-[10px] border-primary/20"></div>
+                    <div className="absolute inset-[10px] rounded-full border-[10px] border-primary"></div>
                     <div className="relative w-40 h-40 rounded-full overflow-hidden clip-circle">
                         {buildImage && <Image src={buildImage.imageUrl} alt={t.step3Title} layout="fill" objectFit="cover" data-ai-hint={buildImage.imageHint} />}
-                        <div className="absolute inset-0 bg-accent/30 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-primary/30 flex items-center justify-center">
                            <PencilRuler className="h-16 w-16 text-white" />
                         </div>
                     </div>
@@ -215,12 +215,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   {topIdea.description}
                 </p>
                 <div className="space-y-1">
-                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2" />
-                    <p className="text-right text-sm font-medium text-primary">{((topIdea.upvotes.length / totalVotes) * 100).toFixed(1)}% of votes</p>
+                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2 [&>*]:bg-secondary" />
+                    <p className="text-right text-sm font-medium text-secondary">{((topIdea.upvotes.length / totalVotes) * 100).toFixed(1)}% of votes</p>
                 </div>
 
                 <div className="mt-4 flex justify-between items-center text-sm font-medium">
-                  <div className="flex items-center gap-2 font-bold text-lg text-primary">
+                  <div className="flex items-center gap-2 font-bold text-lg text-secondary">
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes.length} {t.votes}</span>
                   </div>
@@ -241,15 +241,15 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                                 <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline">{idea.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-4">{t.by} {idea.author}</p>
                                 <div className="space-y-1 mb-4">
-                                    <Progress value={votePercentage} className="h-2" />
-                                    <p className="text-right text-xs font-medium text-primary">{votePercentage.toFixed(1)}%</p>
+                                    <Progress value={votePercentage} className="h-2 [&>*]:bg-secondary" />
+                                    <p className="text-right text-xs font-medium text-secondary">{votePercentage.toFixed(1)}%</p>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2 font-bold text-primary">
+                                    <div className="flex items-center gap-2 font-bold text-secondary">
                                         <ArrowUp className="h-4 w-4" />
                                         {idea.upvotes.length}
                                     </div>
-                                    <Button asChild variant="secondary">
+                                    <Button asChild variant="outline">
                                         <Link href="/login">{t.voteButton}</Link>
                                     </Button>
                                 </div>
@@ -268,7 +268,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* From Idea to Action Section */}
-      <section id="directives" className="py-20 md:py-24 bg-white dark:bg-card">
+      <section id="directives" className="py-20 md:py-24 bg-card">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight font-headline">{t.ideaToActionTitle}</h2>
@@ -285,9 +285,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <Card key={dir.id} className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                   <CardHeader className="p-6 bg-muted/30">
                     <div className="flex items-start gap-4">
-                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-green-500" : "text-amber-500")} />
+                        <Icon className={cn("h-8 w-8 shrink-0 mt-1", isCompleted ? "text-secondary" : "text-amber-500")} />
                         <div className="flex-1">
-                          <Badge className="mb-2" variant={isCompleted ? 'default' : 'secondary'}>{dir.status}</Badge>
+                          <Badge className="mb-2" variant={isCompleted ? 'secondary' : 'default'}>{dir.status}</Badge>
                           <CardTitle className="text-xl font-headline">{dir.title}</CardTitle>
                         </div>
                     </div>
@@ -388,12 +388,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Testimonials Section */}
-      <section className="bg-white dark:bg-card py-20 md:py-24">
+      <section className="bg-card py-20 md:py-24">
         <div className="container max-w-6xl">
             <div className="mb-16">
                 <div className="flex items-center gap-2">
-                  <div className="h-1 w-4 bg-primary"></div>
-                  <p className="text-sm font-bold uppercase tracking-wider text-primary font-sans">TESTIMONIALS</p>
+                  <div className="h-1 w-4 bg-accent"></div>
+                  <p className="text-sm font-bold uppercase tracking-wider text-accent font-sans">TESTIMONIALS</p>
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4 font-headline">{t.voicesOfKanoTitle}</h2>
                 <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t.voicesOfKanoDescription}</p>
@@ -421,13 +421,13 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                             </div>
                              <Quote className={cn(
                                  "h-10 w-10 ml-auto shrink-0 transition-colors",
-                                 selectedTestimonial.name === testimonial.name ? "text-primary" : "text-muted-foreground/20"
+                                 selectedTestimonial.name === testimonial.name ? "text-accent" : "text-muted-foreground/20"
                              )} />
                         </button>
                     ))}
                 </div>
                  <div className="relative pt-8 lg:pt-0">
-                    <Quote className="h-24 w-24 text-primary/10 absolute -top-8 -left-8" />
+                    <Quote className="h-24 w-24 text-accent/10 absolute -top-8 -left-8" />
                     <div className="relative z-10">
                         <p className="text-2xl lg:text-3xl font-medium leading-relaxed text-foreground/80">
                             "{selectedTestimonial.quote}"

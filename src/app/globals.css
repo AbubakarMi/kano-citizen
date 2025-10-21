@@ -6,14 +6,14 @@
 @layer base {
   :root {
     --background: 0 0% 98%; /* Warm Background: #fafafa */
-    --foreground: 220 13% 25%; /* Charcoal Text: #374151 */
+    --foreground: 220 13% 27%; /* Charcoal Text: #374151 */
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 25%;
+    --card-foreground: 220 13% 27%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 25%;
+    --popover-foreground: 220 13% 27%;
     --primary: 222 83% 52%; /* Deep Blue: #2563eb */
     --primary-foreground: 210 40% 98%;
-    --secondary: 145 63% 39%; /* Vibrant Green: #16a34a */
+    --secondary: 145 73% 35%; /* Vibrant Green: #16a34a */
     --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -26,7 +26,7 @@
     --ring: 222 83% 52%;
     --radius: 0.5rem;
     --chart-1: 222 83% 52%;
-    --chart-2: 145 63% 39%;
+    --chart-2: 145 73% 35%;
     --chart-3: 22 82% 57%;
     --chart-4: 280 70% 60%;
     --chart-5: 350 75% 55%;
@@ -41,7 +41,7 @@
     --popover-foreground: 210 40% 98%;
     --primary: 222 83% 62%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 145 63% 49%;
+    --secondary: 145 73% 45%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;

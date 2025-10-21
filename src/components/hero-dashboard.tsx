@@ -41,8 +41,8 @@ export function HeroDashboard() {
                 </p>
                 <Progress value={78} className="h-2 mb-2" />
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-semibold text-primary">78% of Goal</span>
-                  <span className="flex items-center font-bold text-primary"><ArrowUp className="h-4 w-4 mr-1" />256 Votes</span>
+                  <span className="font-semibold text-secondary">78% of Goal</span>
+                  <span className="flex items-center font-bold text-secondary"><ArrowUp className="h-4 w-4 mr-1" />256 Votes</span>
                 </div>
               </CardContent>
             </Card>
@@ -87,7 +87,7 @@ export function HeroDashboard() {
                   <TableRow>
                     <TableCell>Streetlight Repair Phase 1</TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                      <Badge variant="outline" className="text-amber-600 border-amber-500">
                         <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
                       </Badge>
                     </TableCell>
@@ -95,7 +95,7 @@ export function HeroDashboard() {
                   <TableRow>
                     <TableCell>Drainage Desilting Program</TableCell>
                     <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
+                      <Badge variant="secondary">
                         <CheckCircle className="h-3 w-3 mr-1.5"/> Completed
                       </Badge>
                     </TableCell>
@@ -134,5 +134,3 @@ export function HeroDashboard() {
     </div>
   )
 }
-
-    
