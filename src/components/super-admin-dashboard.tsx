@@ -26,7 +26,7 @@ export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashb
   const renderView = () => {
     switch (activeView) {
       case 'overview':
-        return <ExecutiveDashboard />;
+        return <ExecutiveDashboard user={user} />;
       case 'votes':
         return <OngoingVotes initialIdeas={ideas} />;
       case 'directives':
@@ -44,7 +44,7 @@ export function SuperAdminDashboard({ user, ideas, activeView }: SuperAdminDashb
       case 'settings':
          return <SystemSettings />;
       default:
-        return <ExecutiveDashboard />;
+        return <ExecutiveDashboard user={user} />;
     }
   }
 
