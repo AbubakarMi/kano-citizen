@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Poppins, PT_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
@@ -32,7 +33,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-body antialiased",
+          "min-h-screen bg-background text-foreground antialiased",
           fontPoppins.variable,
           fontPtSans.variable
         )}

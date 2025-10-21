@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Edit, Trash2, ShieldQuestion, MoreVertical, Building, Shield, PlusCircle } from "lucide-react";
-import { seededUsers, type User, type UserRole, type MDA } from "@/lib/data";
+import { seededUsers, type UserProfile, type UserRole, type MDA } from "@/lib/data";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -169,16 +169,12 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     }
     
     const handleCreateUser = (values: z.infer<typeof createUserSchema>) => {
-        const newUser: User = {
+        const newUser: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string} = {
             name: values.fullName,
             email: values.email,
             role: values.role as UserRole,
             mda: values.role === "MDA Official" ? values.mda : undefined,
             location: values.location,
-            submittedIdeas: [],
-            votedOnIdeas: [],
-            followedDirectives: [],
-            volunteeredFor: [],
         };
         setUsers(prev => [newUser, ...prev]);
         toast({
@@ -313,7 +309,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an MDA" />
-                                                            </Trigger>
+                                                            </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
                                                             {mdas.map(mda => (
@@ -486,3 +482,4 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 }
 
       
+
