@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand, ChevronRight, FolderClock, CheckCircle2 } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -60,7 +60,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
 
           <div className="flex items-center justify-center lg:justify-end">
-            <Card className="w-full max-w-md shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
+            <Card className="w-full max-w-lg shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
               <CardHeader className="bg-primary/5 p-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />
@@ -71,16 +71,6 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="relative h-48 w-full mb-4">
-                  <Image
-                    src="https://picsum.photos/seed/kano-hero/600/400"
-                    alt="A vibrant depiction of Kano city"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                    data-ai-hint="vibrant city"
-                  />
-                </div>
                 <h3 className="text-lg font-semibold mb-2">{topIdea.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                   {topIdea.description}
@@ -108,28 +98,34 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
-             <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+             <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
               {speakImage && <Image src={speakImage.imageUrl} alt={speakImage.description} data-ai-hint={speakImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6">
-                <CardTitle className="flex items-center justify-center gap-2 text-xl"><MessageSquareQuote />{t.step1Title}</CardTitle>
+              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
+                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <MessageSquareQuote className="transition-transform group-hover:scale-110"/>{t.step1Title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6 pt-0">
                 <p className="text-muted-foreground">{t.step1Description}</p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
               {decideImage && <Image src={decideImage.imageUrl} alt={decideImage.description} data-ai-hint={decideImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6">
-                <CardTitle className="flex items-center justify-center gap-2 text-xl"><Vote />{t.step2Title}</CardTitle>
+              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
+                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <Vote className="transition-transform group-hover:scale-110"/>{t.step2Title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6 pt-0">
                 <p className="text-muted-foreground">{t.step2Description}</p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
              {buildImage && <Image src={buildImage.imageUrl} alt={buildImage.description} data-ai-hint={buildImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
-              <CardHeader className="p-6">
-                <CardTitle className="flex items-center justify-center gap-2 text-xl"><PencilRuler />{t.step3Title}</CardTitle>
+              <CardHeader className="p-6 bg-gradient-to-b from-transparent to-muted/20">
+                <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <PencilRuler className="transition-transform group-hover:scale-110"/>{t.step3Title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6 pt-0">
                 <p className="text-muted-foreground">{t.step3Description}</p>
@@ -322,13 +318,14 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="flex flex-col justify-between bg-card shadow-md">
-                <CardContent className="p-6">
-                  <p className="text-muted-foreground italic mb-6">"{testimonial.quote}"</p>
-                </CardContent>
-                <CardFooter className="p-6 pt-0">
+              <Card key={index} className="relative flex flex-col justify-between bg-card shadow-lg overflow-hidden border">
+                <Quote className="absolute top-6 left-6 h-16 w-16 text-muted/50" />
+                <CardHeader className="relative z-10 pt-12">
+                   <p className="text-xl font-medium italic text-foreground/90">"{testimonial.quote}"</p>
+                </CardHeader>
+                <CardFooter className="relative z-10 p-6 pt-4 mt-auto bg-muted/40">
                   <div className="flex items-center gap-4">
-                    <Avatar>
+                    <Avatar className="border-2 border-primary/50">
                       <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/40/40`} />
                       <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                     </Avatar>
@@ -410,3 +407,5 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
+
+    
