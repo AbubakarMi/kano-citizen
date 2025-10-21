@@ -1,11 +1,12 @@
 
+
 "use client"
 
 import Image from "next/image";
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, FileText, Check } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -314,38 +315,40 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
         </div>
       </section>
 
-      {/* Get Involved Section */}
+     {/* Get Involved Section */}
       <section id="get-involved" className="py-20 md:py-24 bg-primary/5">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
+             <div className="flex justify-center items-center gap-3">
+                <Check className="h-8 w-8 text-primary bg-primary/10 p-1.5 rounded-full" />
+                 <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t.getInvolvedTitle}</h2>
+             </div>
             <p className="mt-4 text-lg text-muted-foreground">{t.getInvolvedDescription}</p>
           </div>
 
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="flex items-start">
               <div className="flex flex-col">
                 <button
                   onClick={() => setActiveInvolvedTab('volunteer')}
                   className={cn(
-                    "px-6 py-3 text-lg font-semibold rounded-t-lg transition-colors",
-                    activeInvolvedTab === 'volunteer' ? 'bg-background text-primary' : 'bg-transparent text-primary/70 hover:bg-background/50'
+                    "px-6 py-2 text-base font-semibold rounded-t-lg transition-colors text-primary",
+                    activeInvolvedTab === 'volunteer' ? 'bg-background' : 'bg-transparent hover:bg-background/50'
                   )}
                 >
                   Volunteer
                 </button>
-                {/* Add other tabs here */}
               </div>
             </div>
 
-            <div className="bg-background p-8 rounded-b-lg rounded-r-lg shadow-2xl grid md:grid-cols-3 gap-8">
-              <div className="md:col-span-2 space-y-6">
+            <div className="bg-background p-8 rounded-b-lg rounded-tr-lg shadow-2xl grid md:grid-cols-3 gap-8">
+              <div className="md:col-span-2 space-y-8">
                   {volunteerOpportunities.map(op => (
                     <div key={op.id} className="p-4 rounded-lg hover:bg-muted/50 transition-colors">
                       <h3 className="text-xl font-bold">{op.title}</h3>
-                      <p className="text-muted-foreground mt-1 mb-3 line-clamp-2">{op.description}</p>
+                      <p className="text-muted-foreground mt-1 mb-4 line-clamp-2">{op.description}</p>
                        <div className="flex flex-wrap gap-2 mb-4">
-                          {op.requiredSkills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                          {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
                       </div>
                        <Button asChild>
                          <Link href="/register"><Handshake className="mr-2 h-4 w-4"/>Volunteer Now</Link>
@@ -353,19 +356,19 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                     </div>
                   ))}
               </div>
-              <div className="flex flex-col justify-between bg-primary/10 p-6 rounded-lg">
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-primary">Fancy Becoming a Part of It?</h3>
-                  <p className="text-primary/80">Volunteering is one of the most impactful ways you can contribute to building a better Kano, one project at a time.</p>
-                </div>
+              <div className="flex flex-col justify-between p-6 rounded-lg">
                  <Image 
-                    src="https://picsum.photos/seed/getinvolved/300/200"
+                    src="https://picsum.photos/seed/getinvolved/600/800"
                     alt="Community volunteering"
-                    width={300}
-                    height={200}
-                    className="rounded-lg object-cover w-full mt-4"
-                    data-ai-hint="community volunteering"
+                    width={600}
+                    height={800}
+                    className="rounded-lg object-cover w-full h-full"
+                    data-ai-hint="city traffic"
                   />
+                  <div className="mt-4 bg-secondary/10 p-4 rounded-lg text-center">
+                    <h3 className="text-lg font-bold text-secondary-foreground">Ready to build?</h3>
+                    <p className="text-sm text-secondary-foreground/80 mt-1">Your garden to make a real contribution. Volunteers are the backbone of our movement.</p>
+                  </div>
               </div>
             </div>
           </div>
