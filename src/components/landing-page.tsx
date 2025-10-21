@@ -261,8 +261,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                         </CarouselItem>
                     )})}
                     </CarouselContent>
-                    <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
-                    <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
+                    <div className="flex justify-center gap-2 mt-4">
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </div>
                 </Carousel>
                  <div className="text-center mt-8">
                     <Button asChild size="lg" variant="outline">
