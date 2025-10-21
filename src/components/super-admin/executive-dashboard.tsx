@@ -3,7 +3,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Users, FileText, Smile, HardHat, TrendingUp, Sun, CircleDollarSign, ShoppingCart, Repeat, ArrowUp, ArrowDown } from "lucide-react";
+import { Users, FileText, Smile, HardHat, TrendingUp, Sun, CircleDollarSign, ShoppingCart, Repeat, ArrowUp, ArrowDown, Vote } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Pie, PieChart, Cell } from 'recharts';
 import type { User } from "@/lib/data";
 
