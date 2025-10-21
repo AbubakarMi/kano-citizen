@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, FileText, HelpingHand, ChevronRight, FolderClock, CheckCircle2 } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
-import { ComplaintForm } from "@/components/complaint-form";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from 'next/link';
 import { Badge } from "./ui/badge";
@@ -13,7 +12,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 
 interface LandingPageProps {
   language: Language;
@@ -110,7 +108,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+             <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               {speakImage && <Image src={speakImage.imageUrl} alt={speakImage.description} data-ai-hint={speakImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
               <CardHeader className="p-6">
                 <CardTitle className="flex items-center justify-center gap-2 text-xl"><MessageSquareQuote />{t.step1Title}</CardTitle>
@@ -119,7 +117,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <p className="text-muted-foreground">{t.step1Description}</p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               {decideImage && <Image src={decideImage.imageUrl} alt={decideImage.description} data-ai-hint={decideImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
               <CardHeader className="p-6">
                 <CardTitle className="flex items-center justify-center gap-2 text-xl"><Vote />{t.step2Title}</CardTitle>
@@ -128,7 +126,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                 <p className="text-muted-foreground">{t.step2Description}</p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card className="shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
              {buildImage && <Image src={buildImage.imageUrl} alt={buildImage.description} data-ai-hint={buildImage.imageHint} width={600} height={400} className="rounded-t-lg object-cover h-48 w-full" />}
               <CardHeader className="p-6">
                 <CardTitle className="flex items-center justify-center gap-2 text-xl"><PencilRuler />{t.step3Title}</CardTitle>
@@ -142,7 +140,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
 
       {/* Complaint Section */}
-      <section className="bg-white dark:bg-black py-20 md:py-24 overflow-hidden">
+       <section className="bg-white dark:bg-black py-20 md:py-24 overflow-hidden">
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
@@ -412,7 +410,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
-
-    
