@@ -37,47 +37,58 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-background">
-        <div className="container mx-auto grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32">
+      <section className="relative bg-background text-white py-20 md:py-32">
+        <div className="absolute inset-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1582738412492-0a3a37172045?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8a2FubyUyMGNpdHl8ZW58MHx8fHwxNzYxMDQwMTA5fDA&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="City of Kano"
+            fill
+            className="object-cover"
+            data-ai-hint="kano city"
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+        
+        <div className="container relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              {t.heroTitle}<span className="text-primary">{t.heroTitleSpan}</span>
+              {t.heroTitle}<span className="text-blue-400">{t.heroTitleSpan}</span>
             </h1>
-            <p className="max-w-xl text-lg md:text-xl text-muted-foreground">
+            <p className="max-w-xl text-lg md:text-xl text-blue-100/90">
               {t.heroDescription}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-               <Button asChild size="lg" className="w-full">
+               <Button asChild size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                 <Link href="/register">{t.registerButton}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="w-full">
+              <Button asChild size="lg" variant="outline" className="w-full text-white border-blue-400 hover:bg-blue-500/10 hover:text-white">
                  <Link href="/login">{t.signInButton}</Link>
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-blue-200/70 mt-2">
               {t.registerHint}
             </p>
           </div>
 
           <div className="lg:justify-self-end">
-            <Card className="w-full max-w-md shadow-2xl overflow-hidden border-2 border-primary/20 bg-card">
-              <CardHeader className="bg-primary/5 p-4">
+            <Card className="w-full max-w-md shadow-2xl overflow-hidden bg-black/30 backdrop-blur-lg border-2 border-white/10 text-white">
+              <CardHeader className="p-4 bg-white/5">
                 <div className="flex items-center gap-3">
-                  <Award className="h-8 w-8 text-primary" />
+                  <Award className="h-8 w-8 text-blue-400" />
                   <div>
                     <CardTitle className="text-xl leading-none">{t.topIdeaTitle}</CardTitle>
-                    <CardDescription className="text-sm">{t.topIdeaDescription}</CardDescription>
+                    <CardDescription className="text-sm text-blue-200/80">{t.topIdeaDescription}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold mb-2">{topIdea.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                <p className="text-sm text-blue-100/80 mb-4 line-clamp-2">
                   {topIdea.description}
                 </p>
-                <div className="flex justify-between items-center text-sm font-medium text-muted-foreground">
+                <div className="flex justify-between items-center text-sm font-medium text-blue-100/80">
                   <span>{t.by} {topIdea.author}</span>
-                  <div className="flex items-center gap-2 text-lg font-bold text-primary">
+                  <div className="flex items-center gap-2 text-lg font-bold text-blue-300">
                     <ArrowUp className="h-5 w-5" />
                     <span>{topIdea.upvotes} {t.votes}</span>
                   </div>
@@ -406,9 +417,3 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
     </>
   );
 }
-
-    
-
-    
-
-    
