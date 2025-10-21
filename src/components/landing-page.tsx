@@ -44,8 +44,12 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   return (
     <div className="bg-warm-white text-charcoal">
       {/* Hero Section */}
-      <section className="bg-warm-white py-20 md:py-32">
-        <div className="container grid lg:grid-cols-2 gap-12 items-center">
+      <section className="relative bg-warm-white py-20 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute h-[500px] w-[500px] bg-primary/5 rounded-full -top-40 -left-40"></div>
+          <div className="absolute h-[400px] w-[400px] bg-secondary/5 rounded-full -bottom-20 -right-20"></div>
+        </div>
+        <div className="container relative z-10 grid lg:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col items-start text-left gap-6">
                 <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight font-headline">
                     {t.heroTitle} <span className="text-primary">{t.heroTitleSpan}</span>
