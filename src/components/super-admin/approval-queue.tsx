@@ -1,14 +1,13 @@
 
-
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck, User, Signature } from "lucide-react";
+import { CheckCircle, FileCheck, FileX, Info, RefreshCcw, XCircle, ShieldCheck, Signature, Pencil } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -23,13 +22,15 @@ import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import type { ApprovalItem, ApprovalStatus } from "@/lib/data";
-import { initialApprovalItems } from "@/lib/data";
-import { Input } from "../ui/input";
 import { useAppContext } from "@/app/app-provider";
+import SignaturePad from "react-signature-canvas";
+import Image from "next/image";
+
 
 export function ApprovalQueue() {
     const { toast } = useToast();
     const { approvalQueue, setApprovalQueue } = useAppContext();
+    const sigPad = useRef<SignaturePad>(null);
     
     const [activeItem, setActiveItem] = useState<ApprovalItem | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -37,7 +38,7 @@ export function ApprovalQueue() {
     const [isSignatureOpen, setIsSignatureOpen] = useState(false);
     const [actionType, setActionType] = useState<"Approve" | "Reject">("Approve");
     const [reason, setReason] = useState("");
-    const [signature, setSignature] = useState("");
+    const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
     
     const getSubmitterInitials = (name: string) => name.split(' ').map(n => n[0]).join('');
 
@@ -50,8 +51,9 @@ export function ApprovalQueue() {
 
     const openApproveDialog = (item: ApprovalItem) => {
         setActiveItem(item);
-        setSignature("");
         setReason("");
+        setSignatureDataUrl(null);
+        sigPad.current?.clear();
         setIsSignatureOpen(true);
     }
     
@@ -77,13 +79,13 @@ export function ApprovalQueue() {
     };
     
     const handleConfirmApproval = () => {
-        if (!activeItem || !signature) return;
+        if (!activeItem || !signatureDataUrl) return;
 
         setApprovalQueue(prev => prev.map(item => 
             item.id === activeItem.id ? { 
                 ...item, 
                 status: "ReadyForIssuance", 
-                governorSignature: signature,
+                governorSignature: signatureDataUrl,
                 approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
                 reason: reason
             } : item));
@@ -96,8 +98,9 @@ export function ApprovalQueue() {
         
         setIsSignatureOpen(false);
         setActiveItem(null);
-        setSignature("");
+        setSignatureDataUrl(null);
         setReason("");
+        sigPad.current?.clear();
     }
 
     const handleRevert = (itemToRevert: ApprovalItem) => {
@@ -147,15 +150,15 @@ export function ApprovalQueue() {
                                 </Button>
                                 {status === 'Pending' && (
                                     <>
-                                        <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary" onClick={() => openApproveDialog(item)}>
+                                        <Button variant="outline" size="sm" className="text-secondary border-secondary/50 hover:bg-secondary/10 hover:text-secondary" onClick={() => openApproveDialog(item)}>
                                             <FileCheck className="mr-2 h-4 w-4" /> Approve
                                         </Button>
-                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => openRejectDialog(item)}>
+                                        <Button variant="outline" size="sm" className="text-destructive border-destructive/50 hover:bg-destructive/10 hover:text-destructive" onClick={() => openRejectDialog(item)}>
                                             <FileX className="mr-2 h-4 w-4" /> Reject
                                         </Button>
                                     </>
                                 )}
-                                {(status === 'Approved' || status === 'Rejected' || status === 'ReadyForIssuance') && (
+                                {(status === 'Approved' || status === 'Rejected' || status === 'ReadyForIssuance' || status === 'Issued') && (
                                      <Button variant="ghost" size="sm" onClick={() => handleRevert(item)}>
                                         <RefreshCcw className="mr-2 h-4 w-4" /> Revert to Pending
                                     </Button>
@@ -181,12 +184,13 @@ export function ApprovalQueue() {
             </div>
 
             <Tabs defaultValue="pending" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-card">
+                <TabsList className="grid w-full grid-cols-4 bg-card">
                     <TabsTrigger value="pending">
                         Pending
                         <Badge variant="secondary" className="ml-2">{approvalQueue.filter(i => i.status === 'Pending').length}</Badge>
                     </TabsTrigger>
-                    <TabsTrigger value="approved">Approved & Issued</TabsTrigger>
+                    <TabsTrigger value="ready">Ready for Issuance</TabsTrigger>
+                    <TabsTrigger value="issued">Issued</TabsTrigger>
                     <TabsTrigger value="rejected">Rejected</TabsTrigger>
                 </TabsList>
                 <TabsContent value="pending" className="mt-4">
@@ -196,10 +200,17 @@ export function ApprovalQueue() {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="approved" className="mt-4">
-                    <Card>
-                         <CardContent className="p-0">
-                            {renderTable('Approved')}
+                <TabsContent value="ready" className="mt-4">
+                     <Card>
+                        <CardContent className="p-0">
+                            {renderTable('ReadyForIssuance')}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="issued" className="mt-4">
+                     <Card>
+                        <CardContent className="p-0">
+                            {renderTable('Issued')}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -223,7 +234,8 @@ export function ApprovalQueue() {
                     </DialogHeader>
                     <div className="py-4 space-y-4">
                         <p className="text-sm text-muted-foreground">{activeItem?.description}</p>
-                        {activeItem?.reason && (
+                        
+                        {activeItem?.reason && activeItem.status !== 'Issued' && (
                             <div className="p-4 bg-muted rounded-lg space-y-2">
                                 <h4 className="font-semibold flex items-center gap-2 text-sm">
                                     {activeItem.status === 'Rejected' ? <XCircle className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-secondary" />}
@@ -238,10 +250,10 @@ export function ApprovalQueue() {
                                     <Signature className="h-4 w-4" />
                                     Approved by the Executive Governor
                                 </h4>
-                                <p className="text-sm text-muted-foreground">
-                                    Signed by: <span className="font-medium text-foreground">{activeItem.governorSignature}</span>
-                                </p>
-                                 <p className="text-sm text-muted-foreground">
+                                <div className="relative h-24 bg-background border border-dashed rounded-md">
+                                    <Image src={activeItem.governorSignature} alt="Governor's Signature" layout="fill" objectFit="contain" />
+                                </div>
+                                 <p className="text-sm text-muted-foreground pt-2">
                                     Date: <span className="font-medium text-foreground">{activeItem.approvalDate}</span>
                                 </p>
                             </div>
@@ -293,18 +305,30 @@ export function ApprovalQueue() {
                     <DialogHeader>
                         <DialogTitle>Final Executive Approval</DialogTitle>
                         <DialogDescription>
-                           To approve "{activeItem?.title}", please provide your e-signature. This action is final and will forward the item for directive issuance.
+                           To approve "{activeItem?.title}", please provide your e-signature below. This action is final and will forward the item for directive issuance.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="signature">Governor's E-Signature</Label>
-                            <Input 
-                                id="signature" 
-                                value={signature} 
-                                onChange={(e) => setSignature(e.target.value)}
-                                placeholder="Type your full name to sign"
-                            />
+                            <Label>Governor's E-Signature</Label>
+                            <div className="w-full h-40 rounded-lg border border-dashed bg-muted relative">
+                                <SignaturePad 
+                                    ref={sigPad}
+                                    canvasProps={{className: "w-full h-full"}} 
+                                    onEnd={() => setSignatureDataUrl(sigPad.current!.toDataURL())}
+                                />
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="absolute top-2 right-2 h-7 w-7"
+                                    onClick={() => {
+                                        sigPad.current?.clear();
+                                        setSignatureDataUrl(null);
+                                    }}
+                                >
+                                    <RefreshCcw className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="approval-reason">Reason for Approval (Optional)</Label>
@@ -323,10 +347,9 @@ export function ApprovalQueue() {
                         </DialogClose>
                         <Button
                             onClick={handleConfirmApproval}
-                            disabled={!signature.trim()}
-                            variant={'default'}
+                            disabled={!signatureDataUrl}
                         >
-                             <Signature className="mr-2 h-4 w-4"/>
+                             <Pencil className="mr-2 h-4 w-4"/>
                             Sign and Approve
                         </Button>
                     </DialogFooter>

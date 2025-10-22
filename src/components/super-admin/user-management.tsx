@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -51,7 +52,7 @@ const createUserSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   confirmPassword: z.string(),
-  role: z.enum(["MDA Official", "Moderator", "Special Adviser", "Governor"]),
+  role: z.enum(["MDA Official", "Moderator", "Special Adviser", "Governor", "Citizen"]),
   mda: z.string().optional(),
   location: z.string().optional(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -69,7 +70,7 @@ const createUserSchema = z.object({
 
 
 // Filter out citizens and create a mutable list
-const initialAdminUsers = seededUsers.filter(u => u.role !== "Citizen");
+const initialAdminUsers = seededUsers;
 
 interface UserManagementProps {
     availableRoles: UserRole[];
@@ -82,8 +83,8 @@ interface UserManagementProps {
 export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles }: UserManagementProps) {
     const { toast } = useToast();
     const [users, setUsers] = useState(initialAdminUsers);
-    const [userToDelete, setUserToDelete] = useState<Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> | null>(null);
-    const [userToEdit, setUserToEdit] = useState<Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> | null>(null);
+    const [userToDelete, setUserToDelete] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) | null>(null);
+    const [userToEdit, setUserToEdit] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) | null>(null);
     const [newRole, setNewRole] = useState<UserRole | "">("");
 
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
@@ -104,7 +105,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 
     const selectedRole = form.watch("role");
 
-    const handleDeleteClick = (user: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'>) => {
+    const handleDeleteClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string})) => {
         setUserToDelete(user);
     }
 
@@ -119,7 +120,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setUserToDelete(null);
     }
 
-    const handleEditClick = (user: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'>) => {
+    const handleEditClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string})) => {
         setUserToEdit(user);
         setNewRole(user.role);
     }
@@ -168,7 +169,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     }
     
     const handleCreateUser = (values: z.infer<typeof createUserSchema>) => {
-        const newUser: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string} = {
+        const newUser: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) = {
             name: values.fullName,
             email: values.email,
             role: values.role as UserRole,
@@ -308,7 +309,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an MDA" />
-                                                            </SelectTrigger>
+                                                            </Trigger>
                                                         </FormControl>
                                                         <SelectContent>
                                                             {mdas.map(mda => (
