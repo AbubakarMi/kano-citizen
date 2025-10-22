@@ -104,7 +104,7 @@ const DashboardLoading = () => (
 function HomePageContent() {
   const { user, loading: userLoading } = useUser();
   const [language, setLanguage] = useState<Language>('en');
-  const { isSidebarCollapsed } = useAppContext();
+  const { isSidebarCollapsed, ideas, directives, volunteerOpportunities } = useAppContext();
   
   const t = translations[language];
 
@@ -129,9 +129,9 @@ function HomePageContent() {
             language={language} 
             t={t.landing} 
             complaintStrings={t.complaint}
-            ideas={t.ideas}
-            directives={t.directives}
-            volunteerOpportunities={t.volunteerOpportunities}
+            ideas={ideas}
+            directives={directives}
+            volunteerOpportunities={volunteerOpportunities}
             testimonials={t.testimonials}
             faqs={t.faqs}
           />
