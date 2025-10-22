@@ -27,12 +27,12 @@ import {
   Building,
   CheckSquare,
 } from "lucide-react";
-import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useAppContext } from "@/app/app-provider";
 import { useUser } from "@/firebase/auth/use-user";
 import { useRouter } from "next/navigation";
+import { Logo } from "./site-header";
 
 
 interface SidebarLink {
@@ -140,6 +140,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
 
   const isAdmin = user.role === 'Governor' || user.role === 'Special Adviser';
 
+  // Admin Sidebar (Governor, Special Adviser)
   if (isAdmin) {
       return (
         <TooltipProvider delayDuration={0}>
@@ -227,6 +228,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
       )
   }
 
+  // Citizen, MDA, Moderator Sidebar
   return (
     <nav className={cn("flex flex-col gap-1 py-6", className)}>
         {links.map((link) => (
@@ -247,5 +249,3 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
       </nav>
   );
 }
-
-    

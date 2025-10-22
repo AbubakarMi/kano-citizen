@@ -51,15 +51,12 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
     }
 
     return (
-        <div className="flex">
+        <div className="flex bg-muted/40">
             <aside 
             className={cn(
-                "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block transition-all duration-300",
-                isAdmin && "bg-card",
-                !isAdmin && "bg-primary",
-                isAdmin && !isSidebarCollapsed && "w-[240px]",
-                isAdmin && isSidebarCollapsed && "w-[72px]",
-                !isAdmin && "w-[240px]"
+                "fixed left-0 top-0 h-full z-30 pt-20 border-r bg-card text-card-foreground hidden lg:block transition-all duration-300",
+                isSidebarCollapsed && "w-[72px]",
+                !isSidebarCollapsed && "w-[240px]"
             )}
             >
                 <DashboardSidebar 
@@ -69,11 +66,9 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
                 />
             </aside>
             <main className={cn(
-            "flex-1 pt-20 transition-all duration-300",
-            !isCitizen && "lg:ml-[240px]",
-            isAdmin && !isSidebarCollapsed && "lg:ml-[240px]",
-            isAdmin && isSidebarCollapsed && "lg:ml-[72px]",
-            isCitizen && "lg:ml-0" 
+                "flex-1 min-h-screen pt-20 transition-all duration-300",
+                !isSidebarCollapsed && "lg:ml-[240px]",
+                isSidebarCollapsed && "lg:ml-[72px]"
             )}>
                 <div className={cn(
                     "p-6 lg:p-8",
