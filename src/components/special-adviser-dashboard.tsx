@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -18,7 +19,7 @@ interface SpecialAdviserDashboardProps {
 }
 
 export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDashboardProps) {
-  const { ideas, setApprovalQueue, setIdeas } = useAppContext();
+  const { ideas, setIdeas, setApprovalQueue } = useAppContext();
   const mdas = initialMdas;
 
   const renderView = () => {

@@ -6,7 +6,7 @@ export type Idea = {
   author: string;
   authorId: string;
   upvotes: string[]; // array of user uids
-  status: "Pending" | "Approved" | "Rejected";
+  status: "Pending" | "Approved" | "Rejected" | "Completed";
 };
 
 export type Directive = {
