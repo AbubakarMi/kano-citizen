@@ -6,7 +6,7 @@ import type { UserProfile, MDA, UserRole, ApprovalItem } from "@/lib/data";
 import { mdas as initialMdas, seededUsers } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { FileUp, Send, Signature } from "lucide-react";
 import { Badge } from "./ui/badge";
