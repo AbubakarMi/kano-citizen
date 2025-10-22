@@ -8,7 +8,7 @@ import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
-import { FileUp, Send, Signature, Building, ShieldCheck, Gavel } from "lucide-react";
+import { FileUp, Send, Signature, Building, ShieldCheck, Gavel, Vote } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SpecialAdviserMainDashboard } from "./super-admin/special-adviser-main-dashboard";
 import { DirectiveIssuance } from "./super-admin/directive-issuance";
 import { MDAPerformanceMonitor } from "./super-admin/mda-performance-monitor";
-import { ModerationOversight } from "./super-admin/moderation-oversight";
+import { OngoingVotes } from "./super-admin/ongoing-votes";
 
 interface SpecialAdviserDashboardProps {
   user: UserProfile;
@@ -157,10 +157,10 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
         return <ReadyForIssuance />;
       case 'drafting':
         return <DirectiveIssuance ideas={ideas} mdas={mdas} setApprovalQueue={setApprovalQueue} />;
+      case 'ongoing-votes':
+        return <OngoingVotes />;
       case 'mda-monitor':
         return <MDAPerformanceMonitor />;
-      case 'moderation':
-        return <ModerationOversight />;
       case 'analytics':
         return <Analytics />;
       default:

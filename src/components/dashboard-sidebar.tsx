@@ -65,8 +65,8 @@ const specialAdviserLinks: SidebarLink[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS" },
     { id: "submissions", label: "Reviewed Submissions", icon: Send, group: "OPERATIONS" },
     { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
+    { id: "ongoing-votes", label: "Ongoing Votes", icon: Vote, group: "OPERATIONS" },
     { id: "mda-monitor", label: "MDA Performance", icon: Building, group: "OPERATIONS" },
-    { id: "moderation", label: "Moderation Oversight", icon: ShieldCheck, group: "OPERATIONS" },
     { id: "analytics", label: "Analytics", icon: BarChart2, group: "OPERATIONS" },
 ]
 
