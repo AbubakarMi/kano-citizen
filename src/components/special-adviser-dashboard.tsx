@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SpecialAdviserMainDashboard } from "./super-admin/special-adviser-main-dashboard";
 import { DirectiveIssuance } from "./super-admin/directive-issuance";
 import { MDAPerformanceMonitor } from "./super-admin/mda-performance-monitor";
+import { ModerationOversight } from "./super-admin/moderation-oversight";
 
 interface SpecialAdviserDashboardProps {
   user: UserProfile;
@@ -159,7 +160,7 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
       case 'mda-monitor':
         return <MDAPerformanceMonitor />;
       case 'moderation':
-        return <PlaceholderView title="Moderation Oversight" icon={ShieldCheck} />;
+        return <ModerationOversight />;
       case 'analytics':
         return <Analytics />;
       default:
