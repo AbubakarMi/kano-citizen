@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Check, X, Send, Info } from "lucide-react";
+import { ShieldCheck, Check, X, Send, Info, MessageSquareWarning } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from "@/app/app-provider";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -22,6 +22,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useUser } from "@/firebase/auth/use-user";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 
 const moderationKpis = [
     { title: "Items Moderated (24h)", value: "128" },
@@ -52,6 +54,8 @@ export function ModerationOversight() {
     const [escalated, setEscalated] = useState(initialEscalatedItems);
     const [selectedItem, setSelectedItem] = useState<EscalatedItem | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isRejectionOpen, setIsRejectionOpen] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState("");
     
     const handleApproveAndSend = (itemToApprove: EscalatedItem) => {
         // Add to governor's queue
@@ -76,13 +80,25 @@ export function ModerationOversight() {
         setSelectedItem(null);
     }
 
-    const handleReject = (itemToReject: EscalatedItem) => {
-        setEscalated(prev => prev.filter(item => item.id !== itemToReject.id));
+    const openRejectDialog = (item: EscalatedItem) => {
+        setSelectedItem(item);
+        setRejectionReason("");
+        setIsRejectionOpen(true);
+    }
+
+    const handleConfirmRejection = () => {
+        if (!selectedItem || !rejectionReason.trim()) return;
+
+        setEscalated(prev => prev.filter(item => item.id !== selectedItem.id));
         toast({
             variant: "destructive",
             title: "Escalation Rejected",
-            description: `"${itemToReject.title}" has been rejected and will not be forwarded.`,
+            description: `"${selectedItem.title}" was rejected. Reason: ${rejectionReason}`,
         });
+        
+        setIsRejectionOpen(false);
+        setSelectedItem(null);
+        setRejectionReason("");
     }
 
     const handleViewDetails = (item: EscalatedItem) => {
@@ -146,19 +162,22 @@ export function ModerationOversight() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Confirm Approval</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will send the item "{selectedItem?.title}" to the Governor for final approval. Are you sure?
+                          <AlertDialogTitle className="flex items-center gap-2">
+                            <MessageSquareWarning className="h-6 w-6 text-primary" />
+                            Confirm Approval and Forward
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="pt-2">
+                            This will send the item "{selectedItem?.title}" to the Governor for final executive approval. Are you sure you want to proceed?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel onClick={() => setSelectedItem(null)}>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => selectedItem && handleApproveAndSend(selectedItem)}>Confirm</AlertDialogAction>
+                          <AlertDialogAction onClick={() => selectedItem && handleApproveAndSend(selectedItem)}>Confirm & Send</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
 
-                     <Button variant="destructive" size="sm" onClick={() => handleReject(item)}>
+                     <Button variant="destructive" size="sm" onClick={() => openRejectDialog(item)}>
                         <X className="mr-2 h-4 w-4" /> Reject
                     </Button>
                   </TableCell>
@@ -185,7 +204,7 @@ export function ModerationOversight() {
             {recentActivity.map(activity => (
               <div key={activity.id} className="flex items-start gap-3 text-sm">
                 <div>
-                  <Badge variant={activity.action === "Approved" ? "secondary" : "destructive"}>
+                  <Badge variant={activity.action === "Approved" ? "secondary" : activity.action === "Rejected" ? "destructive" : "default"}>
                     {activity.action}
                   </Badge>
                 </div>
@@ -199,6 +218,7 @@ export function ModerationOversight() {
         </CardContent>
       </Card>
 
+      {/* Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent>
             <DialogHeader>
@@ -213,6 +233,38 @@ export function ModerationOversight() {
                 <DialogClose asChild><Button>Close</Button></DialogClose>
             </DialogFooter>
         </DialogContent>
+      </Dialog>
+
+      {/* Rejection Dialog */}
+      <Dialog open={isRejectionOpen} onOpenChange={setIsRejectionOpen}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Confirm Rejection</DialogTitle>
+                  <DialogDescription>
+                      You are about to reject the escalated item: "{selectedItem?.title}". Please provide a clear reason for this decision.
+                  </DialogDescription>
+              </DialogHeader>
+              <div className="py-4 space-y-2">
+                  <Label htmlFor="rejection-reason">Reason for Rejection</Label>
+                  <Textarea
+                      id="rejection-reason"
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="e.g., 'This submission violates community guideline X.Z...'"
+                      rows={4}
+                  />
+              </div>
+              <DialogFooter>
+                  <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+                  <Button
+                      variant="destructive"
+                      onClick={handleConfirmRejection}
+                      disabled={!rejectionReason.trim()}
+                  >
+                      Confirm Rejection
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
       </Dialog>
     </div>
   );
