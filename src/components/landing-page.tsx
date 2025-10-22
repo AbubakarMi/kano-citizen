@@ -30,10 +30,10 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
-  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes.length - a.upvotes.length);
+  const sortedIdeas = [...(ideas || [])].sort((a, b) => b.upvotes.length - a.upvotes.length);
   const topIdea = sortedIdeas[0];
   const otherIdeas = sortedIdeas.slice(1);
-  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes.length, 0);
+  const totalVotes = (ideas || []).reduce((sum, idea) => sum + idea.upvotes.length, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
@@ -144,6 +144,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       </section>
       
       {/* Live Polls Section */}
+      {topIdea && (
       <section id="live-polls" className="py-20 md:py-24">
         <div className="container">
            <div className="text-center max-w-3xl mx-auto mb-16">
@@ -222,8 +223,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
         </div>
       </section>
+      )}
 
       {/* From Idea to Action Section */}
+      {directives && directives.length > 0 && (
       <section id="directives" className="py-20 md:py-24 bg-pure-white">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -277,8 +280,10 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
         </div>
       </section>
+      )}
 
      {/* Get Involved Section */}
+     {volunteerOpportunities && volunteerOpportunities.length > 0 && (
      <section id="get-involved" className="py-20 md:py-24 bg-primary text-pure-white">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -333,6 +338,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
           </div>
         </div>
       </section>
+      )}
 
       {/* Testimonials Section */}
       <section className="bg-pure-white py-20 md:py-24">
