@@ -29,7 +29,8 @@
                 "author": { "type": "string" },
                 "authorId": { "type": "string" },
                 "upvotes": { "type": "array", "items": { "type": "string" }, "description": "Array of user UIDs who have upvoted." },
-                "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected"] }
+                "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "Completed"] },
+                "moderatorApproved": { "type": "boolean", "description": "Flag to indicate if a moderator has approved the submission." }
             },
             "required": ["title", "description", "author", "authorId", "status"]
         },

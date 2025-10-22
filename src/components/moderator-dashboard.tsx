@@ -21,6 +21,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useFirestore } from "@/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 interface ModeratorDashboardProps {
   user: UserProfile;
@@ -29,34 +31,50 @@ interface ModeratorDashboardProps {
 export function ModeratorDashboard({ user }: ModeratorDashboardProps) {
     const { ideas, setIdeas } = useAppContext();
     const { toast } = useToast();
-    const [reviewedIdeaIds, setReviewedIdeaIds] = useState<string[]>([]);
+    const firestore = useFirestore();
     
-    // The moderator's queue consists of ideas that are "Pending" and have not yet been reviewed in the current session.
-    const moderationQueue = ideas.filter(idea => idea.status === 'Pending' && !reviewedIdeaIds.includes(idea.id));
+    // The moderator's queue consists of ideas that are "Pending" and have not yet been approved by a moderator.
+    const moderationQueue = ideas.filter(idea => idea.status === 'Pending' && !idea.moderatorApproved);
 
-    const handleApprove = (idea: Idea) => {
+    const handleApprove = async (idea: Idea) => {
+        if (!firestore) return;
+        
         // "Approving" an idea means it's good to go to the Special Adviser.
         // It remains in the "Pending" state for the Special Adviser to review.
-        // We just remove it from the moderator's view for this session.
-        setReviewedIdeaIds(prev => [...prev, idea.id]);
-        toast({
-            title: "Submission Approved",
-            description: `"${idea.title}" has been escalated to the Special Adviser.`,
-            className: "bg-secondary text-secondary-foreground"
-        });
+        // We set a flag to remove it from the moderator's view.
+        const ideaRef = doc(firestore, "ideas", idea.id);
+        try {
+            await updateDoc(ideaRef, { moderatorApproved: true });
+            setIdeas(prev => prev.map(i => i.id === idea.id ? { ...i, moderatorApproved: true } : i));
+            toast({
+                title: "Submission Approved",
+                description: `"${idea.title}" has been escalated to the Special Adviser.`,
+                className: "bg-secondary text-secondary-foreground"
+            });
+        } catch (error) {
+            console.error("Error approving idea:", error);
+            toast({ variant: "destructive", title: "Error", description: "Could not approve submission." });
+        }
     };
 
-    const handleReject = (ideaToReject: Idea) => {
+    const handleReject = async (ideaToReject: Idea) => {
+        if (!firestore) return;
         // Rejecting an idea sets its status to "Rejected".
-        setIdeas(prevIdeas => prevIdeas.map(idea => 
-            idea.id === ideaToReject.id ? { ...idea, status: "Rejected" } : idea
-        ));
-        setReviewedIdeaIds(prev => [...prev, ideaToReject.id]);
-        toast({
-            title: "Submission Rejected",
-            description: `"${ideaToReject.title}" has been removed from the platform.`,
-            variant: "destructive"
-        });
+        const ideaRef = doc(firestore, "ideas", ideaToReject.id);
+        try {
+            await updateDoc(ideaRef, { status: "Rejected" });
+            setIdeas(prevIdeas => prevIdeas.map(idea => 
+                idea.id === ideaToReject.id ? { ...idea, status: "Rejected" } : idea
+            ));
+            toast({
+                title: "Submission Rejected",
+                description: `"${ideaToReject.title}" has been removed from the platform.`,
+                variant: "destructive"
+            });
+        } catch (error) {
+            console.error("Error rejecting idea:", error);
+            toast({ variant: "destructive", title: "Error", description: "Could not reject submission." });
+        }
     };
 
   return (

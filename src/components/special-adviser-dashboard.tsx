@@ -47,5 +47,3 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
     </div>
   );
 }
-
-    
