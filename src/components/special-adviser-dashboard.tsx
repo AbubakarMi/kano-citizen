@@ -3,16 +3,17 @@
 
 import { useState } from "react";
 import type { UserProfile, MDA } from "@/lib/data";
-import { mdas as initialMdas } from "@/lib/data";
+import { mdas as initialMdas, initialApprovalItems as allItems } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { FileUp, Send, Signature, Building, ShieldCheck, Gavel, FileText } from "lucide-react";
+import { FileUp, Send, Signature, Building, ShieldCheck, Gavel } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { SpecialAdviserMainDashboard } from "./super-admin/special-adviser-main-dashboard";
 
 interface SpecialAdviserDashboardProps {
   user: UserProfile;
@@ -22,14 +23,14 @@ interface SpecialAdviserDashboardProps {
 function ReadyForIssuance() {
     const { approvalQueue, setApprovalQueue } = useAppContext();
     const { toast } = useToast();
-    const [selectedItem, setSelectedItem] = useState<ApprovalItem | null>(null);
+    const [selectedItem, setSelectedItem] = useState<any | null>(null);
     const [isIssuanceOpen, setIsIssuanceOpen] = useState(false);
     const [assignedMdaId, setAssignedMdaId] = useState<string>('');
     const mdas = initialMdas;
 
     const itemsReady = approvalQueue.filter(item => item.status === 'ReadyForIssuance');
 
-    const handleOpenIssuance = (item: ApprovalItem) => {
+    const handleOpenIssuance = (item: any) => {
         setSelectedItem(item);
         setAssignedMdaId('');
         setIsIssuanceOpen(true);
@@ -145,6 +146,8 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
 
   const renderView = () => {
     switch (activeView) {
+      case 'dashboard':
+        return <SpecialAdviserMainDashboard />;
       case 'submissions':
         return <ReadyForIssuance />;
       case 'drafting':
@@ -156,7 +159,7 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
       case 'analytics':
         return <Analytics />;
       default:
-        return <ReadyForIssuance />;
+        return <SpecialAdviserMainDashboard />;
     }
   }
 

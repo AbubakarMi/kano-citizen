@@ -62,6 +62,7 @@ const governorLinks: SidebarLink[] = [
 ];
 
 const specialAdviserLinks: SidebarLink[] = [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS" },
     { id: "submissions", label: "Reviewed Submissions", icon: Send, group: "OPERATIONS" },
     { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
     { id: "mda-monitor", label: "MDA Performance", icon: Building, group: "OPERATIONS" },

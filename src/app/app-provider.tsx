@@ -65,7 +65,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           setActiveView('queue');
           break;
         case 'Special Adviser':
-            setActiveView('submissions');
+            setActiveView('dashboard');
             break;
         case 'Governor':
             setActiveView('overview');
