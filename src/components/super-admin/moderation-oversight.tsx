@@ -10,6 +10,17 @@ import { ShieldCheck, Check, X, Send, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from "@/app/app-provider";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useUser } from "@/firebase/auth/use-user";
 
 const moderationKpis = [
@@ -32,15 +43,17 @@ const recentActivity = [
     { id: 4, item: "Idea: 'Install more traffic lights'", action: "Approved", moderator: "Content Moderator", time: "25m ago" },
 ];
 
+type EscalatedItem = typeof initialEscalatedItems[0];
+
 export function ModerationOversight() {
     const { toast } = useToast();
     const { user } = useUser();
     const { setApprovalQueue } = useAppContext();
     const [escalated, setEscalated] = useState(initialEscalatedItems);
-    const [selectedItem, setSelectedItem] = useState<(typeof initialEscalatedItems)[0] | null>(null);
+    const [selectedItem, setSelectedItem] = useState<EscalatedItem | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
-    const handleApproveAndSend = (itemToApprove: (typeof initialEscalatedItems)[0]) => {
+    
+    const handleApproveAndSend = (itemToApprove: EscalatedItem) => {
         // Add to governor's queue
         const newApprovalItem = {
             id: `escalated-${itemToApprove.id}-${Date.now()}`,
@@ -56,13 +69,14 @@ export function ModerationOversight() {
         setEscalated(prev => prev.filter(item => item.id !== itemToApprove.id));
         
         toast({
-            title: "Item Approved & Sent to Governor",
+            title: "Item Sent to Governor",
             description: `"${itemToApprove.title}" is now pending final executive approval.`,
             className: "bg-primary text-primary-foreground",
         });
+        setSelectedItem(null);
     }
 
-    const handleReject = (itemToReject: (typeof initialEscalatedItems)[0]) => {
+    const handleReject = (itemToReject: EscalatedItem) => {
         setEscalated(prev => prev.filter(item => item.id !== itemToReject.id));
         toast({
             variant: "destructive",
@@ -71,7 +85,7 @@ export function ModerationOversight() {
         });
     }
 
-    const handleViewDetails = (item: (typeof initialEscalatedItems)[0]) => {
+    const handleViewDetails = (item: EscalatedItem) => {
         setSelectedItem(item);
         setIsDetailsOpen(true);
     }
@@ -124,9 +138,26 @@ export function ModerationOversight() {
                     <Button variant="ghost" size="sm" onClick={() => handleViewDetails(item)}>
                         <Info className="mr-2 h-4 w-4" /> Details
                     </Button>
-                    <Button variant="outline" size="sm" className="text-secondary border-secondary/50 hover:bg-secondary/10 hover:text-secondary" onClick={() => handleApproveAndSend(item)}>
-                        <Send className="mr-2 h-4 w-4" /> Approve & Send to Governor
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                         <Button variant="outline" size="sm" className="text-secondary border-secondary/50 hover:bg-secondary/10 hover:text-secondary" onClick={() => setSelectedItem(item)}>
+                            <Check className="mr-2 h-4 w-4" /> Approve
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirm Approval</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will send the item "{selectedItem?.title}" to the Governor for final approval. Are you sure?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setSelectedItem(null)}>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => selectedItem && handleApproveAndSend(selectedItem)}>Confirm</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
                      <Button variant="destructive" size="sm" onClick={() => handleReject(item)}>
                         <X className="mr-2 h-4 w-4" /> Reject
                     </Button>
@@ -186,5 +217,3 @@ export function ModerationOversight() {
     </div>
   );
 }
-
-    
