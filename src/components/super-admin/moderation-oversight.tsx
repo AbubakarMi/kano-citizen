@@ -6,9 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, ShieldCheck, Check, X, ArrowUpCircle } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ShieldCheck, Check, X, Send, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAppContext } from "@/app/app-provider";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { useUser } from "@/firebase/auth/use-user";
 
 const moderationKpis = [
     { title: "Items Moderated (24h)", value: "128" },
@@ -17,7 +19,7 @@ const moderationKpis = [
     { title: "Avg. Review Time", value: "15 mins" },
 ];
 
-const escalatedItems = [
+const initialEscalatedItems = [
     { id: "idea-esc-1", type: "Citizen Idea", title: "Proposal for a state-wide public transportation overhaul", submittedBy: "citizenX@test.com", reason: "High-impact, requires executive review for feasibility." },
     { id: "idea-esc-2", type: "Citizen Idea", title: "Complaint about alleged misconduct in Ministry of Works", submittedBy: "citizenY@test.com", reason: "Serious allegation, beyond standard moderator scope." },
     { id: "idea-esc-3", type: "Comment", title: "Comment on 'Streetlight Repair' directive", submittedBy: "citizenZ@test.com", reason: "Contains potentially sensitive political commentary." },
@@ -32,14 +34,46 @@ const recentActivity = [
 
 export function ModerationOversight() {
     const { toast } = useToast();
-    const [escalated, setEscalated] = useState(escalatedItems);
+    const { user } = useUser();
+    const { setApprovalQueue } = useAppContext();
+    const [escalated, setEscalated] = useState(initialEscalatedItems);
+    const [selectedItem, setSelectedItem] = useState<(typeof initialEscalatedItems)[0] | null>(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-    const handleAction = (itemId: string, action: "Approve" | "Reject") => {
-        setEscalated(prev => prev.filter(item => item.id !== itemId));
+    const handleApproveAndSend = (itemToApprove: (typeof initialEscalatedItems)[0]) => {
+        // Add to governor's queue
+        const newApprovalItem = {
+            id: `escalated-${itemToApprove.id}-${Date.now()}`,
+            type: `Escalated Item: ${itemToApprove.type}`,
+            title: itemToApprove.title,
+            description: `Reason for Escalation: ${itemToApprove.reason}`,
+            submittedBy: user?.profile?.name || 'Special Adviser',
+            status: 'Pending' as const,
+        };
+        setApprovalQueue(prev => [newApprovalItem, ...prev]);
+
+        // Remove from local state
+        setEscalated(prev => prev.filter(item => item.id !== itemToApprove.id));
+        
         toast({
-            title: `Item ${action}d`,
-            description: "The escalated item has been resolved.",
+            title: "Item Approved & Sent to Governor",
+            description: `"${itemToApprove.title}" is now pending final executive approval.`,
+            className: "bg-primary text-primary-foreground",
         });
+    }
+
+    const handleReject = (itemToReject: (typeof initialEscalatedItems)[0]) => {
+        setEscalated(prev => prev.filter(item => item.id !== itemToReject.id));
+        toast({
+            variant: "destructive",
+            title: "Escalation Rejected",
+            description: `"${itemToReject.title}" has been rejected and will not be forwarded.`,
+        });
+    }
+
+    const handleViewDetails = (item: (typeof initialEscalatedItems)[0]) => {
+        setSelectedItem(item);
+        setIsDetailsOpen(true);
     }
     
   return (
@@ -86,11 +120,14 @@ export function ModerationOversight() {
                     <p className="text-sm text-muted-foreground">Type: {item.type}</p>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{item.reason}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" className="mr-2" onClick={() => handleAction(item.id, "Approve")}>
-                        <Check className="mr-2 h-4 w-4" /> Approve
+                  <TableCell className="text-right space-x-2">
+                    <Button variant="ghost" size="sm" onClick={() => handleViewDetails(item)}>
+                        <Info className="mr-2 h-4 w-4" /> Details
                     </Button>
-                     <Button variant="destructive" size="sm" onClick={() => handleAction(item.id, "Reject")}>
+                    <Button variant="outline" size="sm" className="text-secondary border-secondary/50 hover:bg-secondary/10 hover:text-secondary" onClick={() => handleApproveAndSend(item)}>
+                        <Send className="mr-2 h-4 w-4" /> Approve & Send to Governor
+                    </Button>
+                     <Button variant="destructive" size="sm" onClick={() => handleReject(item)}>
                         <X className="mr-2 h-4 w-4" /> Reject
                     </Button>
                   </TableCell>
@@ -130,6 +167,24 @@ export function ModerationOversight() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>{selectedItem?.title}</DialogTitle>
+                <DialogDescription>Type: {selectedItem?.type} | Submitted By: {selectedItem?.submittedBy}</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <h4 className="font-semibold mb-2">Reason for Escalation:</h4>
+                <p className="text-muted-foreground bg-muted/50 p-3 rounded-md">{selectedItem?.reason}</p>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild><Button>Close</Button></DialogClose>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+    
