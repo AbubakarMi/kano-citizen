@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck, User } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -17,11 +17,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 type ApprovalStatus = "Pending" | "Approved" | "Rejected";
 
@@ -40,6 +40,8 @@ const initialApprovalItems: ApprovalItem[] = [
     { id: "app-2", type: "Policy Brief", title: "Recommendations for Waste Management Improvement", description: "A policy brief outlining three key recommendations for improving waste collection efficiency and introducing recycling incentives.", submittedBy: "Moderator", status: "Pending"},
     { id: "app-3", type: "System Change", title: "New User Role: 'Community Champion'", description: "Proposal for a new user role to recognize and grant additional privileges to highly active and constructive community members.", submittedBy: "System Administrator", status: "Approved", reason: "Excellent idea for boosting engagement. Approved for implementation in Q3."},
     { id: "app-4", type: "Idea for Directive", title: "Kano Market Modernization", description: "An idea to modernize the Kantin Kwari market with better stalls, improved sanitation, and a digital payment system.", submittedBy: "Citizen via Moderator", status: "Rejected", reason: "This project is too large for the current budget cycle. Please resubmit with a phased approach for consideration next year."},
+    { id: "app-5", type: "Policy Brief", title: "Youth Sports Development Fund", description: "A proposal to create a dedicated fund to support local youth sports teams and facilities.", submittedBy: "Moderator", status: "Pending"},
+
 ]
 
 export function ApprovalQueue() {
@@ -50,6 +52,8 @@ export function ApprovalQueue() {
     const [isActionOpen, setIsActionOpen] = useState(false);
     const [actionType, setActionType] = useState<"Approved" | "Rejected">("Approved");
     const [reason, setReason] = useState("");
+    
+    const getSubmitterInitials = (name: string) => name.split(' ').map(n => n[0]).join('');
 
     const openActionDialog = (item: ApprovalItem, type: "Approved" | "Rejected") => {
         setActiveItem(item);
@@ -100,7 +104,6 @@ export function ApprovalQueue() {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Item</TableHead>
-                        <TableHead>Type</TableHead>
                         <TableHead>Submitted By</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -108,12 +111,23 @@ export function ApprovalQueue() {
                 <TableBody>
                     {filteredItems.map(item => (
                         <TableRow key={item.id}>
-                            <TableCell className="font-medium">{item.title}</TableCell>
-                            <TableCell><Badge variant="outline">{item.type}</Badge></TableCell>
-                            <TableCell>{item.submittedBy}</TableCell>
+                            <TableCell>
+                                <div className="font-medium">{item.title}</div>
+                                <div className="text-sm text-muted-foreground">{item.type}</div>
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback className="text-xs bg-muted text-muted-foreground">
+                                            {getSubmitterInitials(item.submittedBy)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-sm">{item.submittedBy}</span>
+                                </div>
+                            </TableCell>
                             <TableCell className="text-right space-x-2">
                                 <Button variant="ghost" size="sm" onClick={() => openDetailsDialog(item)}>
-                                    <Info className="mr-2 h-4 w-4" /> View Details
+                                    <Info className="mr-2 h-4 w-4" /> Details
                                 </Button>
                                 {status === 'Pending' && (
                                     <>
@@ -127,7 +141,7 @@ export function ApprovalQueue() {
                                 )}
                                 {(status === 'Approved' || status === 'Rejected') && (
                                      <Button variant="ghost" size="sm" onClick={() => handleRevert(item)}>
-                                        <RefreshCcw className="mr-2 h-4 w-4" /> Revert to Pending
+                                        <RefreshCcw className="mr-2 h-4 w-4" /> Revert
                                     </Button>
                                 )}
                             </TableCell>
@@ -139,7 +153,7 @@ export function ApprovalQueue() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 bg-muted/40 p-4 sm:p-6 lg:p-8 rounded-lg -m-4 sm:-m-6 lg:-m-8">
             <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                     <ShieldCheck className="w-6 h-6 text-primary" />
@@ -150,8 +164,8 @@ export function ApprovalQueue() {
                 </div>
             </div>
 
-            <Tabs defaultValue="pending">
-                <TabsList className="grid w-full grid-cols-3">
+            <Tabs defaultValue="pending" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-card">
                     <TabsTrigger value="pending">
                         Pending
                         <Badge variant="secondary" className="ml-2">{items.filter(i => i.status === 'Pending').length}</Badge>
@@ -160,34 +174,22 @@ export function ApprovalQueue() {
                     <TabsTrigger value="rejected">Rejected</TabsTrigger>
                 </TabsList>
                 <TabsContent value="pending" className="mt-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Items Awaiting Your Decision</CardTitle>
-                            <CardDescription>These items have been vetted and are ready for your final approval or rejection.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                     <Card>
+                        <CardContent className="p-0">
                             {renderTable('Pending')}
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="approved" className="mt-4">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Approved Items</CardTitle>
-                            <CardDescription>A log of all items that have received your final approval.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                         <CardContent className="p-0">
                             {renderTable('Approved')}
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="rejected" className="mt-4">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Rejected Items</CardTitle>
-                            <CardDescription>A log of all items that were rejected during the final review stage.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-0">
                             {renderTable('Rejected')}
                         </CardContent>
                     </Card>
@@ -207,9 +209,9 @@ export function ApprovalQueue() {
                         <p className="text-sm text-muted-foreground">{activeItem?.description}</p>
                         {activeItem?.reason && (
                             <div className="p-4 bg-muted rounded-lg space-y-2">
-                                <h4 className="font-semibold flex items-center gap-2">
+                                <h4 className="font-semibold flex items-center gap-2 text-sm">
                                     {activeItem.status === 'Approved' ? <CheckCircle className="h-4 w-4 text-secondary" /> : <XCircle className="h-4 w-4 text-destructive" />}
-                                    Reason for {activeItem.status}
+                                    Governor's Reason for {activeItem.status}
                                 </h4>
                                 <p className="text-sm text-muted-foreground italic">"{activeItem.reason}"</p>
                             </div>
@@ -257,3 +259,5 @@ export function ApprovalQueue() {
         </div>
     );
 }
+
+    
