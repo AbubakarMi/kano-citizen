@@ -6,7 +6,7 @@ import type { UserProfile, MDA } from "@/lib/data";
 import { mdas as initialMdas, initialApprovalItems as allItems } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
 import { FileUp, Send, Signature, Building, ShieldCheck, Gavel } from "lucide-react";
 import { Badge } from "./ui/badge";
@@ -168,7 +168,6 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Special Adviser Command Center</h1>
       {renderView()}
     </div>
   );
