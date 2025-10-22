@@ -4,11 +4,10 @@
 import { useState } from "react";
 import type { UserProfile, MDA, UserRole } from "@/lib/data";
 import { mdas as initialMdas, seededUsers } from "@/lib/data";
-import { ExecutiveDashboard } from "./super-admin/executive-dashboard";
-import { DirectiveIssuance } from "./super-admin/directive-issuance";
 import { ApprovalQueue } from "./super-admin/approval-queue";
 import { SystemLogs } from "./system-admin/system-logs";
 import { useAppContext } from "@/app/app-provider";
+import { ExecutiveDashboard } from "./super-admin/executive-dashboard";
 
 interface GovernorDashboardProps {
   user: UserProfile;
@@ -23,8 +22,6 @@ export function GovernorDashboard({ user, activeView }: GovernorDashboardProps) 
     switch (activeView) {
       case 'overview':
         return <ExecutiveDashboard user={user} />;
-      case 'directives':
-        return <DirectiveIssuance ideas={ideas} mdas={mdas} />;
       case 'approvals':
         return <ApprovalQueue />;
        case 'audit':

@@ -6,7 +6,7 @@ import type { UserProfile, MDA } from "@/lib/data";
 import { mdas as initialMdas, initialApprovalItems as allItems } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { FileUp, Send, Signature, Building, ShieldCheck, Gavel } from "lucide-react";
 import { Badge } from "./ui/badge";
@@ -14,6 +14,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { SpecialAdviserMainDashboard } from "./super-admin/special-adviser-main-dashboard";
+import { DirectiveIssuance } from "./super-admin/directive-issuance";
 
 interface SpecialAdviserDashboardProps {
   user: UserProfile;
@@ -143,6 +144,8 @@ const PlaceholderView = ({ title, icon: Icon }: { title: string, icon: React.Ele
 
 
 export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDashboardProps) {
+  const { ideas, setApprovalQueue } = useAppContext();
+  const mdas = initialMdas;
 
   const renderView = () => {
     switch (activeView) {
@@ -151,7 +154,7 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
       case 'submissions':
         return <ReadyForIssuance />;
       case 'drafting':
-        return <PlaceholderView title="Directive Drafting" icon={Gavel} />;
+        return <DirectiveIssuance ideas={ideas} mdas={mdas} setApprovalQueue={setApprovalQueue} />;
       case 'mda-monitor':
         return <PlaceholderView title="MDA Performance Monitor" icon={Building} />;
       case 'moderation':
