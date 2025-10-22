@@ -39,7 +39,7 @@ interface SiteHeaderProps {
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-        <div className="h-8 w-8 bg-card rounded-full flex items-center justify-center">
+        <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
             <MessageSquareText className="h-5 w-5 text-primary" />
         </div>
         <span className="font-bold text-xl tracking-tight text-inherit">Kano Voice</span>
@@ -76,11 +76,20 @@ export function SiteHeader({
   const isAdmin = user?.profile?.role === 'Governor' || user?.profile?.role === 'Special Adviser';
   const isLoggedIn = !!user;
   const isAuthPage = pageType === 'auth';
-
+  
   // Consistent Header Style Logic
-  const headerBgClass = isLoggedIn ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground';
-  const buttonVariant = isLoggedIn ? "ghost" : "ghost";
-  const buttonHoverClass = isLoggedIn ? "text-primary-foreground hover:bg-primary-foreground/10" : "text-foreground hover:bg-muted";
+  const headerBgClass = 'bg-card text-foreground';
+  const buttonVariant = "ghost";
+  const buttonHoverClass = "hover:bg-muted";
+  const logoColorClass = "text-foreground";
+  const avatarBgClass = "bg-muted text-foreground";
+  const sidebarBgClass = "bg-card text-card-foreground";
+  const sidebarBorderClass = "border-border";
+  const sidebarLogoColorClass = "text-foreground";
+  const citizenSidebarClasses = "bg-primary text-primary-foreground";
+  const citizenSidebarBorderClass = "border-primary-foreground/20";
+  const citizenSidebarLogoColorClass = "text-primary-foreground";
+
 
   return (
     <header className={cn("sticky top-0 z-40 w-full border-b", headerBgClass)}>
@@ -93,13 +102,13 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon" className="hover:bg-primary/90">
+                 <Button variant={buttonVariant} size="icon" className={cn(buttonHoverClass, "text-primary")}>
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
-               <SheetContent side="left" className="p-0 w-64 bg-primary text-primary-foreground">
-                <div className="p-4 border-b border-primary-foreground/20">
-                  <Logo className="text-primary-foreground" />
+               <SheetContent side="left" className={cn("p-0 w-64", citizenSidebarClasses)}>
+                <div className={cn("p-4 border-b", citizenSidebarBorderClass)}>
+                  <Logo className={citizenSidebarLogoColorClass} />
                 </div>
                 <DashboardSidebar user={user.profile} className="p-4" />
                </SheetContent>
@@ -108,7 +117,7 @@ export function SiteHeader({
          )}
         <div className={cn("flex items-center gap-8", isLoggedIn && !isAdmin && "hidden lg:flex")}>
             <Link href="/" aria-label="Home">
-              <Logo className={cn(isLoggedIn ? 'text-primary-foreground' : 'text-foreground')} />
+              <Logo className={logoColorClass} />
             </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
@@ -136,14 +145,14 @@ export function SiteHeader({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {isLoggedIn && <div className={cn("h-6 w-px", isLoggedIn ? 'bg-primary-foreground/20' : 'bg-border')} />}
+            {isLoggedIn && <div className="h-6 w-px bg-border" />}
 
             {user?.profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className={cn("relative h-10 w-10 rounded-full", buttonHoverClass)}>
-                    <Avatar className="h-10 w-10 border-2 border-primary-foreground/50">
-                      <AvatarFallback className={cn("font-semibold", isLoggedIn ? "bg-transparent text-primary-foreground" : "bg-muted text-foreground")}>
+                    <Avatar className="h-10 w-10 border-2 border-border">
+                      <AvatarFallback className={cn("font-semibold", avatarBgClass)}>
                         {getInitials(user.profile.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -173,7 +182,7 @@ export function SiteHeader({
             ) : (
              !isAuthPage && (
               <>
-                <Button asChild variant="outline">
+                <Button asChild variant="ghost">
                   <Link href="/login">{t.signIn}</Link>
                 </Button>
 
