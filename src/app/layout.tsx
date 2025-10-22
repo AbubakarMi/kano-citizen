@@ -7,6 +7,7 @@ import "./globals.css";
 import { FirebaseProvider } from "@/firebase/provider";
 import { FirebaseErrorListener } from "@/components/FirebaseErrorListener";
 import { MockAuthProvider } from "@/firebase/auth/use-user";
+import { AppProvider } from "./app-provider";
 
 export const metadata: Metadata = {
   title: "Kano Citizens' Voice",
@@ -41,9 +42,11 @@ export default function RootLayout({
       >
         <MockAuthProvider>
           <FirebaseProvider>
-            {children}
-            <Toaster />
-            <FirebaseErrorListener />
+            <AppProvider>
+              {children}
+              <Toaster />
+              <FirebaseErrorListener />
+            </AppProvider>
           </FirebaseProvider>
         </MockAuthProvider>
       </body>
