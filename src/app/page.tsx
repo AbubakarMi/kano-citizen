@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 import { useAppContext } from "@/app/app-provider";
+import { AppProvider } from "./app-provider";
 
 const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) => {
     const { 
@@ -142,6 +143,8 @@ function HomePageContent() {
 
 export default function Home() {
     return (
+      <AppProvider>
         <HomePageContent />
+      </AppProvider>
     )
 }

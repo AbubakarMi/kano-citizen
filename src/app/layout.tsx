@@ -42,11 +42,9 @@ export default function RootLayout({
       >
         <MockAuthProvider>
           <FirebaseProvider>
-            <AppProvider>
-              {children}
-              <Toaster />
-              <FirebaseErrorListener />
-            </AppProvider>
+            {children}
+            <Toaster />
+            <FirebaseErrorListener />
           </FirebaseProvider>
         </MockAuthProvider>
       </body>

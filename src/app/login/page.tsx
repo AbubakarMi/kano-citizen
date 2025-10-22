@@ -7,8 +7,9 @@ import Link from "next/link";
 import { translations, type Language, type Translation } from "@/lib/translations";
 import { SiteHeader } from "@/components/site-header";
 import { useUser } from "@/firebase/auth/use-user";
+import { AppProvider } from "../app-provider";
 
-export default function LoginPage() {
+function LoginPageContent() {
     const [language, setLanguage] = useState<Language>('en');
     const { user, loading } = useUser();
     const t = translations[language];
@@ -39,4 +40,13 @@ export default function LoginPage() {
         </main>
       </div>
     );
+}
+
+
+export default function LoginPage() {
+    return (
+        <AppProvider>
+            <LoginPageContent />
+        </AppProvider>
+    )
 }

@@ -7,8 +7,10 @@ import Link from "next/link";
 import { translations, type Language } from "@/lib/translations";
 import { SiteHeader } from "@/components/site-header";
 import { useUser } from "@/firebase/auth/use-user";
+import { AppProvider } from "../app-provider";
 
-export default function RegisterPage() {
+
+function RegisterPageContent() {
     const [language, setLanguage] = useState<Language>('en');
     const { user, loading } = useUser();
     const t = translations[language];
@@ -39,4 +41,12 @@ export default function RegisterPage() {
             </main>
         </div>
     );
+}
+
+export default function RegisterPage() {
+    return (
+        <AppProvider>
+            <RegisterPageContent />
+        </AppProvider>
+    )
 }
