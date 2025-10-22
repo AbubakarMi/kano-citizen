@@ -60,20 +60,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         case 'Moderator':
           setActiveView('queue');
           break;
-        case 'SPD Coordinator':
-          setActiveView('events');
-          break;
-        case 'System Administrator':
-          setActiveView('health');
-          break;
-        case 'Super Admin':
-          setActiveView('overview');
-          break;
+        case 'Special Adviser':
+            setActiveView('submissions');
+            break;
+        case 'Governor':
+            setActiveView('overview');
+            break;
         default:
           setActiveView('overview');
       }
     } else {
-      // Default for non-logged-in users or those without a role
+      // Default for non-logged-in users
       setActiveView('overview');
     }
   }, [user?.profile?.role]);

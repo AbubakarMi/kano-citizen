@@ -60,7 +60,7 @@ export function SiteHeader({
       .join("");
   };
 
-  const isAdmin = user?.profile?.role === 'Super Admin' || user?.profile?.role === 'System Administrator';
+  const isAdmin = user?.profile?.role === 'Governor' || user?.profile?.role === 'Special Adviser';
   const isLoggedIn = !!user;
 
   return (

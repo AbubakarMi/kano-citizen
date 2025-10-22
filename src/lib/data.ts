@@ -28,9 +28,8 @@ export type UserRole =
     | "Citizen" 
     | "MDA Official" 
     | "Moderator" 
-    | "SPD Coordinator" 
-    | "System Administrator" 
-    | "Super Admin";
+    | "Special Adviser" 
+    | "Governor";
 
 export interface UserProfile {
   uid: string;
@@ -74,7 +73,6 @@ export const seededUsers: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOn
     { name: "Citizen User", email: "citizen@test.com", role: "Citizen" },
     { name: "MDA Official", email: "mda@test.com", role: "MDA Official", mda: "mda-health" },
     { name: "Content Moderator", email: "moderator@test.com", role: "Moderator" },
-    { name: "SPD Coordinator", email: "spd@test.com", role: "SPD Coordinator" },
-    { name: "System Admin", email: "sysadmin@test.com", role: "System Administrator" },
-    { name: "Super Admin", email: "superadmin@test.com", role: "Super Admin" },
+    { name: "Special Adviser", email: "adviser@test.com", role: "Special Adviser" },
+    { name: "Governor", email: "governor@test.com", role: "Governor" },
 ];

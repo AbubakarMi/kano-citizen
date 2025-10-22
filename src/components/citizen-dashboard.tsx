@@ -131,7 +131,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                     onChange={(e) => setNewIdeaTitle(e.target.value)}
                     required
                   />
-                  <Textarea 
+                  <Textarea
                     placeholder={t.ideaDescriptionPlaceholder} 
                     rows={6}
                     value={newIdeaDescription}
@@ -269,5 +269,3 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
-    

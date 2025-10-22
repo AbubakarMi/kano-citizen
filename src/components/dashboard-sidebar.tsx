@@ -23,6 +23,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Send,
+  Building,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -36,7 +38,7 @@ interface SidebarLink {
   id: string;
   label: string;
   icon: React.ElementType;
-  group?: "Engagement" | "Administration" | "SYSTEM" | "CITIZEN";
+  group?: "Engagement" | "Administration" | "CITIZEN" | "OVERSIGHT" | "OPERATIONS";
 }
 
 const getInitials = (name: string) => {
@@ -52,42 +54,35 @@ const citizenLinks: SidebarLink[] = [
   { id: "build", label: "Build Together", icon: Handshake, group: "CITIZEN" },
 ];
 
-const superAdminLinks: SidebarLink[] = [
-  { id: "overview", label: "Dashboard", icon: LayoutDashboard, group: "Engagement" },
-  { id: "votes", label: "Ongoing Votes", icon: Vote, group: "Engagement" },
-  { id: "directives", label: "Directive Issuance", icon: Gavel, group: "Engagement" },
-  { id: "approvals", label: "Approval Queue", icon: CheckCircle, group: "Administration" },
-  { id: "users", label: "User Management", icon: Users, group: "Administration" },
-  { id: "settings", label: "System Settings", icon: Settings, group: "Administration" },
+const governorLinks: SidebarLink[] = [
+  { id: "overview", label: "Command Dashboard", icon: LayoutDashboard, group: "OVERSIGHT" },
+  { id: "approvals", label: "Final Approval Queue", icon: CheckCircle, group: "OVERSIGHT" },
+  { id: "directives", label: "Directive Issuance", icon: Gavel, group: "OVERSIGHT" },
+  { id: "audit", label: "Audit Log", icon: FileClock, group: "OVERSIGHT" },
 ];
+
+const specialAdviserLinks: SidebarLink[] = [
+    { id: "submissions", label: "Reviewed Submissions", icon: Send, group: "OPERATIONS" },
+    { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
+    { id: "mda-monitor", label: "MDA Performance", icon: Building, group: "OPERATIONS" },
+    { id: "moderation", label: "Moderation Oversight", icon: ShieldCheck, group: "OPERATIONS" },
+    { id: "analytics", label: "Analytics", icon: BarChart2, group: "OPERATIONS" },
+]
 
 const mdaLinks: SidebarLink[] = [
     { id: "directives", label: "Assigned Directives", icon: FileText },
 ]
 
 const moderatorLinks: SidebarLink[] = [
-    { id: "queue", label: "Moderation Queue", icon: ShieldCheck },
+    { id: "queue", label: "Submission Queue", icon: ShieldCheck },
 ]
 
-const spdLinks: SidebarLink[] = [
-    { id: "events", label: "Manage SPD Events", icon: CalendarDays },
-]
-
-const sysAdminLinks: SidebarLink[] = [
-    { id: "health", label: "System Health", icon: Activity, group: "SYSTEM" },
-    { id: "users", label: "User Management", icon: Users, group: "SYSTEM" },
-    { id: "analytics", label: "Analytics", icon: BarChart2, group: "SYSTEM" },
-    { id: "logs", label: "System Logs", icon: FileClock, group: "SYSTEM" },
-    { id: "settings", label: "Configuration", icon: Settings, group: "SYSTEM" },
-]
-
-const roleLinks: Record<UserProfile["role"], SidebarLink[]> = {
+const roleLinks: Record<string, SidebarLink[]> = {
   "Citizen": citizenLinks,
-  "Super Admin": superAdminLinks,
+  "Governor": governorLinks,
+  "Special Adviser": specialAdviserLinks,
   "MDA Official": mdaLinks,
   "Moderator": moderatorLinks,
-  "SPD Coordinator": spdLinks,
-  "System Administrator": sysAdminLinks,
 };
 
 interface DashboardSidebarProps {
@@ -99,10 +94,10 @@ interface DashboardSidebarProps {
 
 const SidebarGroup = ({ title, children, isCollapsed }: { title: string, children: React.ReactNode, isCollapsed?: boolean }) => (
     <div className={cn(isCollapsed ? "my-4" : "")}>
-        {!isCollapsed && title !== 'CITIZEN' && title !== 'SYSTEM' ? (
+        {!isCollapsed && !['CITIZEN'].includes(title) ? (
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2 font-sans">{title}</h3>
         ) : (
-             title !== 'CITIZEN' && <div className="flex justify-center my-3">
+             !['CITIZEN'].includes(title) && <div className="flex justify-center my-3">
                 <div className="h-px w-8 bg-border"></div>
             </div>
         )}
@@ -141,7 +136,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
     return acc;
   }, {} as Record<string, SidebarLink[]>);
 
-  const isAdmin = user.role === 'Super Admin' || user.role === 'System Administrator';
+  const isAdmin = user.role === 'Governor' || user.role === 'Special Adviser';
 
   if (isAdmin) {
       return (

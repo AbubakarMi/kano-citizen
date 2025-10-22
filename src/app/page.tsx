@@ -13,9 +13,9 @@ import { LandingPage } from "@/components/landing-page";
 import { CitizenDashboard } from "@/components/citizen-dashboard";
 import { MDAOfficialDashboard } from "@/components/mda-official-dashboard";
 import { ModeratorDashboard } from "@/components/moderator-dashboard";
-import { SPDScoordinatorDashboard } from "@/components/spd-coordinator-dashboard";
-import { SystemAdminDashboard } from "@/components/system-admin-dashboard";
-import { SuperAdminDashboard } from "@/components/super-admin-dashboard";
+import { SpecialAdviserDashboard } from "@/components/special-adviser-dashboard";
+import { GovernorDashboard } from "@/components/governor-dashboard";
+
 import { translations, type Language, type Translation } from "@/lib/translations";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,12 +26,11 @@ import { AppProvider, useAppContext } from "@/app/app-provider";
 const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) => {
     const { 
         activeView, 
-        setActiveView, 
         isSidebarCollapsed, 
         setSidebarCollapsed, 
     } = useAppContext();
 
-    const isSuperAdmin = user.role === 'Super Admin';
+    const isAdmin = user.role === 'Governor' || user.role === 'Special Adviser';
     const isCitizen = user.role === 'Citizen';
 
     const dashboardContent = () => {
@@ -42,12 +41,10 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
           return <MDAOfficialDashboard user={user} />;
         case "Moderator":
           return <ModeratorDashboard user={user} />;
-        case "SPD Coordinator":
-          return <SPDScoordinatorDashboard user={user} />;
-        case "System Administrator":
-          return <SystemAdminDashboard user={user} activeView={activeView} />;
-        case "Super Admin":
-          return <SuperAdminDashboard user={user} activeView={activeView} />;
+        case "Special Adviser":
+            return <SpecialAdviserDashboard user={user} activeView={activeView} />;
+        case "Governor":
+            return <GovernorDashboard user={user} activeView={activeView} />;
         default:
           return <CitizenDashboard t={t.dashboard} />;
       }
@@ -58,11 +55,11 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             <aside 
             className={cn(
                 "fixed left-0 top-0 h-full z-30 pt-20 border-r hidden lg:block transition-all duration-300",
-                (isSuperAdmin || user.role === 'System Administrator') && "bg-card",
-                !(isSuperAdmin || user.role === 'System Administrator') && "bg-primary",
-                (isSuperAdmin || user.role === 'System Administrator') && !isSidebarCollapsed && "w-[240px]",
-                (isSuperAdmin || user.role === 'System Administrator') && isSidebarCollapsed && "w-[72px]",
-                !(isSuperAdmin || user.role === 'System Administrator') && "w-[240px]"
+                isAdmin && "bg-card",
+                !isAdmin && "bg-primary",
+                isAdmin && !isSidebarCollapsed && "w-[240px]",
+                isAdmin && isSidebarCollapsed && "w-[72px]",
+                !isAdmin && "w-[240px]"
             )}
             >
                 <DashboardSidebar 
@@ -74,8 +71,8 @@ const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) 
             <main className={cn(
             "flex-1 pt-20 transition-all duration-300",
             !isCitizen && "lg:ml-[240px]",
-            (isSuperAdmin || user.role === 'System Administrator') && !isSidebarCollapsed && "lg:ml-[240px]",
-            (isSuperAdmin || user.role === 'System Administrator') && isSidebarCollapsed && "lg:ml-[72px]",
+            isAdmin && !isSidebarCollapsed && "lg:ml-[240px]",
+            isAdmin && isSidebarCollapsed && "lg:ml-[72px]",
             isCitizen && "lg:ml-0" 
             )}>
                 <div className={cn(

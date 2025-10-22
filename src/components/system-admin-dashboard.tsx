@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import type { UserProfile } from "@/lib/data";
 import { SystemHealth } from "./system-admin/system-health";
 import { UserManagement } from "./system-admin/user-management";

@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -52,7 +51,7 @@ const createUserSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   confirmPassword: z.string(),
-  role: z.enum(["MDA Official", "Moderator", "SPD Coordinator", "System Administrator", "Super Admin"]),
+  role: z.enum(["MDA Official", "Moderator", "Special Adviser", "Governor"]),
   mda: z.string().optional(),
   location: z.string().optional(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -83,8 +82,8 @@ interface UserManagementProps {
 export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles }: UserManagementProps) {
     const { toast } = useToast();
     const [users, setUsers] = useState(initialAdminUsers);
-    const [userToDelete, setUserToDelete] = useState<(typeof seededUsers)[0] | null>(null);
-    const [userToEdit, setUserToEdit] = useState<(typeof seededUsers)[0] | null>(null);
+    const [userToDelete, setUserToDelete] = useState<Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> | null>(null);
+    const [userToEdit, setUserToEdit] = useState<Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> | null>(null);
     const [newRole, setNewRole] = useState<UserRole | "">("");
 
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
@@ -105,7 +104,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 
     const selectedRole = form.watch("role");
 
-    const handleDeleteClick = (user: (typeof seededUsers)[0]) => {
+    const handleDeleteClick = (user: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'>) => {
         setUserToDelete(user);
     }
 
@@ -120,7 +119,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setUserToDelete(null);
     }
 
-    const handleEditClick = (user: (typeof seededUsers)[0]) => {
+    const handleEditClick = (user: Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'>) => {
         setUserToEdit(user);
         setNewRole(user.role);
     }
