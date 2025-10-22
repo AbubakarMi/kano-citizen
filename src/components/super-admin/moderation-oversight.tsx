@@ -169,7 +169,7 @@ export function ModerationOversight() {
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                         <Button variant="outline" size="sm" className="text-secondary border-secondary/50 hover:bg-secondary/10 hover:text-secondary" onClick={() => setSelectedItem(item)}>
+                         <Button variant="outline" size="sm" onClick={() => setSelectedItem(item)}>
                             <Check className="mr-2 h-4 w-4" /> Approve
                         </Button>
                       </AlertDialogTrigger>
@@ -335,3 +335,5 @@ export function ModerationOversight() {
     </div>
   );
 }
+
+    

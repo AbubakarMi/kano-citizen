@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useUser } from "@/firebase/auth/use-user";
-import { useFirestore, useCollection } from "@/firebase";
+import { useFirestore } from "@/firebase";
 import { collection, doc, writeBatch, arrayUnion, arrayRemove } from "firebase/firestore";
 import type { Idea, Directive } from "@/lib/data";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const { ideas, directives, volunteerOpportunities, activeView } = useAppContext();
+  const { ideas, setIdeas, directives, volunteerOpportunities, activeView } = useAppContext();
 
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
@@ -57,6 +57,17 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
       }
       await batch.commit();
+      
+      // Optimistic UI update
+      setIdeas(prevIdeas => prevIdeas.map(idea => 
+        idea.id === ideaId 
+          ? { ...idea, upvotes: [...idea.upvotes, user.uid] }
+          : idea
+      ));
+      if(user.profile) {
+        user.profile.votedOnIdeas.push(ideaId);
+      }
+
       toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch (error) {
       console.error("Error upvoting:", error);
@@ -106,6 +117,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
   const myIdeas = ideas.filter(idea => idea.authorId === user?.uid);
   const myVotes = ideas.filter(idea => user?.profile?.votedOnIdeas?.includes(idea.id));
+  const livePolls = ideas.filter(idea => idea.status === 'Approved');
 
   return (
     <div className="container py-10">
@@ -148,7 +160,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
         <TabsContent value="decide" className="mt-6">
            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-             {ideas.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
+             {livePolls.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
                <Card key={idea.id} className="flex flex-col">
                  <CardHeader>
                    <CardTitle className="font-headline text-primary">{idea.title}</CardTitle>
@@ -269,3 +281,5 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
+
+    

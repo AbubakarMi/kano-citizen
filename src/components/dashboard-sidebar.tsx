@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Send,
   Building,
+  CheckSquare,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -63,9 +64,9 @@ const governorLinks: SidebarLink[] = [
 
 const specialAdviserLinks: SidebarLink[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS" },
-    { id: "submissions", label: "Reviewed Submissions", icon: Send, group: "OPERATIONS" },
-    { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
+    { id: "submissions", label: "Reviewed Submissions", icon: CheckSquare, group: "OPERATIONS" },
     { id: "ongoing-votes", label: "Ongoing Votes", icon: Vote, group: "OPERATIONS" },
+    { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
     { id: "mda-monitor", label: "MDA Performance", icon: Building, group: "OPERATIONS" },
     { id: "analytics", label: "Analytics", icon: BarChart2, group: "OPERATIONS" },
 ]
@@ -246,3 +247,5 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
       </nav>
   );
 }
+
+    
