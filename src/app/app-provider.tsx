@@ -4,8 +4,9 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
-import type { UserProfile, Idea, Directive, VolunteerOpportunity } from '@/lib/data';
+import type { UserProfile, Idea, Directive, VolunteerOpportunity, ApprovalItem } from '@/lib/data';
 import { useMemoFirebase } from '@/lib/utils';
+import { initialApprovalItems } from '@/lib/data';
 
 type AppContextType = {
   activeView: string;
@@ -17,6 +18,8 @@ type AppContextType = {
   directives: Directive[];
   setDirectives: (directives: Directive[]) => void;
   volunteerOpportunities: VolunteerOpportunity[];
+  approvalQueue: ApprovalItem[];
+  setApprovalQueue: React.Dispatch<React.SetStateAction<ApprovalItem[]>>;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,6 +30,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   
   const [activeView, setActiveView] = useState('overview');
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [approvalQueue, setApprovalQueue] = useState<ApprovalItem[]>(initialApprovalItems);
   
   const ideasQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'ideas')) : null, [firestore]);
   const { data: ideasData } = useCollection<Idea>(ideasQuery);
@@ -85,6 +89,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     directives: directives || [],
     setDirectives,
     volunteerOpportunities: volunteerOpportunities || [],
+    approvalQueue,
+    setApprovalQueue,
   };
 
   return (

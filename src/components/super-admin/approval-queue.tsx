@@ -4,11 +4,11 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck, User } from "lucide-react";
+import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck, User, Signature } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -22,78 +22,94 @@ import {
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-
-type ApprovalStatus = "Pending" | "Approved" | "Rejected";
-
-type ApprovalItem = { 
-    id: string; 
-    type: string; 
-    title: string; 
-    description: string;
-    submittedBy: string; 
-    status: ApprovalStatus;
-    reason?: string;
-};
-
-const initialApprovalItems: ApprovalItem[] = [
-    { id: "app-1", type: "SPD Communiqué", title: "Report from Q2 Special Public Dialogue on Security", description: "This is a detailed report from the Q2 SPD meeting focused on community policing initiatives and neighborhood watch programs.", submittedBy: "SPD Coordinator", status: "Pending"},
-    { id: "app-2", type: "Policy Brief", title: "Recommendations for Waste Management Improvement", description: "A policy brief outlining three key recommendations for improving waste collection efficiency and introducing recycling incentives.", submittedBy: "Moderator", status: "Pending"},
-    { id: "app-3", type: "System Change", title: "New User Role: 'Community Champion'", description: "Proposal for a new user role to recognize and grant additional privileges to highly active and constructive community members.", submittedBy: "System Administrator", status: "Approved", reason: "Excellent idea for boosting engagement. Approved for implementation in Q3."},
-    { id: "app-4", type: "Idea for Directive", title: "Kano Market Modernization", description: "An idea to modernize the Kantin Kwari market with better stalls, improved sanitation, and a digital payment system.", submittedBy: "Citizen via Moderator", status: "Rejected", reason: "This project is too large for the current budget cycle. Please resubmit with a phased approach for consideration next year."},
-    { id: "app-5", type: "Policy Brief", title: "Youth Sports Development Fund", description: "A proposal to create a dedicated fund to support local youth sports teams and facilities.", submittedBy: "Moderator", status: "Pending"},
-
-]
+import type { ApprovalItem, ApprovalStatus } from "@/lib/data";
+import { initialApprovalItems } from "@/lib/data";
+import { Input } from "../ui/input";
+import { useAppContext } from "@/app/app-provider";
 
 export function ApprovalQueue() {
     const { toast } = useToast();
-    const [items, setItems] = useState<ApprovalItem[]>(initialApprovalItems);
+    const { approvalQueue, setApprovalQueue } = useAppContext();
+    
     const [activeItem, setActiveItem] = useState<ApprovalItem | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isActionOpen, setIsActionOpen] = useState(false);
-    const [actionType, setActionType] = useState<"Approved" | "Rejected">("Approved");
+    const [isSignatureOpen, setIsSignatureOpen] = useState(false);
+    const [actionType, setActionType] = useState<"Approve" | "Reject">("Approve");
     const [reason, setReason] = useState("");
+    const [signature, setSignature] = useState("");
     
     const getSubmitterInitials = (name: string) => name.split(' ').map(n => n[0]).join('');
 
-    const openActionDialog = (item: ApprovalItem, type: "Approved" | "Rejected") => {
+    const openRejectDialog = (item: ApprovalItem) => {
         setActiveItem(item);
-        setActionType(type);
+        setActionType("Reject");
         setReason("");
         setIsActionOpen(true);
     };
+
+    const openApproveDialog = (item: ApprovalItem) => {
+        setActiveItem(item);
+        setSignature("");
+        setReason("");
+        setIsSignatureOpen(true);
+    }
     
     const openDetailsDialog = (item: ApprovalItem) => {
         setActiveItem(item);
         setIsDetailsOpen(true);
     }
 
-    const handleAction = () => {
+    const handleConfirmRejection = () => {
         if (!activeItem) return;
 
-        const newStatus = actionType;
-        setItems(items.map(item => item.id === activeItem.id ? { ...item, status: newStatus, reason: reason } : item));
+        setApprovalQueue(prev => prev.map(item => item.id === activeItem.id ? { ...item, status: "Rejected", reason: reason } : item));
         
         toast({
           title: `Decision Recorded`,
-          description: `The item has been marked as ${newStatus}.`,
-          className: newStatus === 'Approved' ? 'bg-secondary text-secondary-foreground' : 'bg-destructive text-destructive-foreground',
+          description: `The item has been marked as Rejected.`,
+          variant: "destructive",
         });
 
         setIsActionOpen(false);
         setActiveItem(null);
         setReason("");
     };
+    
+    const handleConfirmApproval = () => {
+        if (!activeItem || !signature) return;
 
-    const handleRevert = (item: ApprovalItem) => {
-        setItems(items.map(i => i.id === item.id ? { ...i, status: 'Pending', reason: undefined } : i));
+        setApprovalQueue(prev => prev.map(item => 
+            item.id === activeItem.id ? { 
+                ...item, 
+                status: "ReadyForIssuance", 
+                governorSignature: signature,
+                approvalDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                reason: reason
+            } : item));
+        
+        toast({
+          title: `Item Approved`,
+          description: `"${activeItem.title}" has been signed and sent to the Special Adviser for issuance.`,
+          className: "bg-secondary text-secondary-foreground"
+        });
+        
+        setIsSignatureOpen(false);
+        setActiveItem(null);
+        setSignature("");
+        setReason("");
+    }
+
+    const handleRevert = (itemToRevert: ApprovalItem) => {
+        setApprovalQueue(prev => prev.map(i => i.id === itemToRevert.id ? { ...i, status: 'Pending', reason: undefined, governorSignature: undefined, approvalDate: undefined } : i));
         toast({
             title: "Action Reverted",
-            description: `"${item.title}" has been moved back to Pending.`,
+            description: `"${itemToRevert.title}" has been moved back to Pending.`,
         });
     }
 
     const renderTable = (status: ApprovalStatus) => {
-        const filteredItems = items.filter(item => item.status === status);
+        const filteredItems = approvalQueue.filter(item => item.status === status);
 
         if (filteredItems.length === 0) {
             return <div className="text-center text-muted-foreground p-8">No items in this category.</div>
@@ -131,17 +147,17 @@ export function ApprovalQueue() {
                                 </Button>
                                 {status === 'Pending' && (
                                     <>
-                                        <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary" onClick={() => openActionDialog(item, 'Approved')}>
+                                        <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary" onClick={() => openApproveDialog(item)}>
                                             <FileCheck className="mr-2 h-4 w-4" /> Approve
                                         </Button>
-                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => openActionDialog(item, 'Rejected')}>
+                                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => openRejectDialog(item)}>
                                             <FileX className="mr-2 h-4 w-4" /> Reject
                                         </Button>
                                     </>
                                 )}
-                                {(status === 'Approved' || status === 'Rejected') && (
+                                {(status === 'Approved' || status === 'Rejected' || status === 'ReadyForIssuance') && (
                                      <Button variant="ghost" size="sm" onClick={() => handleRevert(item)}>
-                                        <RefreshCcw className="mr-2 h-4 w-4" /> Revert
+                                        <RefreshCcw className="mr-2 h-4 w-4" /> Revert to Pending
                                     </Button>
                                 )}
                             </TableCell>
@@ -168,9 +184,9 @@ export function ApprovalQueue() {
                 <TabsList className="grid w-full grid-cols-3 bg-card">
                     <TabsTrigger value="pending">
                         Pending
-                        <Badge variant="secondary" className="ml-2">{items.filter(i => i.status === 'Pending').length}</Badge>
+                        <Badge variant="secondary" className="ml-2">{approvalQueue.filter(i => i.status === 'Pending').length}</Badge>
                     </TabsTrigger>
-                    <TabsTrigger value="approved">Approved</TabsTrigger>
+                    <TabsTrigger value="approved">Approved & Issued</TabsTrigger>
                     <TabsTrigger value="rejected">Rejected</TabsTrigger>
                 </TabsList>
                 <TabsContent value="pending" className="mt-4">
@@ -210,10 +226,24 @@ export function ApprovalQueue() {
                         {activeItem?.reason && (
                             <div className="p-4 bg-muted rounded-lg space-y-2">
                                 <h4 className="font-semibold flex items-center gap-2 text-sm">
-                                    {activeItem.status === 'Approved' ? <CheckCircle className="h-4 w-4 text-secondary" /> : <XCircle className="h-4 w-4 text-destructive" />}
-                                    Governor's Reason for {activeItem.status}
+                                    {activeItem.status === 'Rejected' ? <XCircle className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-secondary" />}
+                                    Governor's Reason for {activeItem.status === "Rejected" ? "Rejection" : "Approval"}
                                 </h4>
                                 <p className="text-sm text-muted-foreground italic">"{activeItem.reason}"</p>
+                            </div>
+                        )}
+                         {activeItem?.governorSignature && (
+                            <div className="p-4 bg-muted rounded-lg space-y-2">
+                                <h4 className="font-semibold flex items-center gap-2 text-sm text-secondary">
+                                    <Signature className="h-4 w-4" />
+                                    Approved by the Executive Governor
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Signed by: <span className="font-medium text-foreground">{activeItem.governorSignature}</span>
+                                </p>
+                                 <p className="text-sm text-muted-foreground">
+                                    Date: <span className="font-medium text-foreground">{activeItem.approvalDate}</span>
+                                </p>
                             </div>
                         )}
                     </div>
@@ -223,22 +253,22 @@ export function ApprovalQueue() {
                 </DialogContent>
             </Dialog>
             
-            {/* Action Dialog (Approve/Reject) */}
+            {/* Rejection Dialog */}
             <Dialog open={isActionOpen} onOpenChange={setIsActionOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Confirm {actionType}</DialogTitle>
+                        <DialogTitle>Confirm Rejection</DialogTitle>
                         <DialogDescription>
-                            You are about to {actionType.toLowerCase()} the item: "{activeItem?.title}".
+                            You are about to reject the item: "{activeItem?.title}". This action can be reverted.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-2">
-                        <Label htmlFor="reason">Reason (optional for approval, required for rejection)</Label>
+                        <Label htmlFor="reason">Reason for Rejection (Required)</Label>
                         <Textarea 
                             id="reason" 
                             value={reason} 
                             onChange={(e) => setReason(e.target.value)}
-                            placeholder={`Provide a clear justification for the ${actionType.toLowerCase()}...`}
+                            placeholder={`Provide a clear justification for the rejection...`}
                             rows={4}
                         />
                     </div>
@@ -247,11 +277,57 @@ export function ApprovalQueue() {
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
                         <Button
-                            onClick={handleAction}
-                            disabled={actionType === 'Rejected' && !reason.trim()}
-                            variant={actionType === 'Rejected' ? 'destructive' : 'default'}
+                            onClick={handleConfirmRejection}
+                            disabled={!reason.trim()}
+                            variant={'destructive'}
                         >
-                            Confirm {actionType}
+                            Confirm Rejection
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            
+            {/* Signature (Approval) Dialog */}
+            <Dialog open={isSignatureOpen} onOpenChange={setIsSignatureOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Final Executive Approval</DialogTitle>
+                        <DialogDescription>
+                           To approve "{activeItem?.title}", please provide your e-signature. This action is final and will forward the item for directive issuance.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="signature">Governor's E-Signature</Label>
+                            <Input 
+                                id="signature" 
+                                value={signature} 
+                                onChange={(e) => setSignature(e.target.value)}
+                                placeholder="Type your full name to sign"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="approval-reason">Reason for Approval (Optional)</Label>
+                            <Textarea 
+                                id="approval-reason" 
+                                value={reason} 
+                                onChange={(e) => setReason(e.target.value)}
+                                placeholder="Optionally, add a comment or reason for approval..."
+                                rows={3}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button
+                            onClick={handleConfirmApproval}
+                            disabled={!signature.trim()}
+                            variant={'default'}
+                        >
+                             <Signature className="mr-2 h-4 w-4"/>
+                            Sign and Approve
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -259,5 +335,3 @@ export function ApprovalQueue() {
         </div>
     );
 }
-
-    

@@ -15,8 +15,6 @@ interface GovernorDashboardProps {
   activeView: string;
 }
 
-const initialRoles: UserRole[] = [...new Set(seededUsers.map(u => u.role))];
-
 export function GovernorDashboard({ user, activeView }: GovernorDashboardProps) {
   const { ideas } = useAppContext();
   const [mdas] = useState<MDA[]>(initialMdas);
