@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle } from "lucide-react";
+import { CheckCircle, FileCheck, FileText, FileX, Info, RefreshCcw, XCircle, ShieldCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -112,7 +112,7 @@ export function ApprovalQueue() {
                             <TableCell><Badge variant="outline">{item.type}</Badge></TableCell>
                             <TableCell>{item.submittedBy}</TableCell>
                             <TableCell className="text-right space-x-2">
-                                <Button variant="outline" size="sm" onClick={() => openDetailsDialog(item)}>
+                                <Button variant="ghost" size="sm" onClick={() => openDetailsDialog(item)}>
                                     <Info className="mr-2 h-4 w-4" /> View Details
                                 </Button>
                                 {status === 'Pending' && (
@@ -139,92 +139,121 @@ export function ApprovalQueue() {
     };
 
     return (
-        <>
-        <Card>
-            <CardHeader>
-                <CardTitle>Approval Queue</CardTitle>
-                <CardDescription>Review and approve major SPD outcomes, reports, and system changes before they are made public or implemented.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Tabs defaultValue="pending">
-                    <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="pending">Pending</TabsTrigger>
-                        <TabsTrigger value="approved">Approved</TabsTrigger>
-                        <TabsTrigger value="rejected">Rejected</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="pending" className="mt-4">
-                        {renderTable('Pending')}
-                    </TabsContent>
-                    <TabsContent value="approved" className="mt-4">
-                        {renderTable('Approved')}
-                    </TabsContent>
-                    <TabsContent value="rejected" className="mt-4">
-                        {renderTable('Rejected')}
-                    </TabsContent>
-                </Tabs>
-            </CardContent>
-        </Card>
+        <div className="space-y-6">
+            <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Final Approval Queue</h1>
+                    <p className="text-muted-foreground">Review and provide the final sign-off on major SPD outcomes, reports, and system changes.</p>
+                </div>
+            </div>
 
-        {/* Details Dialog */}
-        <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-            <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                    <DialogTitle>{activeItem?.title}</DialogTitle>
-                    <DialogDescription>
-                        <Badge variant="outline">{activeItem?.type}</Badge> submitted by <span className="font-medium">{activeItem?.submittedBy}</span>
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-4">
-                    <p className="text-sm text-muted-foreground">{activeItem?.description}</p>
-                    {activeItem?.reason && (
-                         <div className="p-4 bg-muted rounded-lg space-y-2">
-                             <h4 className="font-semibold flex items-center gap-2">
-                                {activeItem.status === 'Approved' ? <CheckCircle className="h-4 w-4 text-secondary" /> : <XCircle className="h-4 w-4 text-destructive" />}
-                                Reason for {activeItem.status}
-                            </h4>
-                            <p className="text-sm text-muted-foreground italic">"{activeItem.reason}"</p>
-                        </div>
-                    )}
-                </div>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>Close</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-        
-        {/* Action Dialog (Approve/Reject) */}
-        <Dialog open={isActionOpen} onOpenChange={setIsActionOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Confirm {actionType}</DialogTitle>
-                    <DialogDescription>
-                        You are about to {actionType.toLowerCase()} the item: "{activeItem?.title}".
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-2">
-                     <Label htmlFor="reason">Reason (optional for approval, required for rejection)</Label>
-                     <Textarea 
-                        id="reason" 
-                        value={reason} 
-                        onChange={(e) => setReason(e.target.value)}
-                        placeholder={`Provide a clear justification for the ${actionType.toLowerCase()}...`}
-                        rows={4}
-                    />
-                </div>
-                 <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button
-                        onClick={handleAction}
-                        disabled={actionType === 'Rejected' && !reason.trim()}
-                        variant={actionType === 'Rejected' ? 'destructive' : 'default'}
-                    >
-                        Confirm {actionType}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-        </>
+            <Tabs defaultValue="pending">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="pending">
+                        Pending
+                        <Badge variant="secondary" className="ml-2">{items.filter(i => i.status === 'Pending').length}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="approved">Approved</TabsTrigger>
+                    <TabsTrigger value="rejected">Rejected</TabsTrigger>
+                </TabsList>
+                <TabsContent value="pending" className="mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Items Awaiting Your Decision</CardTitle>
+                            <CardDescription>These items have been vetted and are ready for your final approval or rejection.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {renderTable('Pending')}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="approved" className="mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Approved Items</CardTitle>
+                            <CardDescription>A log of all items that have received your final approval.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {renderTable('Approved')}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="rejected" className="mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Rejected Items</CardTitle>
+                            <CardDescription>A log of all items that were rejected during the final review stage.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {renderTable('Rejected')}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
+            {/* Details Dialog */}
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>{activeItem?.title}</DialogTitle>
+                        <DialogDescription>
+                            <Badge variant="outline">{activeItem?.type}</Badge> submitted by <span className="font-medium">{activeItem?.submittedBy}</span>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                        <p className="text-sm text-muted-foreground">{activeItem?.description}</p>
+                        {activeItem?.reason && (
+                            <div className="p-4 bg-muted rounded-lg space-y-2">
+                                <h4 className="font-semibold flex items-center gap-2">
+                                    {activeItem.status === 'Approved' ? <CheckCircle className="h-4 w-4 text-secondary" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                                    Reason for {activeItem.status}
+                                </h4>
+                                <p className="text-sm text-muted-foreground italic">"{activeItem.reason}"</p>
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>Close</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            
+            {/* Action Dialog (Approve/Reject) */}
+            <Dialog open={isActionOpen} onOpenChange={setIsActionOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm {actionType}</DialogTitle>
+                        <DialogDescription>
+                            You are about to {actionType.toLowerCase()} the item: "{activeItem?.title}".
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-2">
+                        <Label htmlFor="reason">Reason (optional for approval, required for rejection)</Label>
+                        <Textarea 
+                            id="reason" 
+                            value={reason} 
+                            onChange={(e) => setReason(e.target.value)}
+                            placeholder={`Provide a clear justification for the ${actionType.toLowerCase()}...`}
+                            rows={4}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button
+                            onClick={handleAction}
+                            disabled={actionType === 'Rejected' && !reason.trim()}
+                            variant={actionType === 'Rejected' ? 'destructive' : 'default'}
+                        >
+                            Confirm {actionType}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }
