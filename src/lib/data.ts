@@ -1,3 +1,4 @@
+
 export type Idea = {
   id: string;
   title: string;
@@ -5,6 +6,7 @@ export type Idea = {
   author: string;
   authorId: string;
   upvotes: string[]; // array of user uids
+  status: "Pending" | "Approved" | "Rejected";
 };
 
 export type Directive = {

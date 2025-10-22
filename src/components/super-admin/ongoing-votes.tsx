@@ -29,14 +29,15 @@ import { useAppContext } from "@/app/app-provider";
 export function OngoingVotes() {
   const firestore = useFirestore();
   const { user } = useUser();
-  const { ideas, setIdeas } = useAppContext();
+  const { ideas } = useAppContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
   const { toast } = useToast();
 
-  const sortedIdeas = [...ideas].sort((a, b) => b.upvotes.length - a.upvotes.length);
-  const totalVotes = ideas.reduce((sum, idea) => sum + idea.upvotes.length, 0);
+  const approvedIdeas = ideas.filter(idea => idea.status === 'Approved');
+  const sortedIdeas = [...approvedIdeas].sort((a, b) => b.upvotes.length - a.upvotes.length);
+  const totalVotes = approvedIdeas.reduce((sum, idea) => sum + idea.upvotes.length, 0);
 
   const handleCreatePoll = async () => {
     if (!newIdeaTitle || !newIdeaDescription) {
@@ -56,16 +57,18 @@ export function OngoingVotes() {
             author: user.profile.name,
             authorId: user.uid,
             upvotes: [],
+            status: 'Approved' as const, // Automatically approve polls created by Super Admin
         };
-        const newIdeaWithId = await addIdea(firestore, newIdea);
-        setIdeas(prevIdeas => [newIdeaWithId, ...prevIdeas]);
+        await addIdea(firestore, newIdea);
+        // The useCollection hook will automatically update the UI. No need for local state update.
 
         setIsSheetOpen(false);
         setNewIdeaTitle("");
         setNewIdeaDescription("");
         toast({
-            title: "Poll Created",
+            title: "Poll Created & Approved",
             description: `The poll "${newIdea.title}" is now live.`,
+            className: "bg-secondary text-secondary-foreground",
         });
     } catch (error) {
         console.error(error);
@@ -83,7 +86,7 @@ export function OngoingVotes() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Live Community Polls</CardTitle>
-            <CardDescription>Real-time view of top-voted ideas from citizens.</CardDescription>
+            <CardDescription>Real-time view of top-voted (and approved) ideas from citizens.</CardDescription>
           </div>
           <Button onClick={() => setIsSheetOpen(true)}>
             <PlusCircle className="mr-2" />
@@ -91,7 +94,7 @@ export function OngoingVotes() {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {sortedIdeas.map((idea) => {
+          {sortedIdeas.length > 0 ? sortedIdeas.map((idea) => {
             const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
             return (
               <div key={idea.id} className="space-y-2 border-b pb-4 last:border-none last:pb-0">
@@ -111,7 +114,11 @@ export function OngoingVotes() {
                 </div>
               </div>
             );
-          })}
+          }) : (
+            <div className="text-center text-muted-foreground p-8">
+              No approved polls are currently live. Create one or approve a pending idea.
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -120,7 +127,7 @@ export function OngoingVotes() {
           <SheetHeader>
             <SheetTitle>Create a New Poll</SheetTitle>
             <SheetDescription>
-              Launch a new idea or question for the community to vote on. This will appear immediately in the ongoing votes.
+              Launch a new idea or question for the community to vote on. Polls created here are automatically approved and go live immediately.
             </SheetDescription>
           </SheetHeader>
           <div className="grid gap-4 py-4">
@@ -141,12 +148,10 @@ export function OngoingVotes() {
             <SheetClose asChild>
               <Button variant="outline">Cancel</Button>
             </SheetClose>
-            <Button onClick={handleCreatePoll}>Create Poll</Button>
+            <Button onClick={handleCreatePoll}>Create and Publish Poll</Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
     </>
   );
 }
-
-    

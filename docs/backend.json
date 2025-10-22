@@ -1,3 +1,4 @@
+
 {
     "entities": {
         "UserProfile": {
@@ -27,9 +28,10 @@
                 "description": { "type": "string" },
                 "author": { "type": "string" },
                 "authorId": { "type": "string" },
-                "upvotes": { "type": "array", "items": { "type": "string" }, "description": "Array of user UIDs who have upvoted." }
+                "upvotes": { "type": "array", "items": { "type": "string" }, "description": "Array of user UIDs who have upvoted." },
+                "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected"] }
             },
-            "required": ["title", "description", "author", "authorId"]
+            "required": ["title", "description", "author", "authorId", "status"]
         },
         "Directive": {
             "title": "Directive",

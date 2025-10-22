@@ -14,8 +14,13 @@ export async function addIdea(
   const ideasCollection = collection(firestore, 'ideas');
   
   try {
-    const docRef = await addDoc(ideasCollection, idea);
-    return { ...idea, id: docRef.id };
+    // Add the status to the idea if it's not present
+    const ideaWithStatus = {
+      status: 'Pending', // Default status
+      ...idea,
+    };
+    const docRef = await addDoc(ideasCollection, ideaWithStatus);
+    return { ...ideaWithStatus, id: docRef.id };
   } catch (serverError: any) {
     const permissionError = new FirestorePermissionError({
       path: ideasCollection.path,
