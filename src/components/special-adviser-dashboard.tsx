@@ -2,15 +2,15 @@
 "use client";
 
 import { useState } from "react";
-import type { UserProfile, MDA, UserRole, ApprovalItem } from "@/lib/data";
-import { mdas as initialMdas, seededUsers } from "@/lib/data";
+import type { UserProfile, MDA } from "@/lib/data";
+import { mdas as initialMdas } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { FileUp, Send, Signature } from "lucide-react";
+import { FileUp, Send, Signature, Building, ShieldCheck, Gavel, FileText } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,7 +62,7 @@ function ReadyForIssuance() {
         <div className="space-y-6">
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
                 <FileUp className="h-6 w-6" />
-                Ready for Issuance
+                Reviewed Submissions: Ready for Issuance
             </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {itemsReady.length > 0 ? itemsReady.map(item => (
@@ -76,7 +76,9 @@ function ReadyForIssuance() {
                             <p className="text-sm text-muted-foreground">{item.description}</p>
                             <div className="p-3 bg-muted rounded-md text-sm space-y-1">
                                 <p className="font-semibold flex items-center gap-2"><Signature className="h-4 w-4"/> E-Signature:</p>
-                                <p className="text-muted-foreground">{item.governorSignature}</p>
+                                <div className="relative h-16 w-full">
+                                    <img src={item.governorSignature} alt="Governor's Signature" className="h-full w-full object-contain" />
+                                </div>
                                 <p className="text-xs text-muted-foreground pt-1">Approved on: {item.approvalDate}</p>
                             </div>
                         </CardContent>
@@ -124,24 +126,33 @@ function ReadyForIssuance() {
     )
 }
 
+const PlaceholderView = ({ title, icon: Icon }: { title: string, icon: React.ElementType }) => (
+    <div className="space-y-6">
+        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+            <Icon className="h-6 w-6" />
+            {title}
+        </h2>
+        <Card>
+            <CardContent className="p-8 text-center text-muted-foreground">
+                <p>The interface for '{title}' will be implemented here.</p>
+            </CardContent>
+        </Card>
+    </div>
+);
+
 
 export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDashboardProps) {
-  const { ideas } = useAppContext();
-  const [mdas, setMdas] = useState<MDA[]>(initialMdas);
 
   const renderView = () => {
     switch (activeView) {
       case 'submissions':
         return <ReadyForIssuance />;
       case 'drafting':
-        // Placeholder for Directive Drafting view
-        return <div>Directive Drafting</div>;
+        return <PlaceholderView title="Directive Drafting" icon={Gavel} />;
       case 'mda-monitor':
-        // Placeholder for MDA Performance view
-        return <div>MDA Performance Monitor</div>;
+        return <PlaceholderView title="MDA Performance Monitor" icon={Building} />;
       case 'moderation':
-        // Placeholder for Moderation Oversight view
-        return <div>Moderation Oversight</div>;
+        return <PlaceholderView title="Moderation Oversight" icon={ShieldCheck} />;
       case 'analytics':
         return <Analytics />;
       default:
