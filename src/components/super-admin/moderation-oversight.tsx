@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Check, X, Send, Info, MessageSquareWarning } from "lucide-react";
+import { ShieldCheck, Check, X, Send, Info, MessageSquareWarning, Archive } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from "@/app/app-provider";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -46,13 +46,16 @@ const recentActivity = [
 ];
 
 type EscalatedItem = typeof initialEscalatedItems[0];
+type ProcessedItem = EscalatedItem & { decision: 'Forwarded to Governor' | 'Rejected', decisionReason?: string };
+
 
 export function ModerationOversight() {
     const { toast } = useToast();
     const { user } = useUser();
     const { setApprovalQueue } = useAppContext();
     const [escalated, setEscalated] = useState(initialEscalatedItems);
-    const [selectedItem, setSelectedItem] = useState<EscalatedItem | null>(null);
+    const [processedItems, setProcessedItems] = useState<ProcessedItem[]>([]);
+    const [selectedItem, setSelectedItem] = useState<EscalatedItem | ProcessedItem | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isRejectionOpen, setIsRejectionOpen] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
@@ -69,7 +72,10 @@ export function ModerationOversight() {
         };
         setApprovalQueue(prev => [newApprovalItem, ...prev]);
 
-        // Remove from local state
+        // Move to processed list
+        setProcessedItems(prev => [{ ...itemToApprove, decision: 'Forwarded to Governor' }, ...prev]);
+        
+        // Remove from escalated list
         setEscalated(prev => prev.filter(item => item.id !== itemToApprove.id));
         
         toast({
@@ -89,11 +95,18 @@ export function ModerationOversight() {
     const handleConfirmRejection = () => {
         if (!selectedItem || !rejectionReason.trim()) return;
 
+        const rejectedItem: ProcessedItem = { 
+            ...(selectedItem as EscalatedItem), 
+            decision: 'Rejected', 
+            decisionReason: rejectionReason 
+        };
+        setProcessedItems(prev => [rejectedItem, ...prev]);
         setEscalated(prev => prev.filter(item => item.id !== selectedItem.id));
+
         toast({
             variant: "destructive",
             title: "Escalation Rejected",
-            description: `"${selectedItem.title}" was rejected. Reason: ${rejectionReason}`,
+            description: `"${selectedItem.title}" was rejected.`,
         });
         
         setIsRejectionOpen(false);
@@ -101,7 +114,7 @@ export function ModerationOversight() {
         setRejectionReason("");
     }
 
-    const handleViewDetails = (item: EscalatedItem) => {
+    const handleViewDetails = (item: EscalatedItem | ProcessedItem) => {
         setSelectedItem(item);
         setIsDetailsOpen(true);
     }
@@ -172,7 +185,7 @@ export function ModerationOversight() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel onClick={() => setSelectedItem(null)}>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => selectedItem && handleApproveAndSend(selectedItem)}>Confirm & Send</AlertDialogAction>
+                          <AlertDialogAction onClick={() => selectedItem && handleApproveAndSend(selectedItem as EscalatedItem)}>Confirm & Send</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -196,7 +209,7 @@ export function ModerationOversight() {
       
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity Log</CardTitle>
+          <CardTitle>Recent Moderation Activity</CardTitle>
           <CardDescription>A log of recent decisions made by the moderation team.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -218,6 +231,51 @@ export function ModerationOversight() {
         </CardContent>
       </Card>
 
+        <Card>
+            <CardHeader>
+                <CardTitle>Review History</CardTitle>
+                <CardDescription>A log of decisions you have made on escalated items.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Item</TableHead>
+                        <TableHead>Decision</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                    {processedItems.length > 0 ? processedItems.map(item => (
+                        <TableRow key={item.id}>
+                        <TableCell>
+                            <p className="font-medium">{item.title}</p>
+                            <p className="text-sm text-muted-foreground">Type: {item.type}</p>
+                        </TableCell>
+                        <TableCell>
+                            <Badge variant={item.decision === 'Forwarded to Governor' ? 'default' : 'destructive'}>
+                                {item.decision}
+                            </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                           <Button variant="ghost" size="sm" onClick={() => handleViewDetails(item)}>
+                                <Info className="mr-2 h-4 w-4" /> Details
+                            </Button>
+                        </TableCell>
+                        </TableRow>
+                    )) : (
+                        <TableRow>
+                            <TableCell colSpan={3} className="text-center py-12 text-muted-foreground">
+                                You have not reviewed any escalated items yet.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+
+
       {/* Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent>
@@ -225,9 +283,17 @@ export function ModerationOversight() {
                 <DialogTitle>{selectedItem?.title}</DialogTitle>
                 <DialogDescription>Type: {selectedItem?.type} | Submitted By: {selectedItem?.submittedBy}</DialogDescription>
             </DialogHeader>
-            <div className="py-4">
-                <h4 className="font-semibold mb-2">Reason for Escalation:</h4>
-                <p className="text-muted-foreground bg-muted/50 p-3 rounded-md">{selectedItem?.reason}</p>
+            <div className="py-4 space-y-4">
+                <div>
+                    <h4 className="font-semibold mb-2">Reason for Escalation:</h4>
+                    <p className="text-muted-foreground bg-muted/50 p-3 rounded-md">{selectedItem?.reason}</p>
+                </div>
+                 {'decision' in selectedItem! && selectedItem.decision === 'Rejected' && (
+                    <div>
+                        <h4 className="font-semibold mb-2">Your Reason for Rejection:</h4>
+                        <p className="text-muted-foreground bg-destructive/10 p-3 rounded-md border border-destructive/20">{selectedItem.decisionReason}</p>
+                    </div>
+                )}
             </div>
             <DialogFooter>
                 <DialogClose asChild><Button>Close</Button></DialogClose>
@@ -269,3 +335,5 @@ export function ModerationOversight() {
     </div>
   );
 }
+
+    
