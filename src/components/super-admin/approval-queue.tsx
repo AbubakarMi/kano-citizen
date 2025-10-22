@@ -229,7 +229,10 @@ export function ApprovalQueue() {
                     <DialogHeader>
                         <DialogTitle>{activeItem?.title}</DialogTitle>
                         <DialogDescription>
-                            <Badge variant="outline">{activeItem?.type}</Badge> submitted by <span className="font-medium">{activeItem?.submittedBy}</span>
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline">{activeItem?.type}</Badge> 
+                                <span>submitted by <span className="font-medium">{activeItem?.submittedBy}</span></span>
+                            </div>
                         </DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-4">
