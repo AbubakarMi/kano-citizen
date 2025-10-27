@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
 import { addIdea } from "@/firebase/firestore/ideas";
 import { useAppContext } from "@/app/app-provider";
+import { Progress } from "./ui/progress";
 
 interface CitizenDashboardProps {
   t: Translation['dashboard'];
@@ -117,6 +118,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const myIdeas = ideas.filter(idea => idea.authorId === authedUser?.uid);
   const myVotes = ideas.filter(idea => authedUser?.profile?.votedOnIdeas?.includes(idea.id));
   const livePolls = ideas.filter(idea => idea.status === 'Approved');
+  const totalVotes = livePolls.reduce((sum, idea) => sum + idea.upvotes.length, 0);
 
   return (
     <div className="container py-10">
@@ -174,40 +176,54 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         </TabsContent>
 
         <TabsContent value="decide" className="mt-6">
-           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-             {livePolls.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
-               <Card key={idea.id} className="flex flex-col hover:shadow-lg transition-shadow duration-300">
-                 <CardHeader>
-                   <CardTitle className="font-headline text-lg text-primary">{idea.title}</CardTitle>
-                   <CardDescription className="text-xs">{t.by} <span className="font-medium">{idea.author}</span></CardDescription>
-                 </CardHeader>
-                 <CardContent className="flex-grow">
-                   <p className="text-muted-foreground text-sm line-clamp-3">{idea.description}</p>
-                 </CardContent>
-                 <CardFooter className="flex justify-between items-center bg-muted/50 p-4">
-                   <div className="flex items-center gap-2 font-bold text-lg text-secondary">
-                     <ArrowUp className="h-5 w-5"/>
-                     {idea.upvotes.length}
-                   </div>
-                   <Button 
-                     variant={authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? "secondary" : "outline"}
-                     onClick={() => handleUpvote(idea.id)}
-                     disabled={authedUser?.profile?.votedOnIdeas?.includes(idea.id)}
-                   >
-                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <Vote className="mr-2 h-4 w-4" />}
-                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? t.voted : t.upvote}
-                   </Button>
-                 </CardFooter>
-               </Card>
-             ))}
-           </div>
-           {livePolls.length === 0 && (
-                <div className="text-center py-20 bg-muted rounded-lg">
-                    <Vote className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium">No Live Polls</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">There are no ideas available for voting right now.</p>
+          <div className="space-y-6">
+              {livePolls.length > 0 ? (
+                  livePolls.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => {
+                  const hasVoted = authedUser?.profile?.votedOnIdeas?.includes(idea.id);
+                  const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
+                  return (
+                      <Card key={idea.id} className="w-full overflow-hidden shadow-md transition-shadow hover:shadow-xl duration-300">
+                      <div className="grid md:grid-cols-3">
+                          <div className="md:col-span-2 p-6">
+                          <CardTitle className="text-2xl font-headline text-primary mb-2">{idea.title}</CardTitle>
+                          <CardDescription className="text-sm mb-4">{t.by} <span className="font-semibold">{idea.author}</span></CardDescription>
+                          <p className="text-muted-foreground text-base leading-relaxed">{idea.description}</p>
+                          </div>
+                          <div className="md:col-span-1 bg-muted/50 p-6 flex flex-col justify-center items-center gap-4 text-center">
+                              <div className="space-y-2">
+                                  <div className="flex items-baseline justify-center gap-2">
+                                      <span className="text-5xl font-bold text-secondary">{idea.upvotes.length}</span>
+                                      <span className="text-lg font-medium text-muted-foreground">Votes</span>
+                                  </div>
+                                  <div className="w-full">
+                                    <Progress value={votePercentage} className="h-2" />
+                                    <p className="text-sm font-semibold text-secondary mt-1">{votePercentage.toFixed(1)}% of total votes</p>
+                                  </div>
+                              </div>
+                              <Button 
+                                  size="lg"
+                                  className="w-full font-bold text-base"
+                                  variant={hasVoted ? "secondary" : "default"}
+                                  onClick={() => handleUpvote(idea.id)}
+                                  disabled={hasVoted}
+                              >
+                                  {hasVoted ? <Check className="mr-2 h-5 w-5" /> : <Vote className="mr-2 h-5 w-5" />}
+                                  {hasVoted ? t.voted : t.upvote}
+                              </Button>
+                          </div>
+                      </div>
+                      </Card>
+                  );
+                  })
+              ) : (
+                <div className="text-center py-20 bg-muted rounded-lg border border-dashed">
+                    <Vote className="mx-auto h-16 w-16 text-muted-foreground/50" />
+                    <h3 className="mt-6 text-2xl font-bold font-headline">No Live Polls</h3>
+                    <p className="mt-2 text-lg text-muted-foreground">There are no ideas available for voting right now.</p>
+                    <p className="mt-1 text-base text-muted-foreground">Why not be the first to submit one?</p>
                 </div>
-            )}
+              )}
+          </div>
         </TabsContent>
 
         <TabsContent value="build" className="mt-6">
