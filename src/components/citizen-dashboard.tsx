@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info, ChevronDown, ChevronUpIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
@@ -41,6 +41,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
   const [votingFor, setVotingFor] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAllMyIdeas, setShowAllMyIdeas] = useState(false);
 
   const handleUpvote = async (ideaId: string) => {
     if (!authedUser || !firestore || !profile) return;
@@ -155,6 +156,8 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         return 'outline';
     }
   };
+
+  const visibleIdeas = showAllMyIdeas ? myIdeas : myIdeas.slice(0, 3);
 
 
   return (
@@ -278,7 +281,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         <h4 className="font-semibold text-sm mb-3">My Submitted Ideas</h4>
                         {myIdeas.length > 0 ? (
                             <ul className="space-y-3">
-                                {myIdeas.map(idea => (
+                                {visibleIdeas.map(idea => (
                                 <li key={idea.id} className="text-sm space-y-1">
                                     <div className="flex justify-between items-center">
                                       <span className="font-medium pr-2">{idea.title}</span>
@@ -301,6 +304,14 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         ) : <p className="text-muted-foreground text-sm">{t.noVotes}</p>}
                       </div>
                   </CardContent>
+                    {myIdeas.length > 3 && (
+                        <CardFooter>
+                            <Button variant="ghost" size="sm" className="w-full text-primary" onClick={() => setShowAllMyIdeas(!showAllMyIdeas)}>
+                                {showAllMyIdeas ? 'Show Less' : 'View All'}
+                                {showAllMyIdeas ? <ChevronUpIcon className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
+                            </Button>
+                        </CardFooter>
+                    )}
               </Card>
 
                <Card>
@@ -374,6 +385,5 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
 
     
