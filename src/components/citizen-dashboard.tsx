@@ -31,47 +31,64 @@ interface CitizenDashboardProps {
 }
 
 export function CitizenDashboard({ t }: CitizenDashboardProps) {
-  const { authedUser } = useUser();
+  const { authedUser, profile, loading: userLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const { ideas, setIdeas, directives, volunteerOpportunities, activeView } = useAppContext();
 
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
+  const [votingFor, setVotingFor] = useState<string | null>(null);
 
   const handleUpvote = async (ideaId: string) => {
-    if (!authedUser || !firestore) return;
+    if (!authedUser || !firestore || !profile) return;
     
-    const userRef = doc(firestore, "users", authedUser.uid);
-    const ideaRef = doc(firestore, "ideas", ideaId);
+    // Prevent multiple clicks
+    if (votingFor) return;
     
-    const isVoted = authedUser.profile?.votedOnIdeas?.includes(ideaId);
-
-    try {
-      const batch = writeBatch(firestore);
-      if (isVoted) {
+    const isVoted = profile.votedOnIdeas?.includes(ideaId);
+    if (isVoted) {
         toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
         return;
-      } else {
-        batch.update(ideaRef, { upvotes: arrayUnion(authedUser.uid) });
-        batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
-      }
-      await batch.commit();
-      
-      // Optimistic UI update
+    }
+    
+    setVotingFor(ideaId);
+
+    const userRef = doc(firestore, "users", authedUser.uid);
+    const ideaRef = doc(firestore, "ideas", ideaId);
+
+    try {
+      // Optimistic UI update first
       setIdeas(prevIdeas => prevIdeas.map(idea => 
         idea.id === ideaId 
           ? { ...idea, upvotes: [...idea.upvotes, authedUser.uid] }
           : idea
       ));
       if(authedUser.profile) {
-        authedUser.profile.votedOnIdeas.push(ideaId);
+          authedUser.profile.votedOnIdeas.push(ideaId);
       }
+
+      const batch = writeBatch(firestore);
+      batch.update(ideaRef, { upvotes: arrayUnion(authedUser.uid) });
+      batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
+      await batch.commit();
 
       toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch (error) {
       console.error("Error upvoting:", error);
       toast({ variant: "destructive", title: "Error", description: "Could not cast vote." });
+
+      // Revert optimistic update on error
+       setIdeas(prevIdeas => prevIdeas.map(idea => 
+        idea.id === ideaId 
+          ? { ...idea, upvotes: idea.upvotes.filter(uid => uid !== authedUser.uid) }
+          : idea
+      ));
+       if(authedUser.profile) {
+          authedUser.profile.votedOnIdeas = authedUser.profile.votedOnIdeas.filter(id => id !== ideaId);
+      }
+    } finally {
+        setVotingFor(null);
     }
   };
 
@@ -205,10 +222,10 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                                   className="w-full font-bold text-base"
                                   variant={hasVoted ? "secondary" : "default"}
                                   onClick={() => handleUpvote(idea.id)}
-                                  disabled={hasVoted}
+                                  disabled={hasVoted || votingFor === idea.id}
                               >
                                   {hasVoted ? <Check className="mr-2 h-5 w-5" /> : <Vote className="mr-2 h-5 w-5" />}
-                                  {hasVoted ? t.voted : t.upvote}
+                                  {hasVoted ? t.voted : (votingFor === idea.id ? 'Voting...' : t.upvote)}
                               </Button>
                           </div>
                       </div>
@@ -324,5 +341,3 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
-    
