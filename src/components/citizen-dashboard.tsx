@@ -18,11 +18,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
-import { Separator } from "./ui/separator";
 import { addIdea } from "@/firebase/firestore/ideas";
 import { useAppContext } from "@/app/app-provider";
 
@@ -128,31 +127,45 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
       <Tabs value={activeView} className="mt-8">
         <TabsContent value="speak" className="mt-6">
-          <Card>
-            <CardHeader>
+          <Card className="max-w-3xl mx-auto shadow-md border-primary/20">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-primary/10 text-primary mx-auto rounded-full flex items-center justify-center mb-4">
+                  <MessageSquareQuote className="w-8 h-8" />
+              </div>
               <CardTitle className="text-2xl font-headline text-primary">{t.submitIdeaTitle}</CardTitle>
               <CardDescription>
                 {t.submitIdeaDescription}
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmitIdea}>
-              <CardContent className="space-y-4">
-                  <Input 
-                    placeholder={t.ideaTitlePlaceholder} 
-                    value={newIdeaTitle}
-                    onChange={(e) => setNewIdeaTitle(e.target.value)}
-                    required
-                  />
-                  <Textarea
-                    placeholder={t.ideaDescriptionPlaceholder} 
-                    rows={6}
-                    value={newIdeaDescription}
-                    onChange={(e) => setNewIdeaDescription(e.target.value)}
-                    required
-                  />
+              <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <label htmlFor="idea-title" className="font-medium text-sm">Idea Title</label>
+                    <Input 
+                        id="idea-title"
+                        placeholder={t.ideaTitlePlaceholder} 
+                        value={newIdeaTitle}
+                        onChange={(e) => setNewIdeaTitle(e.target.value)}
+                        required
+                        className="text-base"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="idea-desc" className="font-medium text-sm">Idea Description</label>
+                    <Textarea
+                        id="idea-desc"
+                        placeholder={t.ideaDescriptionPlaceholder} 
+                        rows={6}
+                        value={newIdeaDescription}
+                        onChange={(e) => setNewIdeaDescription(e.target.value)}
+                        required
+                        className="text-base"
+                    />
+                  </div>
               </CardContent>
-              <CardFooter>
-                <Button type="submit">{t.submitIdeaButton}</Button>
+              <CardFooter className="flex-col gap-4">
+                <Button type="submit" size="lg" className="w-full font-bold">{t.submitIdeaButton}</Button>
+                <p className="text-xs text-muted-foreground">Your idea will be reviewed by moderators before appearing for public vote.</p>
               </CardFooter>
             </form>
           </Card>
@@ -161,15 +174,15 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         <TabsContent value="decide" className="mt-6">
            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
              {livePolls.sort((a,b) => b.upvotes.length - a.upvotes.length).map((idea) => (
-               <Card key={idea.id} className="flex flex-col">
+               <Card key={idea.id} className="flex flex-col hover:shadow-lg transition-shadow duration-300">
                  <CardHeader>
-                   <CardTitle className="font-headline text-primary">{idea.title}</CardTitle>
-                   <CardDescription>{t.by} {idea.author}</CardDescription>
+                   <CardTitle className="font-headline text-lg text-primary">{idea.title}</CardTitle>
+                   <CardDescription className="text-xs">{t.by} <span className="font-medium">{idea.author}</span></CardDescription>
                  </CardHeader>
                  <CardContent className="flex-grow">
-                   <p className="text-muted-foreground">{idea.description}</p>
+                   <p className="text-muted-foreground text-sm line-clamp-3">{idea.description}</p>
                  </CardContent>
-                 <CardFooter className="flex justify-between items-center">
+                 <CardFooter className="flex justify-between items-center bg-muted/50 p-4">
                    <div className="flex items-center gap-2 font-bold text-lg text-secondary">
                      <ArrowUp className="h-5 w-5"/>
                      {idea.upvotes.length}
@@ -179,103 +192,115 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                      onClick={() => handleUpvote(idea.id)}
                      disabled={authedUser?.profile?.votedOnIdeas?.includes(idea.id)}
                    >
-                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
+                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <Vote className="mr-2 h-4 w-4" />}
                      {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? t.voted : t.upvote}
                    </Button>
                  </CardFooter>
                </Card>
              ))}
            </div>
+           {livePolls.length === 0 && (
+                <div className="text-center py-20 bg-muted rounded-lg">
+                    <Vote className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 text-lg font-medium">No Live Polls</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">There are no ideas available for voting right now.</p>
+                </div>
+            )}
         </TabsContent>
 
-        <TabsContent value="build" className="mt-6 space-y-8">
-            <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.myActivity}</h2>
-                <p className="text-muted-foreground">An overview of your contributions to the platform.</p>
-                <div className="grid gap-6 md:grid-cols-2 mt-4">
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline text-primary"><FileText />{t.mySubmittedIdeas}</CardTitle></CardHeader>
-                        <CardContent className="pl-6">
-                            {myIdeas.length > 0 ? (
-                                <ul className="list-disc space-y-1 text-sm">
-                                    {myIdeas.map(i => <li key={i.id}>{i.title}</li>)}
-                                </ul>
-                            ) : <p className="text-muted-foreground text-sm">{t.noSubmittedIdeas}</p>}
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg font-headline text-primary"><Vote />{t.myVotes}</CardTitle></CardHeader>
-                        <CardContent className="pl-6">
-                           {myVotes.length > 0 ? (
-                                <ul className="list-disc space-y-1 text-sm">
-                                    {myVotes.map(i => <li key={i.id}>{i.title}</li>)}
-                                </ul>
-                            ) : <p className="text-muted-foreground text-sm">{t.noVotes}</p>}
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-
-            <Separator />
-
-            <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.followDirectives}</h2>
-                <p className="text-muted-foreground">Track the progress of ideas that have been turned into official government projects.</p>
-                <div className="mt-4 space-y-4">
-                    {directives.map(dir => (
-                        <Card key={dir.id}>
-                        <CardHeader>
-                            <div className="flex justify-between items-start">
-                            <div>
-                                <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'accent'}>{dir.status}</Badge>
-                                <CardTitle className="font-headline text-primary">{dir.title}</CardTitle>
-                            </div>
-                            <Button variant={authedUser?.profile?.followedDirectives?.includes(dir.id) ? "secondary" : "outline"} size="sm" onClick={() => handleFollow(dir.id)}>
-                                {authedUser?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
-                                {authedUser?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
-                            </Button>
-                            </div>
-                            <CardDescription>{dir.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h4 className="font-semibold mb-2 font-headline">{t.latestUpdates}</h4>
-                            <ul className="space-y-2">
-                            {dir.updates.map((update, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-1 shrink-0 text-accent" /><span>{update}</span></li>
-                            ))}
+        <TabsContent value="build" className="mt-6">
+          <div className="grid lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-1 space-y-6">
+              <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 font-headline text-primary"><FileText />{t.myActivity}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2">{t.mySubmittedIdeas}</h4>
+                        {myIdeas.length > 0 ? (
+                            <ul className="space-y-2 text-sm">
+                                {myIdeas.map(i => <li key={i.id} className="flex items-center gap-2"><ChevronRight className="h-4 w-4 text-muted-foreground" /><span>{i.title}</span></li>)}
                             </ul>
-                        </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            </div>
+                        ) : <p className="text-muted-foreground text-sm">{t.noSubmittedIdeas}</p>}
+                      </div>
+                       <div>
+                        <h4 className="font-semibold text-sm mb-2">{t.myVotes}</h4>
+                         {myVotes.length > 0 ? (
+                            <ul className="space-y-2 text-sm">
+                                {myVotes.map(i => <li key={i.id} className="flex items-center gap-2"><ChevronRight className="h-4 w-4 text-muted-foreground" /><span>{i.title}</span></li>)}
+                            </ul>
+                        ) : <p className="text-muted-foreground text-sm">{t.noVotes}</p>}
+                      </div>
+                  </CardContent>
+              </Card>
 
-            <Separator />
-
-             <div>
-                <h2 className="text-2xl font-bold tracking-tight font-headline text-primary">{t.volunteer}</h2>
-                <p className="text-muted-foreground">Your skills and time can make a huge difference. Volunteer for a project today.</p>
-                <div className="mt-4 grid md:grid-cols-2 gap-6">
+               <Card>
+                <CardHeader>
+                  <CardTitle className="font-headline text-primary">{t.volunteer}</CardTitle>
+                  <CardDescription>Your skills and time can make a huge difference.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
                     {volunteerOpportunities.map(op => (
-                        <Card key={op.id} className="mb-4">
-                        <CardHeader>
-                            <CardTitle className="font-headline text-primary">{op.title}</CardTitle>
-                            <CardDescription>{op.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <h4 className="font-semibold text-sm mb-2 font-headline">{t.skillsNeeded}</h4>
-                            <div className="flex flex-wrap gap-2">
-                            {op.requiredSkills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
+                        <div key={op.id} className="p-3 border rounded-lg">
+                            <h4 className="font-semibold text-sm">{op.title}</h4>
+                            <div className="flex flex-wrap gap-1 my-2">
+                            {op.requiredSkills.map(skill => <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>)}
                             </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={() => handleVolunteer(op.id)} variant="accent"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
-                        </CardFooter>
-                        </Card>
+                            <p className="text-xs text-muted-foreground mb-3">{op.description}</p>
+                            <Button onClick={() => handleVolunteer(op.id)} variant="accent" size="sm"><Handshake className="mr-2 h-4 w-4" />{t.volunteerButton}</Button>
+                        </div>
                     ))}
-                </div>
+                    {volunteerOpportunities.length === 0 && (
+                      <p className="text-muted-foreground text-sm text-center py-4">No volunteer opportunities available right now.</p>
+                    )}
+                </CardContent>
+              </Card>
             </div>
-
+            
+            <div className="lg:col-span-2">
+                <Card>
+                    <CardHeader>
+                      <CardTitle className="font-headline text-primary">{t.followDirectives}</CardTitle>
+                      <CardDescription>Track the progress of ideas that have been turned into official government projects.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {directives.map(dir => (
+                            <Card key={dir.id} className="bg-muted/50">
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                <div>
+                                    <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'accent'}>{dir.status}</Badge>
+                                    <h3 className="font-semibold">{dir.title}</h3>
+                                </div>
+                                <Button variant={authedUser?.profile?.followedDirectives?.includes(dir.id) ? "secondary" : "outline"} size="sm" onClick={() => handleFollow(dir.id)}>
+                                    {authedUser?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
+                                    {authedUser?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
+                                </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground pt-1">{dir.description}</p>
+                            </CardHeader>
+                            <CardContent>
+                                <h4 className="font-semibold mb-3 text-sm">{t.latestUpdates}</h4>
+                                <ul className="space-y-3">
+                                {dir.updates.map((update, i) => (
+                                <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground"><Pin className="h-4 w-4 mt-0.5 shrink-0 text-accent" /><span>{update}</span></li>
+                                ))}
+                                </ul>
+                            </CardContent>
+                            </Card>
+                        ))}
+                        {directives.length === 0 && (
+                             <div className="text-center py-20">
+                                <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <h3 className="mt-4 text-lg font-medium">No Directives Issued</h3>
+                                <p className="mt-1 text-sm text-muted-foreground">Check back later for updates on implemented ideas.</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
