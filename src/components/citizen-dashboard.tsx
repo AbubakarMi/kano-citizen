@@ -31,7 +31,7 @@ interface CitizenDashboardProps {
 }
 
 export function CitizenDashboard({ t }: CitizenDashboardProps) {
-  const { user } = useUser();
+  const { authedUser } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const { ideas, setIdeas, directives, volunteerOpportunities, activeView } = useAppContext();
@@ -40,12 +40,12 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
 
   const handleUpvote = async (ideaId: string) => {
-    if (!user || !firestore) return;
+    if (!authedUser || !firestore) return;
     
-    const userRef = doc(firestore, "users", user.uid);
+    const userRef = doc(firestore, "users", authedUser.uid);
     const ideaRef = doc(firestore, "ideas", ideaId);
     
-    const isVoted = user.profile?.votedOnIdeas?.includes(ideaId);
+    const isVoted = authedUser.profile?.votedOnIdeas?.includes(ideaId);
 
     try {
       const batch = writeBatch(firestore);
@@ -53,7 +53,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         toast({ title: t.alreadyVoted, description: t.alreadyVotedDescription });
         return;
       } else {
-        batch.update(ideaRef, { upvotes: arrayUnion(user.uid) });
+        batch.update(ideaRef, { upvotes: arrayUnion(authedUser.uid) });
         batch.update(userRef, { votedOnIdeas: arrayUnion(ideaId) });
       }
       await batch.commit();
@@ -61,11 +61,11 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
       // Optimistic UI update
       setIdeas(prevIdeas => prevIdeas.map(idea => 
         idea.id === ideaId 
-          ? { ...idea, upvotes: [...idea.upvotes, user.uid] }
+          ? { ...idea, upvotes: [...idea.upvotes, authedUser.uid] }
           : idea
       ));
-      if(user.profile) {
-        user.profile.votedOnIdeas.push(ideaId);
+      if(authedUser.profile) {
+        authedUser.profile.votedOnIdeas.push(ideaId);
       }
 
       toast({ title: t.voteCasted, description: t.voteCastedDescription, className: "bg-secondary text-secondary-foreground" });
@@ -76,9 +76,9 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   };
 
   const handleFollow = async (directiveId: string) => {
-    if (!user || !firestore) return;
-    const userRef = doc(firestore, "users", user.uid);
-    const isFollowing = user.profile?.followedDirectives?.includes(directiveId);
+    if (!authedUser || !firestore) return;
+    const userRef = doc(firestore, "users", authedUser.uid);
+    const isFollowing = authedUser.profile?.followedDirectives?.includes(directiveId);
     
     try {
       await writeBatch(firestore).update(userRef, {
@@ -96,14 +96,14 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   
   const handleSubmitIdea = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firestore || !user?.profile) return;
+    if (!firestore || !authedUser?.profile) return;
     
     try {
       await addIdea(firestore, {
         title: newIdeaTitle,
         description: newIdeaDescription,
-        author: user.profile.name,
-        authorId: user.uid,
+        author: authedUser.profile.name,
+        authorId: authedUser.uid,
         upvotes: [],
       });
       setNewIdeaTitle("");
@@ -115,14 +115,14 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     }
   }
 
-  const myIdeas = ideas.filter(idea => idea.authorId === user?.uid);
-  const myVotes = ideas.filter(idea => user?.profile?.votedOnIdeas?.includes(idea.id));
+  const myIdeas = ideas.filter(idea => idea.authorId === authedUser?.uid);
+  const myVotes = ideas.filter(idea => authedUser?.profile?.votedOnIdeas?.includes(idea.id));
   const livePolls = ideas.filter(idea => idea.status === 'Approved');
 
   return (
     <div className="container py-10">
       <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-headline text-primary">
-        {t.welcome} {user?.profile?.name.split(" ")[0]}!
+        {t.welcome} {authedUser?.profile?.name.split(" ")[0]}!
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
 
@@ -175,12 +175,12 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                      {idea.upvotes.length}
                    </div>
                    <Button 
-                     variant={user?.profile?.votedOnIdeas?.includes(idea.id) ? "secondary" : "outline"}
+                     variant={authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? "secondary" : "outline"}
                      onClick={() => handleUpvote(idea.id)}
-                     disabled={user?.profile?.votedOnIdeas?.includes(idea.id)}
+                     disabled={authedUser?.profile?.votedOnIdeas?.includes(idea.id)}
                    >
-                     {user?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
-                     {user?.profile?.votedOnIdeas?.includes(idea.id) ? t.voted : t.upvote}
+                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? <Check className="mr-2 h-4 w-4" /> : <ArrowUp className="mr-2 h-4 w-4" />}
+                     {authedUser?.profile?.votedOnIdeas?.includes(idea.id) ? t.voted : t.upvote}
                    </Button>
                  </CardFooter>
                </Card>
@@ -230,9 +230,9 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                                 <Badge className="mb-2" variant={dir.status === 'An kammala' || dir.status === 'Completed' ? 'secondary' : dir.status === 'In Progress' || dir.status === 'Ana ci gaba' ? 'default' : 'accent'}>{dir.status}</Badge>
                                 <CardTitle className="font-headline text-primary">{dir.title}</CardTitle>
                             </div>
-                            <Button variant={user?.profile?.followedDirectives?.includes(dir.id) ? "secondary" : "outline"} size="sm" onClick={() => handleFollow(dir.id)}>
-                                {user?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
-                                {user?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
+                            <Button variant={authedUser?.profile?.followedDirectives?.includes(dir.id) ? "secondary" : "outline"} size="sm" onClick={() => handleFollow(dir.id)}>
+                                {authedUser?.profile?.followedDirectives?.includes(dir.id) ? <Check className="mr-2 h-4 w-4" /> : <Bell className="mr-2 h-4 w-4" />}
+                                {authedUser?.profile?.followedDirectives?.includes(dir.id) ? t.following : t.follow}
                             </Button>
                             </div>
                             <CardDescription>{dir.description}</CardDescription>
@@ -281,6 +281,3 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
-    
-    

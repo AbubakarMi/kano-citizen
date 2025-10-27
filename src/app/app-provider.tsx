@@ -6,7 +6,6 @@ import { useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { UserProfile, Idea, Directive, VolunteerOpportunity, ApprovalItem } from '@/lib/data';
 import { useMemoFirebase } from '@/lib/utils';
-import { initialApprovalItems } from '@/lib/data';
 
 type AppContextType = {
   activeView: string;
@@ -25,12 +24,12 @@ type AppContextType = {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { user } = useUser();
+  const { authedUser } = useUser();
   const firestore = useFirestore();
   
   const [activeView, setActiveView] = useState('overview');
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [approvalQueue, setApprovalQueue] = useState<ApprovalItem[]>(initialApprovalItems);
+  const [approvalQueue, setApprovalQueue] = useState<ApprovalItem[]>([]);
   
   const ideasQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'ideas')) : null, [firestore]);
   const { data: ideasData } = useCollection<Idea>(ideasQuery);
@@ -53,8 +52,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [directivesData]);
 
   useEffect(() => {
-    if (user?.profile?.role) {
-      switch (user.profile.role) {
+    if (authedUser?.profile?.role) {
+      switch (authedUser.profile.role) {
         case 'Citizen':
           setActiveView('decide');
           break;
@@ -77,7 +76,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Default for non-logged-in users
       setActiveView('overview');
     }
-  }, [user?.profile?.role]);
+  }, [authedUser?.profile?.role]);
 
   const value = {
     activeView,

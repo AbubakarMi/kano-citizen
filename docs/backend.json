@@ -15,7 +15,8 @@
                 "submittedIdeas": { "type": "array", "items": { "type": "string" }, "description": "Array of idea IDs submitted by the user." },
                 "votedOnIdeas": { "type": "array", "items": { "type": "string" }, "description": "Array of idea IDs the user has voted on." },
                 "followedDirectives": { "type": "array", "items": { "type": "string" }, "description": "Array of directive IDs the user is following." },
-                "volunteeredFor": { "type": "array", "items": { "type": "string" }, "description": "Array of volunteer opportunity IDs the user has signed up for." }
+                "volunteeredFor": { "type": "array", "items": { "type": "string" }, "description": "Array of volunteer opportunity IDs the user has signed up for." },
+                "createdAt": { "type": "string", "format": "date-time", "description": "The timestamp when the user profile was created." }
             },
             "required": ["uid", "name", "email", "role"]
         },

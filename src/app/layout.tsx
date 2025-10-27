@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { FirebaseProvider } from "@/firebase/provider";
 import { FirebaseErrorListener } from "@/components/FirebaseErrorListener";
-import { MockAuthProvider } from "@/firebase/auth/use-user";
+import { AuthProvider } from "@/firebase/auth/use-user";
 import { AppProvider } from "./app-provider";
 
 export const metadata: Metadata = {
@@ -40,13 +40,15 @@ export default function RootLayout({
           fontPtSans.variable
         )}
       >
-        <MockAuthProvider>
-          <FirebaseProvider>
-            {children}
-            <Toaster />
-            <FirebaseErrorListener />
-          </FirebaseProvider>
-        </MockAuthProvider>
+        <FirebaseProvider>
+          <AuthProvider>
+            <AppProvider>
+                {children}
+                <Toaster />
+                <FirebaseErrorListener />
+            </AppProvider>
+          </AuthProvider>
+        </FirebaseProvider>
       </body>
     </html>
   );

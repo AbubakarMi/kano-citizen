@@ -22,7 +22,6 @@ import type { Translation } from "@/lib/translations";
 import { Checkbox } from "./ui/checkbox";
 import { WelcomeDialog } from "./welcome-dialog";
 import { useUser } from "@/firebase/auth/use-user";
-import { seededUsers } from "@/lib/data";
 
 
 const loginSchema = z.object({
@@ -50,12 +49,9 @@ export function LoginForm({ t }: LoginFormProps) {
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  const showWelcomeDialog = async (email: string) => {
-    const user = seededUsers.find(u => u.email === email);
-    const userName = user ? user.name : "Citizen";
-    
+  const showWelcomeDialog = async (displayName: string) => {
     setDialogContent({
-        title: `${t.toastWelcome} ${userName.split(' ')[0]}!`,
+        title: `${t.toastWelcome} ${displayName.split(' ')[0]}!`,
         description: t.toastDescription,
     });
     setDialogOpen(true);
@@ -64,29 +60,30 @@ export function LoginForm({ t }: LoginFormProps) {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Find user in seeded data
-    const foundUser = seededUsers.find(u => u.email === values.email);
-
-    if (foundUser) {
-        login(values.email, foundUser.role, foundUser.name, foundUser.mda);
-        await showWelcomeDialog(values.email);
-    } else {
+    try {
+        const user = await login(values.email, values.password);
+        if (user?.displayName) {
+            await showWelcomeDialog(user.displayName);
+        } else {
+             // Fallback if displayName is not available
+             router.push('/');
+        }
+    } catch (error: any) {
+        console.error("Login failed:", error);
         toast({
             variant: "destructive",
             title: t.toastErrorTitle,
-            description: t.toastErrorDescription,
+            description: error.message || t.toastErrorDescription,
         });
+    } finally {
+        setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleDialogConfirm = () => {
     setDialogOpen(false);
     router.push('/');
+    router.refresh(); // Force a refresh to ensure user state is re-evaluated
   }
 
   return (
@@ -111,12 +108,8 @@ export function LoginForm({ t }: LoginFormProps) {
                     <Input 
                       placeholder="e.g. citizen@test.com" 
                       {...field} 
-                      list="emails"
                     />
                   </FormControl>
-                  <datalist id="emails">
-                    {seededUsers.map(u => <option key={u.email} value={u.email} />)}
-                  </datalist>
                   <FormMessage />
                   </FormItem>
               )}
@@ -127,7 +120,7 @@ export function LoginForm({ t }: LoginFormProps) {
               render={({ field }) => (
                   <FormItem>
                   <FormLabel>{t.passwordLabel}</FormLabel>
-                  <FormControl><Input type="password" placeholder="any password" {...field} /></FormControl>
+                  <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
                   <FormMessage />
                   </FormItem>
               )}

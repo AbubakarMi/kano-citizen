@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import type { Translation } from "@/lib/translations";
 import { WelcomeDialog } from "./welcome-dialog";
 import { useToast } from "@/hooks/use-toast";
-import type { UserProfile } from "@/lib/data";
+import { useUser } from "@/firebase/auth/use-user";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required." }),
@@ -37,6 +37,7 @@ export function RegisterForm({ t }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { register } = useUser();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -47,18 +48,26 @@ export function RegisterForm({ t }: RegisterFormProps) {
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     
-    // Simulate network delay and success
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log("Mock registration successful for:", values.email);
-    
-    toast({
-        title: t.toastSuccessTitle,
-        description: `(Mock) Account for ${values.fullName} created.`,
-    });
-      
-    setDialogOpen(true);
-    setIsLoading(false);
+    try {
+        await register(values.email, values.password, values.fullName, values.location);
+        
+        toast({
+            title: t.toastSuccessTitle,
+            description: `Account for ${values.fullName} created. Please log in.`,
+        });
+          
+        setDialogOpen(true);
+
+    } catch (error: any) {
+        console.error("Registration failed:", error);
+        toast({
+            variant: "destructive",
+            title: t.toastErrorTitle,
+            description: error.message || t.toastErrorDescription,
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
   
   const handleDialogConfirm = () => {

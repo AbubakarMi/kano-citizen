@@ -4,9 +4,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase/auth/use-user';
-import { useFirestore } from '@/firebase';
-import { collection, getDocs, query } from 'firebase/firestore';
-import type { UserProfile, Idea, Directive, VolunteerOpportunity } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
 
 import { SiteHeader } from "@/components/site-header";
 import { LandingPage } from "@/components/landing-page";
@@ -22,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 import { useAppContext } from "@/app/app-provider";
-import { AppProvider } from "./app-provider";
 
 const RoleBasedDashboard = ({ user, t }: { user: UserProfile, t: Translation }) => {
     const { 
@@ -101,8 +98,8 @@ const DashboardLoading = () => (
     </div>
 );
 
-function HomePageContent() {
-  const { user, loading: userLoading } = useUser();
+export default function Home() {
+  const { authedUser, loading: userLoading } = useUser();
   const [language, setLanguage] = useState<Language>('en');
   const { isSidebarCollapsed, ideas, directives, volunteerOpportunities } = useAppContext();
   
@@ -115,15 +112,15 @@ function HomePageContent() {
   return (
     <div className="flex flex-col min-h-screen">
        <SiteHeader
-        user={user}
+        user={authedUser}
         language={language}
         setLanguage={setLanguage}
         t={t.header}
         isSidebarCollapsed={isSidebarCollapsed}
       />
       <main className="flex-1">
-        {user?.profile ? (
-          <RoleBasedDashboard user={user.profile} t={t} />
+        {authedUser?.profile ? (
+          <RoleBasedDashboard user={authedUser.profile} t={t} />
         ) : (
           <LandingPage 
             language={language} 
@@ -139,12 +136,4 @@ function HomePageContent() {
       </main>
     </div>
   );
-}
-
-export default function Home() {
-    return (
-      <AppProvider>
-        <HomePageContent />
-      </AppProvider>
-    )
 }

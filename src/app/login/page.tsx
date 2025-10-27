@@ -7,17 +7,16 @@ import Link from "next/link";
 import { translations, type Language, type Translation } from "@/lib/translations";
 import { SiteHeader } from "@/components/site-header";
 import { useUser } from "@/firebase/auth/use-user";
-import { AppProvider } from "../app-provider";
 
-function LoginPageContent() {
+export default function LoginPage() {
     const [language, setLanguage] = useState<Language>('en');
-    const { user, loading } = useUser();
+    const { authedUser } = useUser();
     const t = translations[language];
 
     return (
       <div className="min-h-screen w-full flex flex-col bg-background">
         <SiteHeader 
-            user={user}
+            user={authedUser}
             language={language}
             setLanguage={setLanguage}
             t={t.header}
@@ -40,13 +39,4 @@ function LoginPageContent() {
         </main>
       </div>
     );
-}
-
-
-export default function LoginPage() {
-    return (
-        <AppProvider>
-            <LoginPageContent />
-        </AppProvider>
-    )
 }

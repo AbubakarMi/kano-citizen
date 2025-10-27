@@ -22,7 +22,7 @@ interface DirectiveIssuanceProps {
 
 export function DirectiveIssuance({ ideas, mdas, setApprovalQueue }: DirectiveIssuanceProps) {
   const { toast } = useToast();
-  const { user } = useUser();
+  const { authedUser } = useUser();
   const [draftedDirectives, setDraftedDirectives] = useState<ApprovalItem[]>([]);
 
   // Form state
@@ -47,7 +47,7 @@ export function DirectiveIssuance({ ideas, mdas, setApprovalQueue }: DirectiveIs
         type: "Drafted Directive",
         title: directiveTitle,
         description: directiveDetails,
-        submittedBy: user?.profile?.name || 'Special Adviser',
+        submittedBy: authedUser?.profile?.name || 'Special Adviser',
         status: "Pending", // This will now go to the Governor for approval
     };
 

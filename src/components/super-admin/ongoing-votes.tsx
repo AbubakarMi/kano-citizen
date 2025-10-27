@@ -39,7 +39,7 @@ import { useAppContext } from "@/app/app-provider";
 
 export function OngoingVotes() {
   const firestore = useFirestore();
-  const { user } = useUser();
+  const { authedUser } = useUser();
   const { ideas, setIdeas, setApprovalQueue } = useAppContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
@@ -60,14 +60,14 @@ export function OngoingVotes() {
         });
         return;
     }
-    if (!firestore || !user?.profile) return;
+    if (!firestore || !authedUser?.profile) return;
 
     try {
         await addIdea(firestore, {
             title: newIdeaTitle,
             description: newIdeaDescription,
-            author: user.profile.name,
-            authorId: user.uid,
+            author: authedUser.profile.name,
+            authorId: authedUser.uid,
             upvotes: [],
             status: 'Approved',
         });

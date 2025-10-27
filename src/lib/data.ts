@@ -1,5 +1,7 @@
 
 
+import type { Timestamp } from 'firebase/firestore';
+
 export type Idea = {
   id: string;
   title: string;
@@ -44,6 +46,7 @@ export interface UserProfile {
   votedOnIdeas: string[]; // array of idea ids
   followedDirectives: string[]; // array of directive ids
   volunteeredFor: string[]; // array of opportunity ids
+  createdAt: Timestamp | Date;
 };
 
 export type Testimonial = {
@@ -84,14 +87,6 @@ export const mdas: MDA[] = [
     { id: "mda-env", name: "Ministry of Environment" },
     { id: "mda-water", name: "Ministry of Water Resources" },
     { id: "mda-agric", name: "Ministry of Agriculture" },
-];
-
-export const seededUsers: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string})[] = [
-    { name: "Citizen User", email: "citizen@test.com", role: "Citizen" },
-    { name: "MDA Official", email: "mda@test.com", role: "MDA Official", mda: "mda-health" },
-    { name: "Content Moderator", email: "moderator@test.com", role: "Moderator" },
-    { name: "Special Adviser", email: "adviser@test.com", role: "Special Adviser" },
-    { name: "Governor", email: "governor@test.com", role: "Governor" },
 ];
 
 export const initialApprovalItems: ApprovalItem[] = [

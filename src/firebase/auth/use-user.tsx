@@ -1,71 +1,178 @@
 
 'use client';
-import { useEffect, useState, createContext, useContext, ReactNode } from 'react';
-import type { UserProfile, UserRole } from '@/lib/data';
-import { seededUsers } from '@/lib/data';
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  ReactNode,
+  useCallback,
+} from 'react';
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  type User as FirebaseUser,
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { useFirebaseApp, useFirestore } from '../provider';
+import type { UserProfile } from '@/lib/data';
 
-// Create a new context for our mock auth
-type MockAuthContextType = {
-  user: { uid: string; profile: UserProfile | null } | null;
+// 1. The shape of our user context
+type UserContextType = {
+  user: FirebaseUser | null;
+  profile: UserProfile | null;
   loading: boolean;
-  login: (email: string, role: UserRole, name: string, mda?: string) => void;
-  logout: () => void;
+  register: (
+    email: string,
+    password: string,
+    fullName: string,
+    location?: string
+  ) => Promise<FirebaseUser>;
+  login: (email: string, password: string) => Promise<FirebaseUser>;
+  logout: () => Promise<void>;
 };
 
-const MockAuthContext = createContext<MockAuthContextType | undefined>(undefined);
+// 2. Create the context
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Create a provider for this context
-export function MockAuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<{ uid: string; profile: UserProfile | null } | null>(null);
+// 3. Create the provider component
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const app = useFirebaseApp();
+  const firestore = useFirestore();
+  const auth = app ? getAuth(app) : null;
+
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Effect to listen for auth state changes
   useEffect(() => {
-    // On initial load, check if we have a mocked user in session storage
-    const storedUserEmail = sessionStorage.getItem('mockUserEmail');
-    if (storedUserEmail) {
-      const foundUser = seededUsers.find(u => u.email === storedUserEmail);
-      if(foundUser) {
-        login(storedUserEmail, foundUser.role, foundUser.name, foundUser.mda);
-      }
+    if (!auth) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
-  }, []);
 
-  const login = (email: string, role: UserRole, name: string, mda?: string) => {
-    const uid = `mock-uid-${email}`;
-    const profile: UserProfile = {
-      uid,
-      name,
-      email,
-      role,
-      mda,
-      location: 'Kano',
-      submittedIdeas: ['idea-1'],
-      votedOnIdeas: ['idea-2'],
-      followedDirectives: ['dir-1'],
-      volunteeredFor: [],
-    };
-    setUser({ uid, profile });
-    sessionStorage.setItem('mockUserEmail', email);
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        // User is signed in, fetch their profile from Firestore
+        if (firestore) {
+          const userRef = doc(firestore, 'users', firebaseUser.uid);
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            setProfile(docSnap.data() as UserProfile);
+          } else {
+            // Handle case where user exists in Auth but not Firestore
+            console.warn('User profile not found in Firestore for UID:', firebaseUser.uid);
+            setProfile(null);
+          }
+        }
+      } else {
+        // User is signed out
+        setUser(null);
+        setProfile(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [auth, firestore]);
+
+  // Registration function
+  const register = useCallback(
+    async (email: string, password: string, fullName: string, location?: string) => {
+      if (!auth || !firestore) {
+        throw new Error('Firebase not initialized for registration.');
+      }
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const newUser = userCredential.user;
+
+      // Create a user profile in Firestore
+      const userRef = doc(firestore, 'users', newUser.uid);
+      const newUserProfile: UserProfile = {
+        uid: newUser.uid,
+        name: fullName,
+        email: email,
+        role: 'Citizen',
+        location: location || '',
+        createdAt: serverTimestamp(),
+        // Initialize empty arrays for other fields
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+      };
+      await setDoc(userRef, newUserProfile);
+
+      return newUser;
+    },
+    [auth, firestore]
+  );
+
+  // Login function
+  const login = useCallback(
+    async (email: string, password: string) => {
+      if (!auth) {
+        throw new Error('Firebase not initialized for login.');
+      }
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential.user;
+    },
+    [auth]
+  );
+
+  // Logout function
+  const logout = useCallback(async () => {
+    if (!auth) {
+      throw new Error('Firebase not initialized for logout.');
+    }
+    await signOut(auth);
+  }, [auth]);
+
+  const value = {
+    user, // The raw Firebase user object
+    profile, // The Firestore profile object
+    loading,
+    register,
+    login,
+    logout,
   };
 
-  const logout = () => {
-    setUser(null);
-    sessionStorage.removeItem('mockUserEmail');
-    setLoading(false);
-  };
-
-  const value = { user, loading, login, logout };
-
-  return <MockAuthContext.Provider value={value}>{children}</MockAuthContext.Provider>;
+  return (
+    <UserContext.Provider value={value}>
+      {!loading && children}
+    </UserContext.Provider>
+  );
 }
 
-// The new useUser hook that components will use
+// 4. Custom hook to use the auth context
 export function useUser() {
-  const context = useContext(MockAuthContext);
+  const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a MockAuthProvider');
+    throw new Error('useUser must be used within an AuthProvider');
   }
-  return context;
+  // Return a combined user object for convenience
+  return {
+    ...context,
+    // A convenience property that combines the Firebase User and Firestore Profile
+    authedUser:
+      context.user && context.profile
+        ? {
+            uid: context.user.uid,
+            ...context.user,
+            profile: context.profile,
+          }
+        : null,
+  };
 }

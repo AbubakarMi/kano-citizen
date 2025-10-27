@@ -62,8 +62,9 @@ export function SiteHeader({
   const router = useRouter();
 
   const handleLogout = async () => {
-    logout();
+    await logout();
     router.push('/');
+    router.refresh();
   }
   
   const getInitials = (name: string) => {
@@ -77,15 +78,10 @@ export function SiteHeader({
   const isLoggedIn = !!user;
   const isAuthPage = pageType === 'auth';
   
-  // Consistent Header Style Logic
   const headerBgClass = 'bg-card text-foreground';
-  const buttonVariant = "ghost";
   const buttonHoverClass = "hover:bg-muted";
   const logoColorClass = "text-foreground";
   const avatarBgClass = "bg-muted text-foreground";
-  const sidebarBgClass = "bg-card text-card-foreground";
-  const sidebarBorderClass = "border-border";
-  const sidebarLogoColorClass = "text-foreground";
   const citizenSidebarClasses = "bg-primary text-primary-foreground";
   const citizenSidebarBorderClass = "border-primary-foreground/20";
   const citizenSidebarLogoColorClass = "text-primary-foreground";
@@ -102,7 +98,7 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant={buttonVariant} size="icon" className={cn(buttonHoverClass, "text-primary")}>
+                 <Button variant="ghost" size="icon" className={cn(buttonHoverClass, "text-primary")}>
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
@@ -123,7 +119,7 @@ export function SiteHeader({
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-1 md:gap-2">
             {isAuthPage && (
-                 <Button variant={buttonVariant} size="icon" asChild className={buttonHoverClass}>
+                 <Button variant="ghost" size="icon" asChild className={buttonHoverClass}>
                     <Link href="/" aria-label="Home">
                         <Home className="h-5 w-5" />
                     </Link>
@@ -131,7 +127,7 @@ export function SiteHeader({
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant={buttonVariant} size="icon" className={buttonHoverClass}>
+                <Button variant="ghost" size="icon" className={buttonHoverClass}>
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -169,13 +165,13 @@ export function SiteHeader({
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <UserIcon />
-                    {t.myProfile}
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>{t.myProfile}</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-                    <LogOut />
-                    {t.logout}
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>{t.logout}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
