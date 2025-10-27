@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
@@ -39,6 +39,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
   const [votingFor, setVotingFor] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleUpvote = async (ideaId: string) => {
     if (!authedUser || !firestore || !profile) return;
@@ -113,8 +114,9 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   
   const handleSubmitIdea = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firestore || !authedUser?.profile) return;
-    
+    if (!firestore || !authedUser?.profile || isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       await addIdea(firestore, {
         title: newIdeaTitle,
@@ -129,6 +131,8 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     } catch (error) {
       console.error(error);
       toast({ variant: "destructive", title: "Error", description: "Could not submit idea."});
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
@@ -185,7 +189,10 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                   </div>
               </CardContent>
               <CardFooter className="flex-col gap-4 p-6 md:p-8 bg-muted/50 rounded-b-lg">
-                <Button type="submit" size="lg" className="w-full font-bold text-lg">{t.submitIdeaButton}</Button>
+                <Button type="submit" size="lg" className="w-full font-bold text-lg" disabled={isSubmitting}>
+                   {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                   {isSubmitting ? 'Submitting...' : t.submitIdeaButton}
+                </Button>
                 <p className="text-xs text-muted-foreground text-center">Your idea will be reviewed by moderators before appearing for public vote. This ensures all submissions are constructive.</p>
               </CardFooter>
             </form>
@@ -341,3 +348,5 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
+
+    
