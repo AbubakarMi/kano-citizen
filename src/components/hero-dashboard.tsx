@@ -28,10 +28,11 @@ interface HeroDashboardProps {
 }
 
 export function HeroDashboard({ ideas, directives }: HeroDashboardProps) {
-  const sortedIdeas = [...ideas].sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0));
+  const livePolls = ideas.filter(idea => idea.status === 'Approved');
+  const sortedIdeas = [...livePolls].sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0));
   const topIdea = sortedIdeas[0];
   const otherPolls = sortedIdeas.slice(1, 4);
-  const totalVotes = ideas.reduce((sum, idea) => sum + (idea.upvotes?.length || 0), 0);
+  const totalVotes = livePolls.reduce((sum, idea) => sum + (idea.upvotes?.length || 0), 0);
 
   const inProgressDirectives = directives.filter(d => d.status === 'In Progress' || d.status === 'Ana ci gaba').slice(0, 1);
   const completedDirectives = directives.filter(d => d.status === 'Completed' || d.status === 'An kammala').slice(0, 1);
