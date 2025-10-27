@@ -18,13 +18,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
 import { addIdea } from "@/firebase/firestore/ideas";
 import { useAppContext } from "@/app/app-provider";
 import { Progress } from "./ui/progress";
+import { cn } from "@/lib/utils";
 
 interface CitizenDashboardProps {
   t: Translation['dashboard'];
@@ -136,10 +137,25 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     }
   }
 
-  const myIdeas = ideas.filter(idea => idea.authorId === authedUser?.uid);
+  const myIdeas = ideas.filter(idea => idea.authorId === authedUser?.uid).sort((a, b) => (b.createdAt as any) - (a.createdAt as any));
   const myVotes = ideas.filter(idea => authedUser?.profile?.votedOnIdeas?.includes(idea.id));
   const livePolls = ideas.filter(idea => idea.status === 'Approved');
   const totalVotes = livePolls.reduce((sum, idea) => sum + idea.upvotes.length, 0);
+  
+  const getStatusVariant = (status: Idea['status']) => {
+    switch (status) {
+      case 'Approved':
+        return 'secondary';
+      case 'Rejected':
+        return 'destructive';
+      case 'Completed':
+        return 'default';
+      case 'Pending':
+      default:
+        return 'outline';
+    }
+  };
+
 
   return (
     <div className="container py-10">
@@ -259,14 +275,24 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                   </CardHeader>
                   <CardContent className="space-y-4">
                       <div>
-                        <h4 className="font-semibold text-sm mb-2">{t.mySubmittedIdeas}</h4>
+                        <h4 className="font-semibold text-sm mb-3">My Submitted Ideas</h4>
                         {myIdeas.length > 0 ? (
-                            <ul className="space-y-2 text-sm">
-                                {myIdeas.map(i => <li key={i.id} className="flex items-center gap-2"><ChevronRight className="h-4 w-4 text-muted-foreground" /><span>{i.title}</span></li>)}
+                            <ul className="space-y-3">
+                                {myIdeas.map(idea => (
+                                <li key={idea.id} className="text-sm space-y-1">
+                                    <div className="flex justify-between items-center">
+                                      <span className="font-medium pr-2">{idea.title}</span>
+                                      <Badge variant={getStatusVariant(idea.status)} className="text-xs">{idea.status}</Badge>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                      Submitted on {new Date(idea.createdAt as any).toLocaleDateString()}
+                                    </p>
+                                </li>
+                                ))}
                             </ul>
                         ) : <p className="text-muted-foreground text-sm">{t.noSubmittedIdeas}</p>}
                       </div>
-                       <div>
+                       <div className="border-t pt-4">
                         <h4 className="font-semibold text-sm mb-2">{t.myVotes}</h4>
                          {myVotes.length > 0 ? (
                             <ul className="space-y-2 text-sm">
@@ -348,5 +374,6 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
+
 
     
