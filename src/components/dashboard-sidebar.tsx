@@ -125,8 +125,9 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
   };
   
   const handleLogout = async () => {
-    logout();
+    await logout();
     router.push('/');
+    router.refresh();
   }
 
   const groupedLinks = links.reduce((acc, link) => {
@@ -239,7 +240,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
             className={cn(
               buttonVariants({ variant: activeView === link.id ? "secondary" : "ghost" }),
               "justify-start text-base md:text-sm",
-               activeView === link.id ? "text-secondary-foreground" : "text-primary-foreground hover:bg-primary-foreground/10"
+               activeView === link.id ? "text-secondary-foreground" : "text-card-foreground hover:bg-muted/10"
             )}
           >
             <link.icon className="mr-3 h-4 w-4" />

@@ -68,6 +68,7 @@ export function SiteHeader({
   }
   
   const getInitials = (name: string) => {
+    if (!name) return '';
     return name
       .split(" ")
       .map((n) => n[0])
@@ -82,9 +83,9 @@ export function SiteHeader({
   const buttonHoverClass = "hover:bg-muted";
   const logoColorClass = "text-foreground";
   const avatarBgClass = "bg-muted text-foreground";
-  const citizenSidebarClasses = "bg-primary text-primary-foreground";
-  const citizenSidebarBorderClass = "border-primary-foreground/20";
-  const citizenSidebarLogoColorClass = "text-primary-foreground";
+  const citizenSidebarClasses = "bg-card text-card-foreground";
+  const citizenSidebarBorderClass = "border-border";
+  const citizenSidebarLogoColorClass = "text-foreground";
 
 
   return (
@@ -98,7 +99,7 @@ export function SiteHeader({
            <div className="lg:hidden mr-4">
              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                <SheetTrigger asChild>
-                 <Button variant="ghost" size="icon" className={cn(buttonHoverClass, "text-primary")}>
+                 <Button variant="ghost" size="icon" className={cn(buttonHoverClass)}>
                    <Menu className="h-6 w-6" />
                  </Button>
                </SheetTrigger>
@@ -111,7 +112,7 @@ export function SiteHeader({
              </Sheet>
            </div>
          )}
-        <div className={cn("flex items-center gap-8", isLoggedIn && !isAdmin && "hidden lg:flex")}>
+        <div className={cn("flex items-center gap-8", isLoggedIn && !isAdmin && "hidden lg:flex", isAdmin && "hidden")}>
             <Link href="/" aria-label="Home">
               <Logo className={logoColorClass} />
             </Link>
