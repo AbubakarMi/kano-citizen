@@ -62,9 +62,16 @@ export function SiteHeader({
   const router = useRouter();
 
   const handleLogout = async () => {
-    await logout();
-    router.push('/');
-    router.refresh();
+    try {
+      await logout();
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Even if logout fails, try to redirect to home
+      router.push('/');
+      router.refresh();
+    }
   }
   
   const getInitials = (name: string) => {
