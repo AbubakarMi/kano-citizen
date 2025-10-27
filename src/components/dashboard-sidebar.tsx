@@ -131,12 +131,12 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
     try {
       await logout();
       router.push('/');
-      router.refresh();
+      // Full page refresh to ensure all state is cleared
+      window.location.href = '/';
     } catch (error) {
       console.error("Logout failed:", error);
-      // Even if logout fails, try to redirect to home
-      router.push('/');
-      router.refresh();
+       // Even if logout fails, force redirect
+      window.location.href = '/';
     }
   }
 

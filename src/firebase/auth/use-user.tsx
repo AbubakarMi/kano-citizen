@@ -153,14 +153,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Logout function
   const logout = useCallback(async () => {
+    // Clear local state immediately for a responsive UI
+    setUser(null);
+    setProfile(null);
     sessionStorage.removeItem('seeded-user');
-    if (!auth) {
-      // Still clear local state if auth is not available
-      setUser(null);
-      setProfile(null);
-      return;
+    
+    // Sign out from Firebase if auth is available
+    if (auth) {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Firebase sign out failed:", error);
+        }
     }
-    await signOut(auth);
   }, [auth]);
 
   const value = {
