@@ -129,7 +129,6 @@ export default function Home() {
             ideas={ideas}
             directives={directives}
             volunteerOpportunities={volunteerOpportunities}
-            testimonials={t.testimonials}
             faqs={t.faqs}
           />
         )}

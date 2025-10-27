@@ -59,6 +59,20 @@
                 "requiredSkills": { "type": "array", "items": { "type": "string" } }
             },
             "required": ["title", "description"]
+        },
+        "Testimonial": {
+            "title": "Testimonial",
+            "description": "Represents a user-submitted testimonial about the platform.",
+            "type": "object",
+            "properties": {
+                "text": { "type": "string", "description": "The content of the testimonial." },
+                "authorName": { "type": "string", "description": "The name of the citizen who submitted it." },
+                "authorId": { "type": "string", "description": "The UID of the citizen." },
+                "authorLocation": { "type": "string", "description": "The location of the citizen." },
+                "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected"] },
+                "createdAt": { "type": "string", "format": "date-time" }
+            },
+            "required": ["text", "authorName", "authorId", "status", "createdAt"]
         }
     },
     "auth": {
@@ -80,6 +94,10 @@
         "/volunteerOpportunities/{opportunityId}": {
             "schema": { "$ref": "#/entities/VolunteerOpportunity" },
             "description": "Collection of all volunteer opportunities."
+        },
+        "/testimonials/{testimonialId}": {
+            "schema": { "$ref": "#/entities/Testimonial" },
+            "description": "Collection of all user-submitted testimonials."
         }
     }
 }

@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
-import type { UserProfile, Idea, Directive, VolunteerOpportunity, ApprovalItem } from '@/lib/data';
+import type { UserProfile, Idea, Directive, VolunteerOpportunity, ApprovalItem, Testimonial } from '@/lib/data';
 import { useMemoFirebase } from '@/lib/utils';
 
 type AppContextType = {
@@ -16,6 +16,8 @@ type AppContextType = {
   setIdeas: (ideas: Idea[]) => void;
   directives: Directive[];
   setDirectives: (directives: Directive[]) => void;
+  testimonials: Testimonial[];
+  setTestimonials: (testimonials: Testimonial[]) => void;
   volunteerOpportunities: VolunteerOpportunity[];
   approvalQueue: ApprovalItem[];
   setApprovalQueue: React.Dispatch<React.SetStateAction<ApprovalItem[]>>;
@@ -40,8 +42,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const volunteerQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'volunteerOpportunities')) : null, [firestore]);
   const { data: volunteerOpportunities } = useCollection<VolunteerOpportunity>(volunteerQuery);
 
+  const testimonialsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'testimonials')) : null, [firestore]);
+  const { data: testimonialsData } = useCollection<Testimonial>(testimonialsQuery);
+
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [directives, setDirectives] = useState<Directive[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
     if (ideasData) setIdeas(ideasData);
@@ -50,6 +56,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (directivesData) setDirectives(directivesData);
   }, [directivesData]);
+
+  useEffect(() => {
+    if (testimonialsData) setTestimonials(testimonialsData);
+  }, [testimonialsData]);
 
   useEffect(() => {
     if (authedUser?.profile?.role) {
@@ -87,6 +97,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setIdeas: setIdeas,
     directives: directives || [],
     setDirectives,
+    testimonials: testimonials || [],
+    setTestimonials,
     volunteerOpportunities: volunteerOpportunities || [],
     approvalQueue,
     setApprovalQueue,

@@ -51,9 +51,13 @@ export interface UserProfile {
 };
 
 export type Testimonial = {
-    name: string;
-    location: string;
-    quote: string;
+    id: string;
+    text: string;
+    authorName: string;
+    authorId: string;
+    authorLocation: string;
+    status: "Pending" | "Approved" | "Rejected";
+    createdAt: Timestamp | Date;
 }
 
 export type FAQ = {

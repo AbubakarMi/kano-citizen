@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import type { Language, Translation } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 import { HeroDashboard } from "./hero-dashboard";
+import { useAppContext } from "@/app/app-provider";
 
 interface LandingPageProps {
   language: Language;
@@ -25,11 +26,11 @@ interface LandingPageProps {
   ideas: Idea[];
   directives: Directive[];
   volunteerOpportunities: VolunteerOpportunity[];
-  testimonials: Testimonial[];
   faqs: FAQ[];
 }
 
-export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
+export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, faqs }: LandingPageProps) {
+  const { testimonials } = useAppContext();
   const livePolls = (ideas || []).filter(idea => idea.status === 'Approved');
   const sortedIdeas = [...livePolls].sort((a, b) => b.upvotes.length - a.upvotes.length);
   const topIdea = sortedIdeas[0];
@@ -40,7 +41,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
   const buildImage = PlaceHolderImages.find(p => p.id === 'build');
   
-  const [selectedTestimonial, setSelectedTestimonial] = useState(testimonials[0]);
+  const approvedTestimonials = testimonials.filter(item => item.status === 'Approved');
+  const [selectedTestimonial, setSelectedTestimonial] = useState(approvedTestimonials[0]);
 
   return (
     <div className="bg-warm-white text-charcoal">
@@ -346,6 +348,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
       )}
 
       {/* Testimonials Section */}
+      {approvedTestimonials && approvedTestimonials.length > 0 && (
       <section className="bg-pure-white py-20 md:py-24">
         <div className="container max-w-6xl">
             <div className="mb-16">
@@ -358,47 +361,48 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
             </div>
             <div className="grid lg:grid-cols-2 gap-16 items-start">
                 <div className="flex flex-col gap-4">
-                    {testimonials.map((testimonial) => (
+                    {approvedTestimonials.map((testimonial) => (
                         <button 
-                            key={testimonial.name}
+                            key={testimonial.id}
                             onClick={() => setSelectedTestimonial(testimonial)}
                             className={cn(
                                 "flex items-center gap-4 text-left p-4 rounded-lg transition-all duration-300",
-                                selectedTestimonial.name === testimonial.name 
+                                selectedTestimonial?.id === testimonial.id 
                                     ? "bg-warm-white shadow-lg scale-105" 
                                     : "hover:bg-warm-white"
                             )}
                         >
                             <Avatar className="h-14 w-14 border-2 border-primary/20">
-                               <AvatarImage src={`https://picsum.photos/seed/${testimonial.name.split(' ')[0]}/56/56`} />
-                               <AvatarFallback>{testimonial.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                               <AvatarImage src={`https://picsum.photos/seed/${testimonial.authorName.split(' ')[0]}/56/56`} />
+                               <AvatarFallback>{testimonial.authorName.split(" ").map(n => n[0]).join("")}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-bold text-lg font-headline text-primary">{testimonial.name}</p>
-                                <p className="text-sm text-charcoal/80">{testimonial.location}</p>
+                                <p className="font-bold text-lg font-headline text-primary">{testimonial.authorName}</p>
+                                <p className="text-sm text-charcoal/80">{testimonial.authorLocation}</p>
                             </div>
                              <Quote className={cn(
                                  "h-10 w-10 ml-auto shrink-0 transition-colors",
-                                 selectedTestimonial.name === testimonial.name ? "text-accent" : "text-charcoal/20"
+                                 selectedTestimonial?.id === testimonial.id ? "text-accent" : "text-charcoal/20"
                              )} />
                         </button>
                     ))}
                 </div>
-                 <div className="relative pt-8 lg:pt-0">
+                 {selectedTestimonial && <div className="relative pt-8 lg:pt-0">
                     <Quote className="h-24 w-24 text-accent/10 absolute -top-8 -left-8" />
                     <div className="relative z-10">
                         <p className="text-2xl lg:text-3xl font-medium leading-relaxed text-charcoal/80">
-                            "{selectedTestimonial.quote}"
+                            "{selectedTestimonial.text}"
                         </p>
                         <div className="mt-8">
-                            <p className="text-xl font-bold font-headline text-primary">{selectedTestimonial.name}</p>
-                            <p className="text-charcoal/80">{selectedTestimonial.location}</p>
+                            <p className="text-xl font-bold font-headline text-primary">{selectedTestimonial.authorName}</p>
+                            <p className="text-charcoal/80">{selectedTestimonial.authorLocation}</p>
                         </div>
                     </div>
-                </div>
+                </div>}
             </div>
         </div>
       </section>
+      )}
 
       {/* FAQ Section */}
       <section className="py-20 md:py-24">

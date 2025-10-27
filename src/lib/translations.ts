@@ -138,10 +138,6 @@ type TranslationContent = {
       volunteerThankYou: string,
       volunteerThankYouDescription: string,
   },
-  ideas: Idea[],
-  directives: Directive[],
-  volunteerOpportunities: VolunteerOpportunity[],
-  testimonials: Testimonial[],
   faqs: FAQ[]
 };
 
@@ -282,26 +278,6 @@ const t: Record<Language, TranslationContent> = {
         volunteerThankYou: "Thank you!",
         volunteerThankYouDescription: "Your interest has been noted. We will contact you shortly.",
     },
-    ideas: [],
-    directives: [],
-    volunteerOpportunities: [],
-    testimonials: [
-        {
-            name: 'Hassan Idris',
-            location: 'Fagge, Kano',
-            quote: "I submitted an idea for cleaning up our local market, and it got voted on! Seeing the community get behind it and the government take action was incredible. This platform works."
-        },
-        {
-            name: 'Amina Lawal',
-            location: 'Tarauni, Kano',
-            quote: "Before, it felt like our voices were never heard. Now, I can see what projects are being proposed, vote on what matters to my family, and track the progress. It's brought transparency."
-        },
-        {
-            name: 'Bello Garba',
-            location: 'Nassarawa, Kano',
-            quote: "Volunteering for the tree-planting directive was so rewarding. I met neighbors I'd never spoken to, and together we made our area greener. This platform isn't just about talk; it's about action."
-        }
-    ],
     faqs: [
         {
             question: "Is my data secure?",
@@ -456,26 +432,6 @@ const t: Record<Language, TranslationContent> = {
         volunteerThankYou: "Mun Gode!",
         volunteerThankYouDescription: "An lura da sha'awar ka. Za mu tuntube ka nan ba da daɗewa ba.",
     },
-    ideas: [],
-    directives: [],
-    volunteerOpportunities: [],
-    testimonials: [
-        {
-            name: 'Hassan Idris',
-            location: 'Fagge, Kano',
-            quote: "Na gabatar da ra'ayin tsaftace kasuwarmu ta gida, kuma an zaɓe shi! Ganin yadda al'umma suka mara masa baya kuma gwamnati ta dauki mataki abin birgewa ne. Wannan dandali yana aiki."
-        },
-        {
-            name: 'Amina Lawal',
-            location: 'Tarauni, Kano',
-            quote: "A da, ana jin kamar ba a taɓa jin muryoyinmu ba. Yanzu, ina iya ganin irin ayyukan da ake gabatarwa, in zaɓi abin da ya fi muhimmanci ga iyalina, kuma in bibiyi ci gaban. Ya kawo gaskiya da riƙon amana."
-        },
-        {
-            name: 'Bello Garba',
-            location: 'Nassarawa, Kano',
-            quote: "Aikin sa kai na dashen itatuwa ya kasance mai matuƙar fa'ida. Na haɗu da maƙwabta waɗanda ban taɓa magana da su ba, kuma tare muka sa yankinmu ya zama mai kore. Wannan dandali ba na magana kaɗai ba ne; na aiki ne."
-        }
-    ],
     faqs: [
         {
             question: "Shin bayanaina na da tsaro?",

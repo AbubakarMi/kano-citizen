@@ -27,6 +27,7 @@ import {
   Building,
   CheckSquare,
   DraftingCompass,
+  Star,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
@@ -54,6 +55,7 @@ const citizenLinks: SidebarLink[] = [
   { id: "speak", label: "Speak Up", icon: MessageSquareQuote, group: "CITIZEN" },
   { id: "decide", label: "Decide", icon: Vote, group: "CITIZEN" },
   { id: "build", label: "Build Together", icon: Handshake, group: "CITIZEN" },
+  { id: "testimonials", label: "Testimonials", icon: Star, group: "CITIZEN" },
 ];
 
 const governorLinks: SidebarLink[] = [

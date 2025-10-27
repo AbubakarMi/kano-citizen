@@ -16,13 +16,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info, ChevronDown, ChevronUpIcon, MapPin } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info, ChevronDown, ChevronUpIcon, MapPin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
 import { addIdea } from "@/firebase/firestore/ideas";
+import { addTestimonial } from "@/firebase/firestore/testimonials";
 import { useAppContext } from "@/app/app-provider";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
@@ -35,19 +36,20 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
   const { authedUser, profile, loading: userLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const { ideas, setIdeas, directives, volunteerOpportunities, activeView } = useAppContext();
+  const { ideas, setIdeas, directives, volunteerOpportunities, activeView, setActiveView } = useAppContext();
 
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
   const [newIdeaLocation, setNewIdeaLocation] = useState("");
+  const [newTestimonial, setNewTestimonial] = useState("");
   const [votingFor, setVotingFor] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingTestimonial, setIsSubmittingTestimonial] = useState(false);
   const [showAllMyIdeas, setShowAllMyIdeas] = useState(false);
 
   const handleUpvote = async (ideaId: string) => {
     if (!authedUser || !firestore || !profile) return;
     
-    // Prevent multiple clicks
     if (votingFor) return;
     
     const isVoted = profile.votedOnIdeas?.includes(ideaId);
@@ -62,7 +64,6 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     const ideaRef = doc(firestore, "ideas", ideaId);
 
     try {
-      // Optimistic UI update first
       setIdeas(prevIdeas => prevIdeas.map(idea => 
         idea.id === ideaId 
           ? { ...idea, upvotes: [...idea.upvotes, authedUser.uid] }
@@ -82,7 +83,6 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
       console.error("Error upvoting:", error);
       toast({ variant: "destructive", title: "Error", description: "Could not cast vote." });
 
-      // Revert optimistic update on error
        setIdeas(prevIdeas => prevIdeas.map(idea => 
         idea.id === ideaId 
           ? { ...idea, upvotes: idea.upvotes.filter(uid => uid !== authedUser.uid) }
@@ -141,6 +141,28 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     }
   }
 
+  const handleSubmitTestimonial = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firestore || !authedUser?.profile || !newTestimonial.trim() || isSubmittingTestimonial) return;
+
+    setIsSubmittingTestimonial(true);
+    try {
+      await addTestimonial(firestore, {
+        text: newTestimonial,
+        authorName: authedUser.profile.name,
+        authorId: authedUser.uid,
+        authorLocation: authedUser.profile.location || 'Kano',
+      });
+      setNewTestimonial("");
+      toast({ title: "Testimonial Submitted!", description: "Thank you for your feedback. It will appear on the site after moderator approval.", className: "bg-secondary text-secondary-foreground" });
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Error", description: "Could not submit testimonial."});
+    } finally {
+      setIsSubmittingTestimonial(false);
+    }
+  }
+
   const myIdeas = ideas.filter(idea => idea.authorId === authedUser?.uid).sort((a, b) => (b.createdAt as any) - (a.createdAt as any));
   const myVotes = ideas.filter(idea => authedUser?.profile?.votedOnIdeas?.includes(idea.id));
   const livePolls = ideas.filter(idea => idea.status === 'Approved');
@@ -169,8 +191,14 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
         {t.welcome} {authedUser?.profile?.name.split(" ")[0]}!
       </h1>
       <p className="text-muted-foreground mt-2 text-lg">{t.welcomeSubtitle}</p>
-
-      <Tabs value={activeView} className="mt-8">
+      
+      <Tabs value={activeView} onValueChange={setActiveView} className="mt-8">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="speak">Speak</TabsTrigger>
+          <TabsTrigger value="decide">Decide</TabsTrigger>
+          <TabsTrigger value="build">Build</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+        </TabsList>
         <TabsContent value="speak" className="mt-6">
           <Card className="max-w-3xl mx-auto shadow-lg border-primary/20 bg-card">
             <CardHeader className="text-center items-center gap-4 p-6 md:p-8">
@@ -396,6 +424,43 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                 </Card>
             </div>
           </div>
+        </TabsContent>
+        <TabsContent value="testimonials" className="mt-6">
+           <Card className="max-w-3xl mx-auto shadow-lg border-accent/20 bg-card">
+            <CardHeader className="text-center items-center gap-4 p-6 md:p-8">
+                <div className="w-20 h-20 bg-accent/10 text-accent rounded-full flex items-center justify-center">
+                    <Star className="w-10 h-10" />
+                </div>
+                <div className="space-y-2">
+                    <CardTitle className="text-3xl font-headline text-accent">Share Your Experience</CardTitle>
+                    <CardDescription className="text-base">
+                        Has this platform made a difference? Share a testimonial to inspire others. Approved testimonials may be featured on our homepage.
+                    </CardDescription>
+                </div>
+            </CardHeader>
+            <form onSubmit={handleSubmitTestimonial}>
+              <CardContent className="p-6 md:p-8">
+                  <div className="space-y-2">
+                    <label htmlFor="testimonial-text" className="font-medium">Your Testimonial</label>
+                    <Textarea
+                        id="testimonial-text"
+                        placeholder="Write about your experience with the Kano Citizens' Voice platform..." 
+                        rows={6}
+                        value={newTestimonial}
+                        onChange={(e) => setNewTestimonial(e.target.value)}
+                        required
+                        className="text-base"
+                    />
+                  </div>
+              </CardContent>
+              <CardFooter className="flex-col gap-4 p-6 md:p-8 bg-muted/50 rounded-b-lg">
+                <Button type="submit" size="lg" className="w-full font-bold text-lg" variant="accent" disabled={isSubmittingTestimonial}>
+                   {isSubmittingTestimonial && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                   {isSubmittingTestimonial ? 'Submitting...' : 'Submit Testimonial'}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
