@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, Users, Sparkles } from "lucide-react";
+import { ArrowUp, Award, MessageSquareQuote, PencilRuler, Vote, Handshake, Pin, CheckCircle2, FolderClock, ChevronRight, Quote, Users, Sparkles, MapPin } from "lucide-react";
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -168,7 +168,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
               </CardHeader>
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2 font-headline text-primary">{topIdea.title}</h3>
-                 <p className="text-sm text-charcoal/80 mb-4">{t.by} {topIdea.author}</p>
+                 <p className="text-sm text-charcoal/80 mb-4">{t.by} {topIdea.author}
+                   {topIdea.location && <span className="flex items-center gap-1.5 text-xs mt-1 text-muted-foreground"><MapPin className="h-3 w-3"/>{topIdea.location}</span>}
+                 </p>
                 <p className="text-charcoal/80 mb-4 line-clamp-3">
                   {topIdea.description}
                 </p>
@@ -197,7 +199,9 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                         <Card key={idea.id} className="shadow-md transition-all hover:shadow-lg duration-300">
                             <CardContent className="p-6">
                                 <h3 className="text-lg font-semibold mb-1 line-clamp-2 font-headline text-primary">{idea.title}</h3>
-                                <p className="text-sm text-charcoal/80 mb-4">{t.by} {idea.author}</p>
+                                <p className="text-sm text-charcoal/80 mb-4">{t.by} {idea.author}
+                                    {idea.location && <span className="flex items-center gap-1.5 text-xs mt-1 text-muted-foreground"><MapPin className="h-3 w-3"/>{idea.location}</span>}
+                                </p>
                                 <div className="space-y-1 mb-4">
                                     <Progress value={votePercentage} className="h-2" />
                                     <p className="text-right text-xs font-medium text-secondary">{votePercentage.toFixed(1)}%</p>

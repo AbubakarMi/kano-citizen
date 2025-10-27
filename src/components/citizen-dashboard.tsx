@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info, ChevronDown, ChevronUpIcon } from "lucide-react";
+import { ArrowUp, Check, Handshake, FileText, Bell, Pin, Vote, MessageSquareQuote, ChevronRight, Loader2, Info, ChevronDown, ChevronUpIcon, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import type { Translation } from "@/lib/translations";
@@ -39,6 +39,7 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
   const [newIdeaTitle, setNewIdeaTitle] = useState("");
   const [newIdeaDescription, setNewIdeaDescription] = useState("");
+  const [newIdeaLocation, setNewIdeaLocation] = useState("");
   const [votingFor, setVotingFor] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAllMyIdeas, setShowAllMyIdeas] = useState(false);
@@ -123,12 +124,14 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
       await addIdea(firestore, {
         title: newIdeaTitle,
         description: newIdeaDescription,
+        location: newIdeaLocation,
         author: authedUser.profile.name,
         authorId: authedUser.uid,
         upvotes: [],
       });
       setNewIdeaTitle("");
       setNewIdeaDescription("");
+      setNewIdeaLocation("");
       toast({ title: t.ideaSubmitted, description: t.ideaSubmittedDescription, className: "bg-secondary text-secondary-foreground" });
     } catch (error) {
       console.error(error);
@@ -205,6 +208,19 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                         required
                         className="text-base"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="idea-location" className="font-medium">Location (Optional)</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input 
+                          id="idea-location"
+                          placeholder="e.g., Fagge, Kano"
+                          value={newIdeaLocation}
+                          onChange={(e) => setNewIdeaLocation(e.target.value)}
+                          className="text-base py-6 pl-10"
+                      />
+                    </div>
                   </div>
               </CardContent>
               <CardFooter className="flex-col gap-4 p-6 md:p-8 bg-muted/50 rounded-b-lg">
@@ -385,5 +401,3 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
-
-    

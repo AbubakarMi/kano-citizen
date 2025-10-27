@@ -7,6 +7,7 @@ export type Idea = {
   description: string;
   author: string;
   authorId: string;
+  location?: string;
   upvotes: string[]; // array of user uids
   status: "Pending" | "Approved" | "Rejected" | "Completed";
   moderatorApproved?: boolean;
