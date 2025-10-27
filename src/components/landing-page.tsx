@@ -69,7 +69,7 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                  <p className="text-sm text-charcoal/60">{t.registerHint}</p>
             </div>
             <div>
-              <HeroDashboard />
+              <HeroDashboard ideas={ideas} directives={directives} />
             </div>
         </div>
       </section>

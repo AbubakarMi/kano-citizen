@@ -20,8 +20,23 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowUp, CheckCircle, FolderClock } from "lucide-react"
+import type { Idea, Directive } from "@/lib/data"
 
-export function HeroDashboard() {
+interface HeroDashboardProps {
+    ideas: Idea[];
+    directives: Directive[];
+}
+
+export function HeroDashboard({ ideas, directives }: HeroDashboardProps) {
+  const sortedIdeas = [...ideas].sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0));
+  const topIdea = sortedIdeas[0];
+  const otherPolls = sortedIdeas.slice(1, 4);
+  const totalVotes = ideas.reduce((sum, idea) => sum + (idea.upvotes?.length || 0), 0);
+
+  const inProgressDirectives = directives.filter(d => d.status === 'In Progress' || d.status === 'Ana ci gaba').slice(0, 1);
+  const completedDirectives = directives.filter(d => d.status === 'Completed' || d.status === 'An kammala').slice(0, 1);
+
+
   return (
     <div className="relative w-full max-w-2xl mx-auto">
       <div className="absolute -inset-2 bg-gradient-to-tr from-primary to-secondary rounded-xl blur-lg opacity-25"></div>
@@ -35,17 +50,23 @@ export function HeroDashboard() {
               <Card className="h-full bg-background/70">
                 <CardHeader>
                   <CardTitle className="text-lg text-primary">Top Community Idea</CardTitle>
-                  <CardDescription>Waste-to-Wealth Recycling Project</CardDescription>
+                  {topIdea && <CardDescription>{topIdea.title}</CardDescription>}
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    A comprehensive recycling program that rewards citizens for separating their waste...
-                  </p>
-                  <Progress value={78} className="h-2 mb-2" />
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="font-semibold text-secondary">78% of Goal</span>
-                    <span className="flex items-center font-bold text-secondary"><ArrowUp className="h-4 w-4 mr-1" />256 Votes</span>
-                  </div>
+                  {topIdea ? (
+                    <>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {topIdea.description}
+                      </p>
+                      <Progress value={totalVotes > 0 ? ((topIdea.upvotes?.length || 0) / totalVotes) * 100 : 0} className="h-2 mb-2" />
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="font-semibold text-secondary">{totalVotes > 0 ? (((topIdea.upvotes?.length || 0) / totalVotes) * 100).toFixed(0) : 0}% of votes</span>
+                        <span className="flex items-center font-bold text-secondary"><ArrowUp className="h-4 w-4 mr-1" />{topIdea.upvotes?.length || 0} Votes</span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No ideas submitted yet.</p>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -56,17 +77,18 @@ export function HeroDashboard() {
                   <CardTitle className="text-lg text-primary">Live Polls</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-3 text-sm">
-                    <li className="flex justify-between items-center">
-                      <span>Community Solar</span> <span className="font-bold text-accent">128</span>
-                    </li>
-                    <li className="flex justify-between items-center">
-                      <span>Public Transport</span> <span className="font-bold text-accent">98</span>
-                    </li>
-                    <li className="flex justify-between items-center">
-                      <span>Youth Tech Training</span> <span className="font-bold text-accent">77</span>
-                    </li>
-                  </ul>
+                  {otherPolls.length > 0 ? (
+                    <ul className="space-y-3 text-sm">
+                      {otherPolls.map(poll => (
+                        <li key={poll.id} className="flex justify-between items-center">
+                          <span className="truncate pr-2">{poll.title}</span>
+                          <span className="font-bold text-accent flex-shrink-0">{poll.upvotes?.length || 0}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                     <p className="text-sm text-muted-foreground">No other active polls.</p>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -78,6 +100,7 @@ export function HeroDashboard() {
                 <CardTitle className="text-lg text-primary">Directives in Progress</CardTitle>
               </CardHeader>
               <CardContent>
+                {(inProgressDirectives.length > 0 || completedDirectives.length > 0) ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -86,24 +109,31 @@ export function HeroDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell>Streetlight Repair Phase 1</TableCell>
-                      <TableCell>
-                        <Badge variant="default">
-                          <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Drainage Desilting Program</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          <CheckCircle className="h-3 w-3 mr-1.5"/> Completed
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                    {inProgressDirectives.map(directive => (
+                        <TableRow key={directive.id}>
+                            <TableCell className="truncate">{directive.title}</TableCell>
+                            <TableCell>
+                                <Badge variant="default">
+                                <FolderClock className="h-3 w-3 mr-1.5"/> In Progress
+                                </Badge>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    {completedDirectives.map(directive => (
+                         <TableRow key={directive.id}>
+                            <TableCell className="truncate">{directive.title}</TableCell>
+                            <TableCell>
+                                <Badge variant="secondary">
+                                <CheckCircle className="h-3 w-3 mr-1.5"/> Completed
+                                </Badge>
+                            </TableCell>
+                        </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
+                ) : (
+                    <p className="text-sm text-muted-foreground text-center py-4">No directives are currently active.</p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -128,7 +158,7 @@ export function HeroDashboard() {
                 <AvatarFallback>UF</AvatarFallback>
               </Avatar>
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-xs font-semibold text-accent">
-                +12k
+                +15k
               </div>
             </div>
           </div>
