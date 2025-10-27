@@ -18,11 +18,11 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useFirebaseApp, useFirestore } from '../provider';
-import type { UserProfile } from '@/lib/data';
+import { UserProfile, seededUsers } from '@/lib/data';
 
 // 1. The shape of our user context
 type UserContextType = {
-  user: FirebaseUser | null;
+  user: (FirebaseUser & { displayName: string | null }) | null;
   profile: UserProfile | null;
   loading: boolean;
   register: (
@@ -44,11 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const firestore = useFirestore();
   const auth = app ? getAuth(app) : null;
 
-  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<(FirebaseUser & { displayName: string | null }) | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Effect to listen for auth state changes
+  // Effect to listen for auth state changes from Firebase
   useEffect(() => {
     if (!auth) {
       setLoading(false);
@@ -65,15 +65,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
-            // Handle case where user exists in Auth but not Firestore
             console.warn('User profile not found in Firestore for UID:', firebaseUser.uid);
             setProfile(null);
           }
         }
       } else {
-        // User is signed out
-        setUser(null);
-        setProfile(null);
+        // Check for seeded user in session storage on page load
+        const seededUserJson = sessionStorage.getItem('seeded-user');
+        if (seededUserJson) {
+            const seededUser = JSON.parse(seededUserJson);
+            // This is a mock user object, adapt as needed
+            setUser({ uid: seededUser.uid, displayName: seededUser.name, email: seededUser.email } as any); 
+            setProfile(seededUser);
+        } else {
+            // User is signed out
+            setUser(null);
+            setProfile(null);
+        }
       }
       setLoading(false);
     });
@@ -81,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, [auth, firestore]);
 
-  // Registration function
+  // Registration function for citizens
   const register = useCallback(
     async (email: string, password: string, fullName: string, location?: string) => {
       if (!auth || !firestore) {
@@ -94,7 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
       const newUser = userCredential.user;
 
-      // Create a user profile in Firestore
       const userRef = doc(firestore, 'users', newUser.uid);
       const newUserProfile: UserProfile = {
         uid: newUser.uid,
@@ -103,14 +110,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: 'Citizen',
         location: location || '',
         createdAt: serverTimestamp(),
-        // Initialize empty arrays for other fields
         submittedIdeas: [],
         votedOnIdeas: [],
         followedDirectives: [],
         volunteeredFor: [],
       };
       await setDoc(userRef, newUserProfile);
-
       return newUser;
     },
     [auth, firestore]
@@ -119,6 +124,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Login function
   const login = useCallback(
     async (email: string, password: string) => {
+      
+      // Check if the user is a seeded admin user
+      const seededUser = seededUsers.find(u => u.email === email);
+      if (seededUser && seededUser.password === password) {
+          // Mock login for seeded user
+          const mockUser = { uid: seededUser.uid, displayName: seededUser.name, email: seededUser.email } as any;
+          setUser(mockUser);
+          setProfile(seededUser as UserProfile);
+          sessionStorage.setItem('seeded-user', JSON.stringify(seededUser));
+          return mockUser;
+      }
+      
+      // Proceed with real Firebase auth for non-admin users
       if (!auth) {
         throw new Error('Firebase not initialized for login.');
       }
@@ -127,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password
       );
+      sessionStorage.removeItem('seeded-user'); // Clear any session-based mock user
       return userCredential.user;
     },
     [auth]
@@ -134,15 +153,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Logout function
   const logout = useCallback(async () => {
+    sessionStorage.removeItem('seeded-user');
     if (!auth) {
-      throw new Error('Firebase not initialized for logout.');
+      // Still clear local state if auth is not available
+      setUser(null);
+      setProfile(null);
+      return;
     }
     await signOut(auth);
   }, [auth]);
 
   const value = {
-    user, // The raw Firebase user object
-    profile, // The Firestore profile object
+    user, 
+    profile,
     loading,
     register,
     login,
@@ -165,7 +188,6 @@ export function useUser() {
   // Return a combined user object for convenience
   return {
     ...context,
-    // A convenience property that combines the Firebase User and Firestore Profile
     authedUser:
       context.user && context.profile
         ? {

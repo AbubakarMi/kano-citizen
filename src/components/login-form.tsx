@@ -106,7 +106,7 @@ export function LoginForm({ t }: LoginFormProps) {
                   <FormLabel>{t.emailLabel}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="e.g. citizen@test.com" 
+                      placeholder="e.g. governor@test.com" 
                       {...field} 
                     />
                   </FormControl>

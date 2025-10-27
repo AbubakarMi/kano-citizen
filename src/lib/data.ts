@@ -91,3 +91,57 @@ export const mdas: MDA[] = [
 
 export const initialApprovalItems: ApprovalItem[] = [
 ]
+
+// These users are for demonstration purposes and are available for login.
+// All have the password "Password123"
+export const seededUsers = [
+    {
+        uid: 'governor-001',
+        name: "Executive Governor",
+        email: "governor@test.com",
+        role: "Governor" as UserRole,
+        password: "Password123",
+        createdAt: new Date(),
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+    },
+    {
+        uid: 'adviser-001',
+        name: "Special Adviser",
+        email: "adviser@test.com",
+        role: "Special Adviser" as UserRole,
+        password: "Password123",
+        createdAt: new Date(),
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+    },
+    {
+        uid: 'moderator-001',
+        name: "Content Moderator",
+        email: "moderator@test.com",
+        role: "Moderator" as UserRole,
+        password: "Password123",
+        createdAt: new Date(),
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+    },
+    {
+        uid: 'mda-official-001',
+        name: "MDA Official",
+        email: "mda@test.com",
+        role: "MDA Official" as UserRole,
+        mda: 'mda-works',
+        password: "Password123",
+        createdAt: new Date(),
+        submittedIdeas: [],
+        votedOnIdeas: [],
+        followedDirectives: [],
+        volunteeredFor: [],
+    }
+];
