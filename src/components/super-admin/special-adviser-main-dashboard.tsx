@@ -4,28 +4,25 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { FileUp, Send, Signature, Check, MessageSquareWarning, ArrowRight } from "lucide-react";
 import { useAppContext } from "@/app/app-provider";
 
-const kpis = [
-    { title: "Submissions Awaiting Review", value: "24", icon: MessageSquareWarning },
-    { title: "Directives Ready for Issuance", value: "3", icon: FileUp },
-    { title: "Active Directives", value: "12", icon: Send },
-    { title: "Completed Directives (30d)", value: "5", icon: Check },
-];
-
 export function SpecialAdviserMainDashboard() {
-  const { approvalQueue, setActiveView } = useAppContext();
+  const { ideas, directives, approvalQueue, setActiveView } = useAppContext();
   
+  const submissionsAwaitingReview = ideas.filter(idea => idea.status === 'Pending' && idea.moderatorApproved).length;
+  const directivesReadyForIssuance = approvalQueue.filter(item => item.status === 'ReadyForIssuance').length;
+  const activeDirectives = directives.filter(dir => dir.status === 'In Progress' || dir.status === 'Ana ci gaba').length;
+  const completedDirectives = directives.filter(dir => dir.status === 'Completed' || dir.status === 'An kammala').length;
+
+  const kpis = [
+    { title: "Submissions Awaiting Review", value: submissionsAwaitingReview, icon: MessageSquareWarning },
+    { title: "Directives Ready for Issuance", value: directivesReadyForIssuance, icon: FileUp },
+    { title: "Active Directives", value: activeDirectives, icon: Send },
+    { title: "Completed Directives", value: completedDirectives, icon: Check },
+  ];
+
   const readyForIssuance = approvalQueue.filter(item => item.status === 'ReadyForIssuance').slice(0, 3);
-  
-  // Mock data for moderation activity
-  const moderationActivity = [
-    { id: 1, action: "Approved", item: "Idea: 'Community Garden Initiative'", moderator: "Content Moderator", time: "5m ago" },
-    { id: 2, action: "Rejected", item: "Idea: 'Request for personal loan'", moderator: "Content Moderator", time: "12m ago" },
-    { id: 3, action: "Escalated", item: "Idea: 'Kano Market Modernization'", moderator: "Content Moderator", time: "28m ago" },
-  ]
 
   return (
     <div className="space-y-6">
@@ -43,7 +40,6 @@ export function SpecialAdviserMainDashboard() {
             ))}
         </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
         <Card>
             <CardHeader>
                 <CardTitle>Ready for Directive Issuance</CardTitle>
@@ -68,7 +64,7 @@ export function SpecialAdviserMainDashboard() {
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="outline" size="sm" onClick={() => setActiveView('submissions')}>
+                                    <Button variant="outline" size="sm" onClick={() => setActiveView('drafting')}>
                                         Prepare Directive <ArrowRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </TableCell>
@@ -84,29 +80,6 @@ export function SpecialAdviserMainDashboard() {
                 </Table>
             </CardContent>
         </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>Recent Moderation Activity</CardTitle>
-                <CardDescription>A summary of the latest content reviews.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                 {moderationActivity.map(activity => (
-                    <div key={activity.id} className="flex items-start gap-3 text-sm">
-                        <div>
-                            <Badge variant={activity.action === "Approved" ? "secondary" : activity.action === "Rejected" ? "destructive" : "default"}>
-                                {activity.action}
-                            </Badge>
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-medium text-foreground leading-tight">{activity.item}</p>
-                            <p className="text-xs text-muted-foreground">by {activity.moderator} - {activity.time}</p>
-                        </div>
-                    </div>
-                ))}
-            </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
