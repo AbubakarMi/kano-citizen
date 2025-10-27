@@ -154,7 +154,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     const handleDeleteMda = (mdaId: string) => {
         setMdas(prev => prev.filter(mda => mda.id !== mdaId));
         toast({ title: "MDA Removed", description: "The selected MDA has been removed." });
-    }
+    };
     
     const handleAddRole = () => {
         if (!newRoleName.trim()) {
@@ -313,7 +313,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an MDA" />
-                                                            </Trigger>
+                                                            </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
                                                             {mdas.map(mda => (
@@ -484,3 +484,5 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         </div>
     );
 }
+
+    
