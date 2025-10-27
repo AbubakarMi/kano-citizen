@@ -132,12 +132,14 @@ export function OngoingVotes() {
         <CardContent className="space-y-4">
           {sortedIdeas.length > 0 ? sortedIdeas.map((idea) => {
             const votePercentage = totalVotes > 0 ? (idea.upvotes.length / totalVotes) * 100 : 0;
+            const authorDisplay = idea.author === "Special Adviser" ? "Office of the Special Adviser" : idea.author;
+            
             return (
               <div key={idea.id} className="space-y-2 border-b pb-4 last:border-none last:pb-0">
                 <div className="flex justify-between items-start gap-4">
                   <div>
                     <h3 className="text-base font-semibold">{idea.title}</h3>
-                    <p className="text-xs text-muted-foreground">by {idea.author}</p>
+                    <p className="text-xs text-muted-foreground">by {authorDisplay}</p>
                   </div>
                   <div className="flex items-center gap-2 font-bold text-lg text-primary flex-shrink-0">
                     <ArrowUp className="h-5 w-5" />
