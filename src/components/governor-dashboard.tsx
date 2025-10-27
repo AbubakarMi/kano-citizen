@@ -2,11 +2,12 @@
 "use client";
 
 import type { UserProfile } from "@/lib/data";
-import { seededUsers } from "@/lib/data";
+import { seededUsers, mdas } from "@/lib/data";
 import { ApprovalQueue } from "./super-admin/approval-queue";
 import { SystemLogs } from "./system-admin/system-logs";
 import { useAppContext } from "@/app/app-provider";
 import { ExecutiveDashboard } from "./super-admin/executive-dashboard";
+import { DirectiveIssuance } from "./super-admin/directive-issuance";
 
 interface GovernorDashboardProps {
   user: UserProfile;
@@ -14,7 +15,7 @@ interface GovernorDashboardProps {
 }
 
 export function GovernorDashboard({ user, activeView }: GovernorDashboardProps) {
-  const { ideas, directives, approvalQueue } = useAppContext();
+  const { ideas, directives, approvalQueue, setApprovalQueue } = useAppContext();
   const allUsers: UserProfile[] = seededUsers.map(u => ({...u, submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] }));
 
 
@@ -30,6 +31,8 @@ export function GovernorDashboard({ user, activeView }: GovernorDashboardProps) 
                 />;
       case 'approvals':
         return <ApprovalQueue />;
+      case 'directives':
+        return <DirectiveIssuance ideas={ideas} mdas={mdas} setApprovalQueue={setApprovalQueue} />;
        case 'audit':
          return <SystemLogs />;
       default:
