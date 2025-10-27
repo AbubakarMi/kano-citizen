@@ -2,7 +2,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { format, toDate } from "date-fns";
+import { format, toDate, getMonth } from "date-fns";
 import {
   Card,
   CardHeader,
@@ -32,8 +32,10 @@ const processDataByMonth = (data: (Idea[] | UserProfile[] | undefined)) => {
         const month = format(date, "MMM");
         monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
     });
-
-    const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    const allMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const currentMonthIndex = getMonth(new Date());
+    const monthOrder = allMonths.slice(0, currentMonthIndex + 1);
     
     const chartData = monthOrder.map(month => ({
         month,
