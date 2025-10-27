@@ -1,5 +1,4 @@
 
-
 import type { Timestamp } from 'firebase/firestore';
 
 export type Idea = {
@@ -11,6 +10,7 @@ export type Idea = {
   upvotes: string[]; // array of user uids
   status: "Pending" | "Approved" | "Rejected" | "Completed";
   moderatorApproved?: boolean;
+  createdAt: Timestamp | Date;
 };
 
 export type Directive = {

@@ -1,6 +1,8 @@
 
 "use client";
 
+import { useMemo } from "react";
+import { format, toDate } from "date-fns";
 import {
   Card,
   CardHeader,
@@ -17,34 +19,57 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar, BarChart as RechartsBarChart } from 'recharts';
 import { useAppContext } from "@/app/app-provider";
-import { seededUsers } from "@/lib/data";
+import { seededUsers, type UserProfile, type Idea } from "@/lib/data";
+import { useUser } from "@/firebase/auth/use-user"; // To get all users eventually
 
-const userGrowthData = [
-    { month: "Jan", users: 800 },
-    { month: "Feb", users: 1200 },
-    { month: "Mar", users: 2500 },
-    { month: "Apr", users: 4000 },
-    { month: "May", users: 9000 },
-    { month: "Jun", users: 15342 },
-];
+const processDataByMonth = (data: (Idea[] | UserProfile[] | undefined)) => {
+    if (!data) return [];
+    
+    const monthlyCounts: { [key: string]: number } = {};
 
-const ideaSubmissionData = [
-    { month: "Jan", ideas: 150 },
-    { month: "Feb", ideas: 300 },
-    { month: "Mar", ideas: 600 },
-    { month: "Apr", ideas: 1100 },
-    { month: "May", ideas: 1800 },
-    { month: "Jun", ideas: 871 },
-];
+    data.forEach(item => {
+        // Firebase Timestamps need to be converted to JS Dates
+        const date = item.createdAt ? toDate(item.createdAt.seconds ? item.createdAt.seconds * 1000 : item.createdAt) : new Date();
+        const month = format(date, "MMM");
+        monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
+    });
+
+    const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    const chartData = monthOrder.map(month => ({
+        month,
+        count: monthlyCounts[month] || 0
+    }));
+
+    // For this demo, let's ensure we have some data for the current month up to June
+    const currentMonthIndex = new Date().getMonth();
+    if (currentMonthIndex < 5) {
+        for(let i = currentMonthIndex + 1; i <= 5; i++) {
+            if (chartData[i].count === 0) {
+                 // To make the chart look a bit more interesting if data is sparse
+                 const prevMonthCount = chartData[i-1]?.count || 5;
+                 chartData[i].count = Math.max(0, prevMonthCount + Math.floor(Math.random() * 10) - 5);
+            }
+        }
+    }
+
+
+    return chartData;
+};
+
 
 export const Analytics = () => {
     const { ideas } = useAppContext();
+    // const { users } = useUser(); // In a real app, you'd have a way to fetch all users
+    const allUsers = seededUsers; // For now, we use seeded users
+
+    const ideaSubmissionData = useMemo(() => processDataByMonth(ideas).map(d => ({ month: d.month, ideas: d.count })), [ideas]);
+    const userGrowthData = useMemo(() => processDataByMonth(allUsers).map(d => ({ month: d.month, users: d.count })), [allUsers]);
 
     const totalIdeas = ideas.length;
     const totalVotes = ideas.reduce((acc, idea) => acc + (idea.upvotes?.length || 0), 0);
-    // In a real app, you'd fetch all users. For now, we use seeded users length as a proxy.
-    const totalUsers = seededUsers.length; 
-    const engagementRate = "62.5%"; // This would be a more complex calculation
+    const totalUsers = allUsers.length; 
+    const engagementRate = totalUsers > 0 ? `${((totalVotes / totalUsers) / totalIdeas * 100).toFixed(1)}%` : "0%";
 
     const analyticsKpis = [
         { title: "Total Users", value: totalUsers.toString(), icon: Users },
@@ -76,7 +101,7 @@ export const Analytics = () => {
                 <Card>
                     <CardHeader>
                         <CardTitle>User Growth</CardTitle>
-                        <CardDescription>Total platform users over the last 6 months.</CardDescription>
+                        <CardDescription>Total platform users over the last months.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>

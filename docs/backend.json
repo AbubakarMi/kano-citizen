@@ -31,9 +31,10 @@
                 "authorId": { "type": "string" },
                 "upvotes": { "type": "array", "items": { "type": "string" }, "description": "Array of user UIDs who have upvoted." },
                 "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "Completed"] },
-                "moderatorApproved": { "type": "boolean", "description": "Flag to indicate if a moderator has approved the submission." }
+                "moderatorApproved": { "type": "boolean", "description": "Flag to indicate if a moderator has approved the submission." },
+                "createdAt": { "type": "string", "format": "date-time", "description": "The timestamp when the idea was created." }
             },
-            "required": ["title", "description", "author", "authorId", "status"]
+            "required": ["title", "description", "author", "authorId", "status", "createdAt"]
         },
         "Directive": {
             "title": "Directive",
