@@ -1,3 +1,4 @@
+
 import type { Idea, Directive, VolunteerOpportunity, Testimonial, FAQ } from './data';
 
 export type Language = 'en' | 'ha';
@@ -157,7 +158,7 @@ const t: Record<Language, TranslationContent> = {
       heroTitle: "Your Voice, ",
       heroTitleSpan: "Your Kano.",
       heroDescription: "Join thousands of citizens shaping the future of our state. Submit ideas, vote on priorities, and see your vision come to life.",
-      registerButton: "Register to Participate",
+      registerButton: "Register Voice",
       signInButton: "Sign In",
       registerHint: "It's free, secure, and takes less than a minute.",
       topIdeaTitle: "Top Community Idea",
@@ -281,61 +282,9 @@ const t: Record<Language, TranslationContent> = {
         volunteerThankYou: "Thank you!",
         volunteerThankYouDescription: "Your interest has been noted. We will contact you shortly.",
     },
-    ideas: [
-      {
-        id: "idea-1",
-        title: "Community Solar Power Initiative",
-        description: "Install solar panels on public buildings (schools, markets) to provide clean, reliable energy and reduce electricity costs for the community.",
-        author: "Aisha Bello",
-        authorId: "user-1",
-        upvotes: ["user-2", "user-3"],
-      },
-      {
-        id: "idea-2",
-        title: "Youth Tech Training Program",
-        description: "Establish free coding and digital skills bootcamps for young people in Kano to improve employment opportunities in the tech sector.",
-        author: "Musa Ibrahim",
-        authorId: "user-2",
-        upvotes: ["user-1", "user-3", "user-4"],
-      },
-    ],
-    directives: [
-      {
-        id: "dir-1",
-        title: "Streetlight Repair and Installation Phase 1",
-        status: "In Progress",
-        description: "A directive to repair all faulty streetlights and install new ones in key commercial and residential areas to improve security and nightlife.",
-        updates: [
-          "Initial survey of faulty lights completed.",
-          "Procurement of new LED bulbs is underway.",
-        ],
-      },
-      {
-        id: "dir-2",
-        title: "Drainage Desilting Program",
-        status: "Completed",
-        description: "Clearing of major drainage channels across the metropolitan area to prevent flooding during the rainy season.",
-        updates: [
-          "Contract awarded.",
-          "Work completed in Fagge and Gwale LGAs.",
-          "Program officially concluded with 95% of target channels cleared.",
-        ],
-      },
-    ],
-    volunteerOpportunities: [
-        {
-            id: 'vol-1',
-            title: 'Mentor for Youth Tech Program',
-            description: 'Guide and mentor a small group of students in our new tech training program. Share your industry experience.',
-            requiredSkills: ['Software Development', 'Project Management', 'Public Speaking'],
-        },
-        {
-            id: 'vol-2',
-            title: 'Community Garden Volunteer',
-            description: 'Help with planting, watering, and harvesting at the new community garden initiative. No experience needed!',
-            requiredSkills: ['Gardening (optional)', 'Teamwork'],
-        }
-    ],
+    ideas: [],
+    directives: [],
+    volunteerOpportunities: [],
     testimonials: [
         {
             name: 'Hassan Idris',
@@ -383,7 +332,7 @@ const t: Record<Language, TranslationContent> = {
       heroTitle: "Muryar Ka, ",
       heroTitleSpan: "Kanon Ka.",
       heroDescription: "Haɗa kai da dubban 'yan ƙasa wajen tsara makomar jihar mu. Gabatar da ra'ayoyi, zaɓi muhimman ayyuka, kuma ka ga hangen nesan ka ya tabbata.",
-      registerButton: "Yi Rajista don Shiga",
+      registerButton: "Bada Murya",
       signInButton: "Shiga Ciki",
       registerHint: "Kyauta ne, amintacce, kuma yana ɗaukar ƙasa da minti ɗaya.",
       topIdeaTitle: "Babban Ra'ayin Al'umma",
@@ -507,61 +456,9 @@ const t: Record<Language, TranslationContent> = {
         volunteerThankYou: "Mun Gode!",
         volunteerThankYouDescription: "An lura da sha'awar ka. Za mu tuntube ka nan ba da daɗewa ba.",
     },
-    ideas: [
-      {
-        id: "idea-1",
-        title: "Shirin Hasken Rana na Al'umma",
-        description: "Sanya fuskokin hasken rana a gine-ginen gwamnati (makarantu, kasuwanni) don samar da wutar lantarki mai tsafta, mai dogaro da kai da rage kuɗin wuta ga al'umma.",
-        author: "Aisha Bello",
-        authorId: "user-1",
-        upvotes: ["user-2", "user-3"],
-      },
-      {
-        id: "idea-2",
-        title: "Shirin Horar da Matasa Fasahar Zamani",
-        description: "Kafa wuraren koyar da rubutun kwamfuta da fasahar dijital kyauta ga matasan Kano don inganta damar samun aikin yi a fannin fasaha.",
-        author: "Musa Ibrahim",
-        authorId: "user-2",
-        upvotes: ["user-1", "user-3", "user-4"],
-      },
-    ],
-    directives: [
-      {
-        id: "dir-1",
-        title: "Aikin Gyara da Sanya Fitilun Hanyoyi Mataki na 1",
-        status: "Ana ci gaba",
-        description: "Umarnin gyara dukkan fitilun hanyoyi da suka lalace da sanya sababbi a muhimman wuraren kasuwanci da na zama don inganta tsaro da zirga-zirgar dare.",
-        updates: [
-          "An kammala binciken farko na fitilun da suka lalace.",
-          "Ana kan aiwatar da sayen sabbin kwan fitila na LED.",
-        ],
-      },
-      {
-        id: "dir-2",
-        title: "Shirin Cire Laka a Magudanan Ruwa",
-        status: "An kammala",
-        description: "Share manyan magudanan ruwa a faɗin birni don hana ambaliyar ruwa a lokacin damina.",
-        updates: [
-          "An bayar da kwangila.",
-          "An kammala aiki a ƙananan hukumomin Fagge da Gwale.",
-          "An kammala shirin a hukumance tare da share kashi 95% na magudanan da aka sa a gaba.",
-        ],
-      },
-    ],
-    volunteerOpportunities: [
-        {
-            id: 'vol-1',
-            title: 'Mai Jagora a Shirin Horar da Matasa Fasaha',
-            description: 'Jagoranci da ba da shawara ga ƙaramin rukuni na ɗalibai a sabon shirin mu na horar da fasaha. Raba gogewar ka ta masana\'antu.',
-            requiredSkills: ['Haɓaka Software', 'Gudanar da Ayyuka', 'Yin Magana a Bainar Jama\'a'],
-        },
-        {
-            id: 'vol-2',
-            title: 'Mai Aikin Sa Kai a Lambun Al\'umma',
-            description: 'Taimaka da shuka, ba da ruwa, da girbi a sabon shirin lambun al\'umma. Ba a buƙatar gogewa!',
-            requiredSkills: ['Noman lambu (na zaɓi)', 'Aiki tare'],
-        }
-    ],
+    ideas: [],
+    directives: [],
+    volunteerOpportunities: [],
     testimonials: [
         {
             name: 'Hassan Idris',
