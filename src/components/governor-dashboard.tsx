@@ -1,9 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
-import type { UserProfile, MDA, UserRole } from "@/lib/data";
-import { mdas as initialMdas, seededUsers } from "@/lib/data";
+import type { UserProfile } from "@/lib/data";
+import { seededUsers } from "@/lib/data";
 import { ApprovalQueue } from "./super-admin/approval-queue";
 import { SystemLogs } from "./system-admin/system-logs";
 import { useAppContext } from "@/app/app-provider";
@@ -15,19 +14,32 @@ interface GovernorDashboardProps {
 }
 
 export function GovernorDashboard({ user, activeView }: GovernorDashboardProps) {
-  const { ideas } = useAppContext();
-  const [mdas] = useState<MDA[]>(initialMdas);
+  const { ideas, directives, approvalQueue } = useAppContext();
+  const allUsers: UserProfile[] = seededUsers.map(u => ({...u, submittedIdeas:[], votedOnIdeas:[], followedDirectives:[], volunteeredFor:[] }));
+
 
   const renderView = () => {
     switch (activeView) {
       case 'overview':
-        return <ExecutiveDashboard user={user} />;
+        return <ExecutiveDashboard 
+                    user={user} 
+                    ideas={ideas}
+                    directives={directives}
+                    users={allUsers}
+                    approvalQueue={approvalQueue}
+                />;
       case 'approvals':
         return <ApprovalQueue />;
        case 'audit':
          return <SystemLogs />;
       default:
-        return <ExecutiveDashboard user={user} />;
+        return <ExecutiveDashboard 
+                    user={user}
+                    ideas={ideas}
+                    directives={directives}
+                    users={allUsers}
+                    approvalQueue={approvalQueue}
+                />;
     }
   }
 
