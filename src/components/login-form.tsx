@@ -71,7 +71,7 @@ export function LoginForm({ t }: LoginFormProps) {
     const foundUser = seededUsers.find(u => u.email === values.email);
 
     if (foundUser) {
-        login(values.email);
+        login(values.email, foundUser.role, foundUser.name, foundUser.mda);
         await showWelcomeDialog(values.email);
     } else {
         toast({

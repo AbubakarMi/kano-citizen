@@ -1,14 +1,14 @@
 
 'use client';
 import { useEffect, useState, createContext, useContext, ReactNode } from 'react';
-import type { UserProfile } from '@/lib/data';
-import { seededUsers, mdas } from '@/lib/data';
+import type { UserProfile, UserRole } from '@/lib/data';
+import { seededUsers } from '@/lib/data';
 
 // Create a new context for our mock auth
 type MockAuthContextType = {
   user: { uid: string; profile: UserProfile | null } | null;
   loading: boolean;
-  login: (email: string) => void;
+  login: (email: string, role: UserRole, name: string, mda?: string) => void;
   logout: () => void;
 };
 
@@ -23,49 +23,31 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
     // On initial load, check if we have a mocked user in session storage
     const storedUserEmail = sessionStorage.getItem('mockUserEmail');
     if (storedUserEmail) {
-      login(storedUserEmail);
+      const foundUser = seededUsers.find(u => u.email === storedUserEmail);
+      if(foundUser) {
+        login(storedUserEmail, foundUser.role, foundUser.name, foundUser.mda);
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (email: string) => {
-    const foundUserSeed = seededUsers.find(u => u.email === email);
-    if (foundUserSeed) {
-      const uid = `mock-uid-${foundUserSeed.email}`;
-      const profile: UserProfile = {
-        uid: uid,
-        name: foundUserSeed.name,
-        email: foundUserSeed.email,
-        role: foundUserSeed.role,
-        mda: foundUserSeed.mda,
-        location: foundUserSeed.location,
-        submittedIdeas: ['idea-1'],
-        votedOnIdeas: ['idea-2'],
-        followedDirectives: ['dir-1'],
-        volunteeredFor: [],
-      };
-      setUser({ uid, profile });
-      sessionStorage.setItem('mockUserEmail', email);
-    } else {
-      // Default to citizen if email not found
-      const uid = 'mock-uid-citizen';
-      setUser({
-        uid,
-        profile: {
-          uid,
-          name: 'Mock Citizen',
-          email: 'citizen@test.com',
-          role: 'Citizen',
-          location: 'Kano',
-          submittedIdeas: [],
-          votedOnIdeas: [],
-          followedDirectives: [],
-          volunteeredFor: [],
-        },
-      });
-      sessionStorage.setItem('mockUserEmail', 'citizen@test.com');
-    }
-     setLoading(false);
+  const login = (email: string, role: UserRole, name: string, mda?: string) => {
+    const uid = `mock-uid-${email}`;
+    const profile: UserProfile = {
+      uid,
+      name,
+      email,
+      role,
+      mda,
+      location: 'Kano',
+      submittedIdeas: ['idea-1'],
+      votedOnIdeas: ['idea-2'],
+      followedDirectives: ['dir-1'],
+      volunteeredFor: [],
+    };
+    setUser({ uid, profile });
+    sessionStorage.setItem('mockUserEmail', email);
+    setLoading(false);
   };
 
   const logout = () => {
