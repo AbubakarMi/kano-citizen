@@ -156,17 +156,6 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         toast({ title: "MDA Removed", description: "The selected MDA has been removed." });
     };
     
-    const handleAddRole = () => {
-        if (!newRoleName.trim()) {
-            toast({ variant: "destructive", title: "Invalid Name", description: "Role name cannot be empty." });
-            return;
-        }
-        // This is a simulation. In a real app, UserRole would likely be a more flexible string.
-        setRoles(prev => [...prev, newRoleName.trim() as UserRole]);
-        setNewRoleName("");
-        toast({ title: "Role Added", description: `${newRoleName.trim()} has been added.` });
-    }
-    
     const handleCreateUser = (values: z.infer<typeof createUserSchema>) => {
         const newUser: UserProfile = {
             uid: `user-${Date.now()}`,
@@ -414,21 +403,13 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                 <Card>
                      <CardHeader>
                         <CardTitle>Role Management</CardTitle>
-                        <CardDescription>Define administrative roles on the platform.</CardDescription>
+                        <CardDescription>System-defined administrative roles.</CardDescription>
                     </CardHeader>
                      <CardContent className="flex flex-wrap gap-2">
                         {roles.filter(r => r !== 'Citizen').map(role => (
-                           <Badge key={role} variant="secondary">{role}</Badge>
+                           <Badge key={role} variant="outline" className="text-base">{role}</Badge>
                         ))}
                     </CardContent>
-                    <CardFooter className="flex gap-2 pt-2">
-                        <Input 
-                            placeholder="Enter new role name..." 
-                            value={newRoleName}
-                            onChange={(e) => setNewRoleName(e.target.value)}
-                        />
-                        <Button onClick={handleAddRole}><PlusCircle className="mr-2 h-4 w-4" /> Add</Button>
-                    </CardFooter>
                 </Card>
             </div>
 
@@ -484,5 +465,3 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         </div>
     );
 }
-
-    
