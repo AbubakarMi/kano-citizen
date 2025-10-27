@@ -39,7 +39,7 @@ interface SidebarLink {
   id: string;
   label: string;
   icon: React.ElementType;
-  group?: "Engagement" | "Administration" | "CITIZEN" | "OVERSIGHT" | "OPERATIONS";
+  group?: "Engagement" | "Administration" | "CITIZEN" | "OVERSIGHT" | "OPERATIONS" | "MANAGEMENT";
 }
 
 const getInitials = (name: string) => {
@@ -69,6 +69,7 @@ const specialAdviserLinks: SidebarLink[] = [
     { id: "drafting", label: "Directive Drafting", icon: Gavel, group: "OPERATIONS" },
     { id: "mda-monitor", label: "MDA Performance", icon: Building, group: "OPERATIONS" },
     { id: "analytics", label: "Analytics", icon: BarChart2, group: "OPERATIONS" },
+    { id: "user-management", label: "User Management", icon: Users, group: "MANAGEMENT" },
 ]
 
 const mdaLinks: SidebarLink[] = [

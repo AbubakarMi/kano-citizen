@@ -3,8 +3,8 @@
 "use client";
 
 import { useState } from "react";
-import type { UserProfile, MDA } from "@/lib/data";
-import { mdas as initialMdas, initialApprovalItems as allItems } from "@/lib/data";
+import type { UserProfile, MDA, UserRole } from "@/lib/data";
+import { mdas as initialMdas } from "@/lib/data";
 import { useAppContext } from "@/app/app-provider";
 import { Analytics } from "./system-admin/analytics";
 import { SpecialAdviserMainDashboard } from "./super-admin/special-adviser-main-dashboard";
@@ -12,15 +12,19 @@ import { DirectiveIssuance } from "./super-admin/directive-issuance";
 import { MDAPerformanceMonitor } from "./super-admin/mda-performance-monitor";
 import { OngoingVotes } from "./super-admin/ongoing-votes";
 import { ReviewedSubmissions } from "./super-admin/reviewed-submissions";
+import { UserManagement } from "./super-admin/user-management";
 
 interface SpecialAdviserDashboardProps {
   user: UserProfile;
   activeView: string;
 }
 
+const availableRoles: UserRole[] = ["MDA Official", "Moderator", "Special Adviser", "Governor"];
+
 export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDashboardProps) {
   const { ideas, setIdeas, setApprovalQueue } = useAppContext();
-  const mdas = initialMdas;
+  const [mdas, setMdas] = useState<MDA[]>(initialMdas);
+  const [roles, setRoles] = useState<UserRole[]>(availableRoles);
 
   const renderView = () => {
     switch (activeView) {
@@ -36,6 +40,8 @@ export function SpecialAdviserDashboard({ user, activeView }: SpecialAdviserDash
         return <MDAPerformanceMonitor />;
       case 'analytics':
         return <Analytics />;
+      case 'user-management':
+        return <UserManagement availableRoles={roles} mdas={mdas} setMdas={setMdas} roles={roles} setRoles={setRoles} />;
       default:
         return <SpecialAdviserMainDashboard />;
     }

@@ -83,8 +83,8 @@ interface UserManagementProps {
 export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles }: UserManagementProps) {
     const { toast } = useToast();
     const [users, setUsers] = useState(initialAdminUsers);
-    const [userToDelete, setUserToDelete] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) | null>(null);
-    const [userToEdit, setUserToEdit] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) | null>(null);
+    const [userToDelete, setUserToDelete] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor' | 'createdAt'> & {email: string}) | null>(null);
+    const [userToEdit, setUserToEdit] = useState<(Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor' | 'createdAt'> & {email: string}) | null>(null);
     const [newRole, setNewRole] = useState<UserRole | "">("");
 
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
@@ -105,7 +105,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
 
     const selectedRole = form.watch("role");
 
-    const handleDeleteClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string})) => {
+    const handleDeleteClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor' | 'createdAt'> & {email: string})) => {
         setUserToDelete(user);
     }
 
@@ -120,7 +120,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setUserToDelete(null);
     }
 
-    const handleEditClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string})) => {
+    const handleEditClick = (user: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor' | 'createdAt'> & {email: string})) => {
         setUserToEdit(user);
         setNewRole(user.role);
     }
@@ -169,12 +169,13 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     }
     
     const handleCreateUser = (values: z.infer<typeof createUserSchema>) => {
-        const newUser: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor'> & {email: string}) = {
+        const newUser: (Omit<UserProfile, 'uid' | 'submittedIdeas' | 'votedOnIdeas' | 'followedDirectives' | 'volunteeredFor' | 'createdAt'> & {email: string}) = {
             name: values.fullName,
             email: values.email,
             role: values.role as UserRole,
             mda: values.role === "MDA Official" ? values.mda : undefined,
             location: values.location,
+            password: values.password
         };
         setUsers(prev => [newUser, ...prev]);
         toast({
@@ -286,7 +287,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select a role" />
-                                                        </SelectTrigger>
+                                                        </Trigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         {availableRoles.map(role => (
@@ -481,4 +482,3 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
     );
 }
 
-      
