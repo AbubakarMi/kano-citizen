@@ -127,9 +127,16 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
   
   const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    await logout();
-    router.push('/');
-    router.refresh();
+    try {
+      await logout();
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Even if logout fails, try to redirect to home
+      router.push('/');
+      router.refresh();
+    }
   }
 
   const groupedLinks = links.reduce((acc, link) => {
