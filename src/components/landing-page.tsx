@@ -30,10 +30,11 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ language, t, complaintStrings, ideas, directives, volunteerOpportunities, testimonials, faqs }: LandingPageProps) {
-  const sortedIdeas = [...(ideas || [])].sort((a, b) => b.upvotes.length - a.upvotes.length);
+  const livePolls = (ideas || []).filter(idea => idea.status === 'Approved');
+  const sortedIdeas = [...livePolls].sort((a, b) => b.upvotes.length - a.upvotes.length);
   const topIdea = sortedIdeas[0];
   const otherIdeas = sortedIdeas.slice(1);
-  const totalVotes = (ideas || []).reduce((sum, idea) => sum + idea.upvotes.length, 0);
+  const totalVotes = livePolls.reduce((sum, idea) => sum + idea.upvotes.length, 0);
   
   const speakImage = PlaceHolderImages.find(p => p.id === 'speak');
   const decideImage = PlaceHolderImages.find(p => p.id === 'decide');
@@ -172,8 +173,8 @@ export function LandingPage({ language, t, complaintStrings, ideas, directives, 
                   {topIdea.description}
                 </p>
                 <div className="space-y-1">
-                    <Progress value={(topIdea.upvotes.length / totalVotes) * 100} className="h-2" />
-                    <p className="text-right text-sm font-medium text-secondary">{((topIdea.upvotes.length / totalVotes) * 100).toFixed(1)}% of votes</p>
+                    <Progress value={totalVotes > 0 ? (topIdea.upvotes.length / totalVotes) * 100 : 0} className="h-2" />
+                    <p className="text-right text-sm font-medium text-secondary">{totalVotes > 0 ? ((topIdea.upvotes.length / totalVotes) * 100).toFixed(1) : 0}% of votes</p>
                 </div>
 
                 <div className="mt-4 flex justify-between items-center text-sm font-medium">
