@@ -4,8 +4,8 @@
 import { useState } from "react";
 import { useUser } from "@/firebase/auth/use-user";
 import { useFirestore } from "@/firebase";
-import { collection, doc, writeBatch, arrayUnion, arrayRemove } from "firebase/firestore";
-import type { Idea, Directive } from "@/lib/data";
+import { doc, writeBatch, arrayUnion, arrayRemove } from "firebase/firestore";
+import type { Idea } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -281,3 +281,5 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
     </div>
   );
 }
+
+    
