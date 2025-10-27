@@ -127,31 +127,33 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
 
       <Tabs value={activeView} className="mt-8">
         <TabsContent value="speak" className="mt-6">
-          <Card className="max-w-3xl mx-auto shadow-md border-primary/20">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-primary/10 text-primary mx-auto rounded-full flex items-center justify-center mb-4">
-                  <MessageSquareQuote className="w-8 h-8" />
+          <Card className="max-w-3xl mx-auto shadow-lg border-primary/20 bg-card">
+            <CardHeader className="text-center items-center gap-4 p-6 md:p-8">
+              <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center">
+                  <MessageSquareQuote className="w-10 h-10" />
               </div>
-              <CardTitle className="text-2xl font-headline text-primary">{t.submitIdeaTitle}</CardTitle>
-              <CardDescription>
-                {t.submitIdeaDescription}
-              </CardDescription>
+              <div className="space-y-2">
+                <CardTitle className="text-3xl font-headline text-primary">{t.submitIdeaTitle}</CardTitle>
+                <CardDescription className="text-base">
+                  {t.submitIdeaDescription}
+                </CardDescription>
+              </div>
             </CardHeader>
             <form onSubmit={handleSubmitIdea}>
-              <CardContent className="space-y-6">
+              <CardContent className="p-6 md:p-8 space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="idea-title" className="font-medium text-sm">Idea Title</label>
+                    <label htmlFor="idea-title" className="font-medium">Idea Title</label>
                     <Input 
                         id="idea-title"
                         placeholder={t.ideaTitlePlaceholder} 
                         value={newIdeaTitle}
                         onChange={(e) => setNewIdeaTitle(e.target.value)}
                         required
-                        className="text-base"
+                        className="text-base py-6"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="idea-desc" className="font-medium text-sm">Idea Description</label>
+                    <label htmlFor="idea-desc" className="font-medium">Idea Description</label>
                     <Textarea
                         id="idea-desc"
                         placeholder={t.ideaDescriptionPlaceholder} 
@@ -163,9 +165,9 @@ export function CitizenDashboard({ t }: CitizenDashboardProps) {
                     />
                   </div>
               </CardContent>
-              <CardFooter className="flex-col gap-4">
-                <Button type="submit" size="lg" className="w-full font-bold">{t.submitIdeaButton}</Button>
-                <p className="text-xs text-muted-foreground">Your idea will be reviewed by moderators before appearing for public vote.</p>
+              <CardFooter className="flex-col gap-4 p-6 md:p-8 bg-muted/50 rounded-b-lg">
+                <Button type="submit" size="lg" className="w-full font-bold text-lg">{t.submitIdeaButton}</Button>
+                <p className="text-xs text-muted-foreground text-center">Your idea will be reviewed by moderators before appearing for public vote. This ensures all submissions are constructive.</p>
               </CardFooter>
             </form>
           </Card>
