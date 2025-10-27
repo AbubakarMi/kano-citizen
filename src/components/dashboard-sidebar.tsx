@@ -125,7 +125,8 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
     setActiveView(id);
   };
   
-  const handleLogout = async () => {
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
     await logout();
     router.push('/');
     router.refresh();
@@ -213,7 +214,8 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                         <p className="text-xs text-muted-foreground">{user.role}</p>
                     </div>
                  </div>
-                 <button
+                 <a
+                    href="#"
                     onClick={handleLogout}
                     className={cn(
                         buttonVariants({ variant: "ghost" }), 
@@ -223,7 +225,7 @@ export function DashboardSidebar({ user, className, isCollapsed: isCollapsedProp
                  >
                     <LogOut className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
                     {!isCollapsed && "Log out"}
-                 </button>
+                 </a>
               </div>
           </div>
         </TooltipProvider>
