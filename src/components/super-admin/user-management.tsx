@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -192,7 +192,6 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         setIsCreateUserOpen(false);
     }
 
-
     return (
         <div className="space-y-6">
             <Card>
@@ -314,7 +313,7 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select an MDA" />
-                                                            </SelectTrigger>
+                                                            </Trigger>
                                                         </FormControl>
                                                         <SelectContent>
                                                             {mdas.map(mda => (
@@ -485,5 +484,3 @@ export function UserManagement({ availableRoles, mdas, setMdas, roles, setRoles 
         </div>
     );
 }
-
-    
